@@ -26,4 +26,5 @@
         android:text="@string/btn_A7"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txt_team_name" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

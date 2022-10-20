@@ -2,6 +2,8 @@ package edu.northeastern.numad22fa_team27.spotify;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -26,7 +28,10 @@ public class SpotifyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_spotify);
 
+        token = null;
+
         // Set new auth token
+        startLoadingThread();
         startBearerTokenThread();
     }
 
@@ -75,8 +80,28 @@ public class SpotifyActivity extends AppCompatActivity {
         }
     }
 
+    private void startLoadingThread() {
+        LoadingThread loadingThread = new LoadingThread();
+        new Thread(loadingThread).start();
+    }
+
+    private class LoadingThread implements Runnable {
+        @Override
+        public void run() {
+            ProgressBar loadingPB = findViewById(R.id.pb_loading);
+            while (getToken() == null) {
+                loadingPB.setVisibility(View.VISIBLE);
+            }
+            loadingPB.setVisibility(View.INVISIBLE);
+        }
+    }
+
     private void setToken(SpotifyToken token) {
         this.token = token;
+    }
+
+    private SpotifyToken getToken() {
+        return token;
     }
 
     private String convertStreamToString(InputStream in) {
