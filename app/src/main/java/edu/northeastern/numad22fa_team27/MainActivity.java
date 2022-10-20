@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Button;
 
+import edu.northeastern.numad22fa_team27.spotify.SpotifyActivity;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
