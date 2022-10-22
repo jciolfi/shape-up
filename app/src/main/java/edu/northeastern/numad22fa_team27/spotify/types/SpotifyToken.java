@@ -1,5 +1,7 @@
 package edu.northeastern.numad22fa_team27.spotify.types;
 
+import java.sql.Timestamp;
+
 public class SpotifyToken {
     public String accessToken;
     public long createdOn;
@@ -9,5 +11,9 @@ public class SpotifyToken {
         this.accessToken = accessToken;
         this.createdOn = createdOn;
         this.expiresIn = expiresIn;
+    }
+
+    boolean isExpired() {
+        return new Timestamp(System.currentTimeMillis()).getTime() >= (createdOn + expiresIn);
     }
 }
