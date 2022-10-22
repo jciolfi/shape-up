@@ -9,24 +9,18 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.snackbar.Snackbar;
 
-import org.json.JSONObject;
-
-import java.io.DataOutputStream;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.sql.Timestamp;
-import java.util.Scanner;
+import java.util.LinkedList;
+import java.util.List;
 
 import edu.northeastern.numad22fa_team27.R;
+import edu.northeastern.numad22fa_team27.spotify.types.SongRecommendation;
 import edu.northeastern.numad22fa_team27.spotify.types.SpotifyConnection;
-import edu.northeastern.numad22fa_team27.spotify.types.SpotifyQueryDatatype;
-import edu.northeastern.numad22fa_team27.spotify.types.SpotifyToken;
 
 
 public class SpotifyActivity extends AppCompatActivity {
     private String TAG = "SpotifyActivity__";
     private final SpotifyConnection spotConnect = new SpotifyConnection();
+    private List<SongRecommendation> songRecs = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,14 +50,28 @@ public class SpotifyActivity extends AppCompatActivity {
         @Override
         public void run() {
             if (spotConnect.Connect()) {
+                // Tell the user we can run recommendations
                 String successMessage = "Successfully loaded Spotify Details!";
                 Snackbar.make(findViewById(android.R.id.content), successMessage, Snackbar.LENGTH_SHORT).show();
 
-                String artistId = spotConnect.SearchForId("Lana Del Rey", SpotifyQueryDatatype.ARTIST);
-                Log.v(TAG, "Artist ID is " + artistId);
+                // Perform dummy lookup. Actual user data should go here
+                setSongRecommendations(spotConnect.performRecommendation(
+                        new LinkedList<String>() {{  add("Lana Del Rey"); add("FKA Twigs"); }},
+                        new LinkedList<String>() {{  add("rock"); add("pop");}},
+                        new LinkedList<String>() {{  add("Take On Me"); }},
+           0,
+             0
+                    )
+                );
 
-                String songId = spotConnect.SearchForId("Thunderstruck", SpotifyQueryDatatype.TRACK);
-                Log.v(TAG, String.format("Track ID is %s", songId));
+                // Dummy result reporting. Should go into UI elements
+                if (hasSongRecommendations()) {
+                    for (SongRecommendation currRec : songRecs) {
+                        Log.v(TAG, currRec.toString());
+                    }
+                } else {
+                    Log.e(TAG, "No recommendations!");
+                }
             } else {
                 // Stop LoadingThread
                 String message = "Failed to Load Spotify Details.";
@@ -73,6 +81,19 @@ public class SpotifyActivity extends AppCompatActivity {
             }
         }
     }
+
+    private void setSongRecommendations(List<SongRecommendation> recs) {
+        songRecs = recs;
+    }
+
+    private void resetSongRecommendations() {
+        songRecs = null;
+    }
+
+    private boolean hasSongRecommendations() {
+        return songRecs != null;
+    }
+
 
     /**
      * Thread that displays loading icon while no bearer token set
