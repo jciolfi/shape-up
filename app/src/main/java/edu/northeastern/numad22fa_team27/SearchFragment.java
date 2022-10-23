@@ -85,7 +85,7 @@ public class SearchFragment extends Fragment {
                 artists.setError("Please add an artist");
             }
 
-            if (artistText == null || artistText.toString().isEmpty()) {
+            if (trackText == null || trackText.toString().isEmpty()) {
                 failure = true;
                 tracks.setError("Please add a track");
             }
