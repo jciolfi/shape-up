@@ -3,4 +3,14 @@
     <string name="txt_team_name">Team 27</string>
     <string name="btn_A7">At Your Service</string>
     <string name="artist_image">artist image</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="search_button_description">Search</string>
+    <string name="search_fragment_artist">Seed Artists</string>
+    <string name="search_fragment_artist_hint">Comma-separated names</string>
+    <string name="search_fragment_song">Seed Tracks</string>
+    <string name="search_fragment_song_hint">Comma-separated names</string>
+    <string name="search_fragment_genre">Seed Genre</string>
+    <string name="search_fragment_tempo_toggle">Use Tempo</string>
+    <string name="search_fragment_pop_toggle">Use Popularity</string>
 </resources>

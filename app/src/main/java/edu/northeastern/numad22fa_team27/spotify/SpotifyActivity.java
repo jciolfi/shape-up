@@ -1,5 +1,6 @@
 package edu.northeastern.numad22fa_team27.spotify;
 
+import android.app.FragmentManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Icon;
@@ -8,12 +9,16 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
@@ -24,11 +29,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import edu.northeastern.numad22fa_team27.R;
+import edu.northeastern.numad22fa_team27.SearchFragment;
 import edu.northeastern.numad22fa_team27.spotify.types.SpotifyConnection;
 
 import edu.northeastern.numad22fa_team27.spotify.spotifyviews.Cards;
@@ -38,11 +43,10 @@ import edu.northeastern.numad22fa_team27.spotify.spotifyviews.TrackInfo;
 public class SpotifyActivity extends AppCompatActivity {
     private final String TAG = "SpotifyActivity__";
     private final SpotifyConnection spotConnect = new SpotifyConnection();
-    private final AtomicBoolean isLoading = new AtomicBoolean(false);
     private final List<Cards> cards = new ArrayList<>();
     private RecyclerView lists;
-
     private Thread recThread;
+    private boolean showingSearch = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +59,31 @@ public class SpotifyActivity extends AppCompatActivity {
         lists.setHasFixedSize(isHasFixedSize());
         lists.setAdapter(new TrackInfo(cards));
         lists.setLayoutManager(manager);
+
+
+        SearchFragment search = new SearchFragment();
+
+        getSupportFragmentManager().beginTransaction()
+                .setReorderingAllowed(true)
+                .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                .add(R.id.spotifySearchFragment, search, "search")
+                .hide(search)
+                .commit();
+
+        // Set up search fragment
+        final FloatingActionButton searchButton = findViewById(R.id.searchButton);
+        searchButton.setOnClickListener(v -> {
+            showingSearch = !showingSearch;
+
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+            if (showingSearch) {
+                transaction.show(search);
+            } else {
+                transaction.hide(search);
+            }
+            transaction.commit();
+        });
 
         // Start function threads
         recThread = new Thread(new RecommendationThread());
