@@ -1,20 +1,18 @@
 package edu.northeastern.numad22fa_team27.spotify.spotifyviews;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import edu.northeastern.numad22fa_team27.R;
 
 public class TrackInfo extends RecyclerView.Adapter<Holder> {
 
-    private List<Cards> list;
+    private final List<Cards> list;
 
     public TrackInfo(List<Cards> list) {
         this.list = list;

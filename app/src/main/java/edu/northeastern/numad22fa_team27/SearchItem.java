@@ -32,9 +32,9 @@ public class SearchItem {
         return popularity;
     }
 
-    private List<String> artistNames;
-    private List<String> trackNames;
-    private List<String> genres;
-    private int tempo;
-    private int popularity;
+    private final List<String> artistNames;
+    private final List<String> trackNames;
+    private final List<String> genres;
+    private final int tempo;
+    private final int popularity;
 }

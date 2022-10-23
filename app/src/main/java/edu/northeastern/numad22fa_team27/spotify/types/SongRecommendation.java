@@ -3,11 +3,11 @@ package edu.northeastern.numad22fa_team27.spotify.types;
 import androidx.annotation.NonNull;
 
 public class SongRecommendation {
-    private String trackName;
-    private String artistName;
-    private String imageLarge;
-    private String imageMedium;
-    private String imageSmall;
+    private final String trackName;
+    private final String artistName;
+    private final String imageLarge;
+    private final String imageMedium;
+    private final String imageSmall;
 
     public SongRecommendation(String trackName, String artistName, String imageLarge, String imageMedium, String imageSmall) {
         this.trackName = trackName;

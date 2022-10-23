@@ -3,9 +3,6 @@ package edu.northeastern.numad22fa_team27;
 import android.app.Activity;
 import android.content.Intent;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 /**
  * Class with common helper functions.
  */
