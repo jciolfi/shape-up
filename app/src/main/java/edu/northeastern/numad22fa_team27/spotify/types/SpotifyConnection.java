@@ -6,11 +6,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -89,7 +87,7 @@ public class SpotifyConnection {
             for (int i = 0; i < allRecs.length(); i++) {
                 JSONObject currRec = (JSONObject) allRecs.get(i);
                 recs.add(new SongRecommendation(
-                        currRec.getString("name"),
+                        currRec.getString("name").replace("\n", " "),
                         ((JSONObject)currRec.getJSONArray("artists").get(0)).getString("name"),
                         ((JSONObject)currRec.getJSONObject("album").getJSONArray("images").get(0)).getString("url"),
                         ((JSONObject)currRec.getJSONObject("album").getJSONArray("images").get(1)).getString("url"),
