@@ -1,5 +1,7 @@
 package edu.northeastern.numad22fa_team27.spotify;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Icon;
 import android.media.Image;
 import android.os.Bundle;
@@ -13,20 +15,29 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import org.json.JSONObject;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Scanner;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.spotify.types.SongRecommendation;
 import edu.northeastern.numad22fa_team27.spotify.types.SpotifyConnection;
 import edu.northeastern.numad22fa_team27.spotify.types.SpotifyToken;
+
+import edu.northeastern.numad22fa_team27.spotifyviews.Cards;
+import edu.northeastern.numad22fa_team27.spotifyviews.TrackInfo;
 
 
 public class SpotifyActivity extends AppCompatActivity {
@@ -45,6 +56,9 @@ public class SpotifyActivity extends AppCompatActivity {
         // Set new auth token
         startBearerTokenThread();
         onCreatRec();
+
+        TestThread test = new TestThread();
+        new Thread(test).start();
     }
 
     private void artistManag(RecyclerView.LayoutManager manager) {
@@ -69,81 +83,17 @@ public class SpotifyActivity extends AppCompatActivity {
         artistManag(manager);
     }
 
-    public static class Holder extends RecyclerView.ViewHolder {
-        public TextView artistName;
-        public TextView trackName;
-        public ImageView artistImage;
-
-        public Holder(View view) {
-            super(view);
-            views(view);
+    private Icon getImageFromUrl(String imageURL) {
+        try {
+            URL url = new URL(imageURL);
+            Bitmap image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+            return Icon.createWithAdaptiveBitmap(image);
+        } catch(IOException e) {
+            System.out.println(e);
         }
 
-        private void views(View view) {
-            artistName = view.findViewById(R.id.artistname);
-            trackName = view.findViewById(R.id.trackname);
-            artistImage = view.findViewById(R.id.artistimage);
-        }
-    }
-
-    public static class TrackInfo extends RecyclerView.Adapter<Holder> {
-
-        private final ArrayList<Cards> list;
-
-        public TrackInfo(ArrayList<Cards> list) {
-            this.list = list;
-        }
-
-        @NonNull
-        @Override
-        public Holder onCreateViewHolder(ViewGroup viewGroup, int i) {
-            View inflate = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.activity_cards, viewGroup, false);
-            return new Holder(inflate);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull Holder h, int i) {
-            Cards cards = list.get(i);
-            getInfo(h, cards);
-        }
-
-        private void getInfo(Holder h, Cards cards) {
-            h.artistName.setText(cards.getArtistName());
-            h.trackName.setText(cards.getTrackName());
-            h.artistImage.setImageIcon(cards.getArtistImage());
-        }
-
-        @Override
-        public int getItemCount() {
-            return list.size();
-        }
-    }
-
-    public static class Cards {
-        private final Icon artistImage;
-        private final String artistName;
-        private final String trackName;
-
-        public Cards(Icon artistImage, String artistName, String trackName) {
-            this.artistImage = artistImage;
-            this.artistName = artistName;
-            this.trackName = trackName;
-        }
-
-        public String getArtistName() {
-
-            return artistName;
-        }
-
-        public String getTrackName() {
-
-            return trackName;
-        }
-
-        public Icon getArtistImage() {
-
-            return artistImage;
-        }
+        // TODO - need a default "broken image" icon
+        return null;
     }
 
     /**
@@ -213,7 +163,7 @@ public class SpotifyActivity extends AppCompatActivity {
     /**
      * Thread that displays loading icon while no bearer token set
      */
-    private class LoadingThread implements Runnable {
+    private class TestThread implements Runnable {
         @Override
         public void run() {
             ProgressBar loadingPB = findViewById(R.id.pb_loading);
@@ -221,6 +171,7 @@ public class SpotifyActivity extends AppCompatActivity {
                 loadingPB.setVisibility(View.VISIBLE);
             }
             loadingPB.setVisibility(View.INVISIBLE);
+            listName("Artist Here", "Track Here", getImageFromUrl("https://i.scdn.co/image/ab67616d00001e02a048415db06a5b6fa7ec4e1a"));
         }
     }
 }
