@@ -1,4 +1,4 @@
-package edu.northeastern.numad22fa_team27.spotifyviews;
+package edu.northeastern.numad22fa_team27.spotify.spotifyviews;
 
 import android.view.View;
 import android.widget.ImageView;

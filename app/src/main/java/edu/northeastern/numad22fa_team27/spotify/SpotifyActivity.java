@@ -3,50 +3,40 @@ package edu.northeastern.numad22fa_team27.spotify;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Icon;
-import android.media.Image;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.snackbar.Snackbar;
 
-import org.json.JSONObject;
-
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.spotify.types.SongRecommendation;
 import edu.northeastern.numad22fa_team27.spotify.types.SpotifyConnection;
-import edu.northeastern.numad22fa_team27.spotify.types.SpotifyToken;
 
-import edu.northeastern.numad22fa_team27.spotifyviews.Cards;
-import edu.northeastern.numad22fa_team27.spotifyviews.TrackInfo;
+import edu.northeastern.numad22fa_team27.spotify.spotifyviews.Cards;
+import edu.northeastern.numad22fa_team27.spotify.spotifyviews.TrackInfo;
 
 
 public class SpotifyActivity extends AppCompatActivity {
-    private String TAG = "SpotifyActivity__";
+    private final String TAG = "SpotifyActivity__";
     private final SpotifyConnection spotConnect = new SpotifyConnection();
-    private List<SongRecommendation> songRecs = null;
     private RecyclerView lists;
     private TrackInfo artistInfo;
-    private final ArrayList<Cards> cards = new ArrayList<>();
+    private ArrayList<Cards> cards = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +93,7 @@ public class SpotifyActivity extends AppCompatActivity {
         GetBearerTokenThread bearerTokenThread = new GetBearerTokenThread();
         new Thread(bearerTokenThread).start();
 
-        LoadingThread loadingThread = new LoadingThread();
+        TestThread loadingThread = new TestThread();
         new Thread(loadingThread).start();
     }
 
@@ -120,20 +110,27 @@ public class SpotifyActivity extends AppCompatActivity {
                 Snackbar.make(findViewById(android.R.id.content), successMessage, Snackbar.LENGTH_SHORT).show();
 
                 // Perform dummy lookup. Actual user data should go here
-                setSongRecommendations(spotConnect.performRecommendation(
-                        new LinkedList<String>() {{  add("Lana Del Rey"); add("FKA Twigs"); }},
-                        new LinkedList<String>() {{  add("rock"); add("pop");}},
-                        new LinkedList<String>() {{  add("Take On Me"); }},
-           0,
-             0
-                    )
+                List<SongRecommendation> songRecs = spotConnect.performRecommendation(
+                    new LinkedList<String>() {{  add("Lana Del Rey"); add("FKA Twigs"); }},
+                    new LinkedList<String>() {{  add("rock"); add("pop");}},
+                    new LinkedList<String>() {{  add("Take On Me"); }},
+       0,
+         0
                 );
 
                 // Dummy result reporting. Should go into UI elements
-                if (hasSongRecommendations()) {
-                    for (SongRecommendation currRec : songRecs) {
-                        Log.v(TAG, currRec.toString());
-                    }
+                if (songRecs != null) {
+                    List<Cards> newCards = songRecs.stream()
+                            .map(rec -> new Cards(getImageFromUrl(rec.getImageMedium()), rec.getArtistName(), rec.getTrackName()))
+                            .collect(Collectors.toList());
+
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        cards.clear();
+                        cards.addAll(newCards);
+                        artistInfo.notifyDataSetChanged();
+                    });
+
+
                 } else {
                     Log.e(TAG, "No recommendations!");
                 }
@@ -145,18 +142,6 @@ public class SpotifyActivity extends AppCompatActivity {
                 failedGetToken.show();
             }
         }
-    }
-
-    private void setSongRecommendations(List<SongRecommendation> recs) {
-        songRecs = recs;
-    }
-
-    private void resetSongRecommendations() {
-        songRecs = null;
-    }
-
-    private boolean hasSongRecommendations() {
-        return songRecs != null;
     }
 
 
@@ -171,7 +156,6 @@ public class SpotifyActivity extends AppCompatActivity {
                 loadingPB.setVisibility(View.VISIBLE);
             }
             loadingPB.setVisibility(View.INVISIBLE);
-            listName("Artist Here", "Track Here", getImageFromUrl("https://i.scdn.co/image/ab67616d00001e02a048415db06a5b6fa7ec4e1a"));
         }
     }
 }

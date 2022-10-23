@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="wrap_content">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/idLay"
         android:layout_width="match_parent"
@@ -11,33 +12,30 @@
         android:padding="12dp">
 
         <TextView
-            android:id="@+id/artistname"
-            android:layout_width="wrap_content"
+            android:id="@+id/trackname"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:clickable="true"
             android:textColor="@color/black"
             android:textSize="24sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/artistname"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.09"
-            app:layout_constraintStart_toEndOf="@+id/artistimage"
+            app:layout_constraintStart_toEndOf="@id/picture_spacer"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/trackname"
-            android:layout_width="wrap_content"
+            android:id="@+id/artistname"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:clickable="true"
+            android:clickable="false"
             android:textColor="@color/black"
-            android:textSize="24sp"
-            android:textStyle="bold"
+            android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.085"
-            app:layout_constraintStart_toEndOf="@+id/artistimage"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.866" />
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@id/picture_spacer"
+            app:layout_constraintTop_toBottomOf="@id/trackname" />
 
         <ImageView
             android:id="@+id/artistimage"
@@ -46,9 +44,19 @@
             android:contentDescription="@string/artist_image"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.01"
+            app:layout_constraintHorizontal_bias="0.05"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:srcCompat="@tools:sample/avatars" />
+
+        <Space
+            android:id="@+id/picture_spacer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.1"
+            app:layout_constraintStart_toEndOf="@id/artistimage"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
