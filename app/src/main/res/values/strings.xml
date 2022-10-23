@@ -13,4 +13,5 @@
     <string name="search_fragment_genre">Seed Genre</string>
     <string name="search_fragment_tempo_toggle">Use Tempo</string>
     <string name="search_fragment_pop_toggle">Use Popularity</string>
+    <string name="search_fragment_search">Get Recommendations!</string>
 </resources>

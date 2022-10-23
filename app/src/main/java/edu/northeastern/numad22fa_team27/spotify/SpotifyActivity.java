@@ -1,6 +1,5 @@
 package edu.northeastern.numad22fa_team27.spotify;
 
-import android.app.FragmentManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Icon;
@@ -9,12 +8,11 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,7 +23,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -34,6 +31,8 @@ import java.util.stream.Stream;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.SearchFragment;
+import edu.northeastern.numad22fa_team27.SearchItem;
+import edu.northeastern.numad22fa_team27.SearchItemViewModel;
 import edu.northeastern.numad22fa_team27.spotify.types.SpotifyConnection;
 
 import edu.northeastern.numad22fa_team27.spotify.spotifyviews.Cards;
@@ -43,9 +42,12 @@ import edu.northeastern.numad22fa_team27.spotify.spotifyviews.TrackInfo;
 public class SpotifyActivity extends AppCompatActivity {
     private final String TAG = "SpotifyActivity__";
     private final SpotifyConnection spotConnect = new SpotifyConnection();
+    private SearchItem searchQuery = null;
     private final List<Cards> cards = new ArrayList<>();
     private RecyclerView lists;
-    private Thread recThread;
+    ProgressBar loadingPB;
+    Thread recThread;
+    SearchFragment search;
     private boolean showingSearch = false;
 
     @Override
@@ -56,13 +58,16 @@ public class SpotifyActivity extends AppCompatActivity {
         // Set up our RecyclerView
         RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
         lists = findViewById(R.id.idRecV);
-        lists.setHasFixedSize(isHasFixedSize());
+        lists.setHasFixedSize(true);
         lists.setAdapter(new TrackInfo(cards));
         lists.setLayoutManager(manager);
 
+        // Set up our loading icon
+        loadingPB = findViewById(R.id.pb_loading);
+        loadingPB.setVisibility(View.INVISIBLE);
 
-        SearchFragment search = new SearchFragment();
-
+        // Set up search fragment
+        search = new SearchFragment();
         getSupportFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
                 .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
@@ -70,40 +75,54 @@ public class SpotifyActivity extends AppCompatActivity {
                 .hide(search)
                 .commit();
 
-        // Set up search fragment
+        // Make the search button pull up our fragment
         final FloatingActionButton searchButton = findViewById(R.id.searchButton);
         searchButton.setOnClickListener(v -> {
-            showingSearch = !showingSearch;
-
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-            if (showingSearch) {
-                transaction.show(search);
-            } else {
-                transaction.hide(search);
-            }
-            transaction.commit();
+            toggleSearchFragment();
+            searchButton.setVisibility(View.GONE);
         });
 
-        // Start function threads
+        SearchItemViewModel viewModel = new ViewModelProvider(this).get(SearchItemViewModel.class);
+        viewModel.getSelectedItem().observe(this, item -> {
+            // Perform an action with the latest item data
+            Log.v(TAG, "New data");
+
+            searchQuery = item;
+
+            // Hide the fragment and show the search button again
+            toggleSearchFragment();
+            searchButton.setVisibility(View.VISIBLE);
+        });
+
         recThread = new Thread(new RecommendationThread());
         recThread.start();
+
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        try {
-            recThread.join();
-        } catch (InterruptedException e) {
-            Log.e(TAG, "Could not join worker thread");
+    }
+
+    /**
+     * Toggle the visibility of the search fragment
+     */
+    private void toggleSearchFragment() {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        showingSearch = !showingSearch;
+        if (showingSearch) {
+            transaction.show(search);
+        } else {
+            transaction.hide(search);
         }
+        transaction.commit();
     }
 
-    private boolean isHasFixedSize() {
-        return true;
-    }
-
+    /**
+     * Obtain an Icon from a URL
+     * @param imageURL Network URL to image
+     * @return Image in Icon format on success, else null
+     */
     private Icon getImageFromUrl(String imageURL) {
         try {
             Bitmap image = BitmapFactory.decodeStream(new URL(imageURL).openConnection().getInputStream());
@@ -120,42 +139,75 @@ public class SpotifyActivity extends AppCompatActivity {
      * Thread that queries to Spotify's API to get a token
      */
     private class RecommendationThread implements Runnable {
-        ProgressBar loadingPB = findViewById(R.id.pb_loading);
+        private boolean run = true;
+
+        public void halt() {
+            run = false;
+        }
 
         @Override
         public void run() {
             // Show progress bar
-            loadingPB.setVisibility(View.VISIBLE);
+            new Handler(Looper.getMainLooper()).post(() -> loadingPB.setVisibility(View.VISIBLE));
 
             if (spotConnect.Connect()) {
-                // Perform dummy lookup. Actual user data should go here
-                List<Cards> newCards = Optional.ofNullable(spotConnect.performRecommendation(
-                        new LinkedList<String>() {{  add("Lana Del Rey"); add("FKA Twigs"); }},
-                        new LinkedList<String>() {{  add("rock"); add("pop");}},
-                        new LinkedList<String>() {{  add("Take On Me"); }},
-                        100,
-                        150
-                    ))
-                    .map(Collection::stream)
-                    .orElseGet(Stream::empty)
-                    .map(rec -> new Cards(getImageFromUrl(rec.getImageMedium()), rec.getArtistName(), rec.getTrackName()))
-                    .collect(Collectors.toList());
+                // Stop indicating that we're loading
+                new Handler(Looper.getMainLooper()).post(() -> loadingPB.setVisibility(View.INVISIBLE));
 
-                // Display results
-                new Handler(Looper.getMainLooper()).post(() -> {
-                    cards.clear();
-                    cards.addAll(newCards);
-                    Objects.requireNonNull(lists.getAdapter()).notifyDataSetChanged();
-                });
+                while (run) {
+                    if (searchQuery == null) {
+                        // TODO - Need something more efficient than polling, like events
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            Log.v(TAG, "Cannot sleep");
+                        }
+                        continue;
+                    }
+
+                    // Show progress bar
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        loadingPB.setVisibility(View.VISIBLE);
+                        lists.setVisibility(View.INVISIBLE);
+                    });
+
+                    // Perform dummy lookup. Actual user data should go here
+                    List<Cards> newCards = Optional.ofNullable(spotConnect.performRecommendation(
+                                searchQuery.getArtistNames(),
+                                searchQuery.getGenres(),
+                                searchQuery.getTrackNames(),
+                                searchQuery.getPopularity(),
+                                searchQuery.getTempo()
+                            ))
+                            .map(Collection::stream)
+                            .orElseGet(Stream::empty)
+                            .map(rec -> new Cards(getImageFromUrl(rec.getImageMedium()), rec.getArtistName(), rec.getTrackName()))
+                            .collect(Collectors.toList());
+
+                    // Display results
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        cards.clear();
+                        cards.addAll(newCards);
+                        Objects.requireNonNull(lists.getAdapter()).notifyDataSetChanged();
+                    });
+
+                    searchQuery = null;
+
+                    // Stop indicating that we're loading
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        loadingPB.setVisibility(View.INVISIBLE);
+                        lists.setVisibility(View.VISIBLE);
+                    });
+                }
             } else {
                 String message = "Failed to Load Spotify Details.";
                 Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_INDEFINITE)
                     .setAction("Go Back", view -> onBackPressed())
                     .show();
-            }
 
-            // In all cases, stop indicating that we're loading
-            loadingPB.setVisibility(View.INVISIBLE);
+                // Stop indicating that we're loading
+                new Handler(Looper.getMainLooper()).post(() -> loadingPB.setVisibility(View.INVISIBLE));
+            }
         }
     }
 }
