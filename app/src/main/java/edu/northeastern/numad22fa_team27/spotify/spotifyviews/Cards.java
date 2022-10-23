@@ -14,17 +14,14 @@ public class Cards {
     }
 
     public String getArtistName() {
-
         return artistName;
     }
 
     public String getTrackName() {
-
         return trackName;
     }
 
     public Icon getArtistImage() {
-
         return artistImage;
     }
 }

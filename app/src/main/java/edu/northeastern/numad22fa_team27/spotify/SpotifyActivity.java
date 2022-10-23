@@ -19,12 +19,16 @@ import com.google.android.material.snackbar.Snackbar;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import edu.northeastern.numad22fa_team27.R;
-import edu.northeastern.numad22fa_team27.spotify.types.SongRecommendation;
 import edu.northeastern.numad22fa_team27.spotify.types.SpotifyConnection;
 
 import edu.northeastern.numad22fa_team27.spotify.spotifyviews.Cards;
@@ -34,52 +38,49 @@ import edu.northeastern.numad22fa_team27.spotify.spotifyviews.TrackInfo;
 public class SpotifyActivity extends AppCompatActivity {
     private final String TAG = "SpotifyActivity__";
     private final SpotifyConnection spotConnect = new SpotifyConnection();
+    private final AtomicBoolean isLoading = new AtomicBoolean(false);
+    private final List<Cards> cards = new ArrayList<>();
     private RecyclerView lists;
-    private TrackInfo artistInfo;
-    private ArrayList<Cards> cards = new ArrayList<>();
+
+    private Thread recThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_spotify);
 
-        // Set new auth token
-        startBearerTokenThread();
-        onCreatRec();
+        // Set up our RecyclerView
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
+        lists = findViewById(R.id.idRecV);
+        lists.setHasFixedSize(isHasFixedSize());
+        lists.setAdapter(new TrackInfo(cards));
+        lists.setLayoutManager(manager);
 
-        TestThread test = new TestThread();
-        new Thread(test).start();
+        // Start function threads
+        recThread = new Thread(new RecommendationThread());
+        recThread.start();
     }
 
-    private void artistManag(RecyclerView.LayoutManager manager) {
-        artistInfo = new TrackInfo(cards);
-        lists.setAdapter(artistInfo);
-        lists.setLayoutManager(manager);
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try {
+            recThread.join();
+        } catch (InterruptedException e) {
+            Log.e(TAG, "Could not join worker thread");
+        }
     }
 
     private boolean isHasFixedSize() {
         return true;
     }
 
-    private void listName(String artistName, String trackName, Icon artistImage) {
-        cards.add(0, new Cards(artistImage, artistName, trackName));
-        artistInfo.notifyItemInserted(0);
-    }
-
-    private void onCreatRec() {
-        RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
-        lists = findViewById(R.id.idRecV);
-        lists.setHasFixedSize(isHasFixedSize());
-        artistManag(manager);
-    }
-
     private Icon getImageFromUrl(String imageURL) {
         try {
-            URL url = new URL(imageURL);
-            Bitmap image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+            Bitmap image = BitmapFactory.decodeStream(new URL(imageURL).openConnection().getInputStream());
             return Icon.createWithAdaptiveBitmap(image);
         } catch(IOException e) {
-            System.out.println(e);
+            Log.v(TAG, String.format("Could not get image from URL, error: %s", e));
         }
 
         // TODO - need a default "broken image" icon
@@ -87,74 +88,44 @@ public class SpotifyActivity extends AppCompatActivity {
     }
 
     /**
-     * Start thread to get bearer token for authentication
-     */
-    private void startBearerTokenThread() {
-        GetBearerTokenThread bearerTokenThread = new GetBearerTokenThread();
-        new Thread(bearerTokenThread).start();
-
-        TestThread loadingThread = new TestThread();
-        new Thread(loadingThread).start();
-    }
-
-    /**
      * Thread that queries to Spotify's API to get a token
      */
-    private class GetBearerTokenThread implements Runnable {
+    private class RecommendationThread implements Runnable {
+        ProgressBar loadingPB = findViewById(R.id.pb_loading);
 
         @Override
         public void run() {
+            // Show progress bar
+            loadingPB.setVisibility(View.VISIBLE);
+
             if (spotConnect.Connect()) {
-                // Tell the user we can run recommendations
-                String successMessage = "Successfully loaded Spotify Details!";
-                Snackbar.make(findViewById(android.R.id.content), successMessage, Snackbar.LENGTH_SHORT).show();
-
                 // Perform dummy lookup. Actual user data should go here
-                List<SongRecommendation> songRecs = spotConnect.performRecommendation(
-                    new LinkedList<String>() {{  add("Lana Del Rey"); add("FKA Twigs"); }},
-                    new LinkedList<String>() {{  add("rock"); add("pop");}},
-                    new LinkedList<String>() {{  add("Take On Me"); }},
-       0,
-         0
-                );
+                List<Cards> newCards = Optional.ofNullable(spotConnect.performRecommendation(
+                        new LinkedList<String>() {{  add("Lana Del Rey"); add("FKA Twigs"); }},
+                        new LinkedList<String>() {{  add("rock"); add("pop");}},
+                        new LinkedList<String>() {{  add("Take On Me"); }},
+                        100,
+                        150
+                    ))
+                    .map(Collection::stream)
+                    .orElseGet(Stream::empty)
+                    .map(rec -> new Cards(getImageFromUrl(rec.getImageMedium()), rec.getArtistName(), rec.getTrackName()))
+                    .collect(Collectors.toList());
 
-                // Dummy result reporting. Should go into UI elements
-                if (songRecs != null) {
-                    List<Cards> newCards = songRecs.stream()
-                            .map(rec -> new Cards(getImageFromUrl(rec.getImageMedium()), rec.getArtistName(), rec.getTrackName()))
-                            .collect(Collectors.toList());
-
-                    new Handler(Looper.getMainLooper()).post(() -> {
-                        cards.clear();
-                        cards.addAll(newCards);
-                        artistInfo.notifyDataSetChanged();
-                    });
-
-
-                } else {
-                    Log.e(TAG, "No recommendations!");
-                }
+                // Display results
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    cards.clear();
+                    cards.addAll(newCards);
+                    Objects.requireNonNull(lists.getAdapter()).notifyDataSetChanged();
+                });
             } else {
-                // Stop LoadingThread
                 String message = "Failed to Load Spotify Details.";
-                Snackbar failedGetToken = Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_INDEFINITE);
-                failedGetToken.setAction("Go Back", view -> onBackPressed());
-                failedGetToken.show();
+                Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_INDEFINITE)
+                    .setAction("Go Back", view -> onBackPressed())
+                    .show();
             }
-        }
-    }
 
-
-    /**
-     * Thread that displays loading icon while no bearer token set
-     */
-    private class TestThread implements Runnable {
-        @Override
-        public void run() {
-            ProgressBar loadingPB = findViewById(R.id.pb_loading);
-            while (!spotConnect.isReady()) {
-                loadingPB.setVisibility(View.VISIBLE);
-            }
+            // In all cases, stop indicating that we're loading
             loadingPB.setVisibility(View.INVISIBLE);
         }
     }

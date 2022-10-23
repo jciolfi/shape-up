@@ -8,22 +8,22 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import edu.northeastern.numad22fa_team27.R;
 
 public class TrackInfo extends RecyclerView.Adapter<Holder> {
 
-    private final ArrayList<Cards> list;
+    private List<Cards> list;
 
-    public TrackInfo(ArrayList<Cards> list) {
+    public TrackInfo(List<Cards> list) {
         this.list = list;
     }
 
     @NonNull
     @Override
     public Holder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View inflate = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.activity_cards, viewGroup, false);
-        return new Holder(inflate);
+        return new Holder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.activity_cards, viewGroup, false));
     }
 
     @Override
