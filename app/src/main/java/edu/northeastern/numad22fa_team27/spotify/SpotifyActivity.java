@@ -30,9 +30,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import edu.northeastern.numad22fa_team27.R;
-import edu.northeastern.numad22fa_team27.SearchFragment;
-import edu.northeastern.numad22fa_team27.SearchItem;
-import edu.northeastern.numad22fa_team27.SearchItemViewModel;
 import edu.northeastern.numad22fa_team27.spotify.types.SpotifyConnection;
 
 import edu.northeastern.numad22fa_team27.spotify.spotifyviews.Cards;

@@ -1,8 +1,10 @@
-package edu.northeastern.numad22fa_team27;
+package edu.northeastern.numad22fa_team27.spotify;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import edu.northeastern.numad22fa_team27.R;
 
 public class cards_activity extends AppCompatActivity {
 
