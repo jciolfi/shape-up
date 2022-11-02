@@ -16,5 +16,7 @@ public class MainActivity extends AppCompatActivity {
 
         Button btnA7 = findViewById(R.id.btn_A7);
         btnA7.setOnClickListener(view -> Util.openActivity(this, SpotifyActivity.class));
+        Button btnA8 = findViewById(R.id.btn_A8);
+        btnA8.setOnClickListener(view -> Util.openActivity(this, DB_Activity.class));
     }
 }
