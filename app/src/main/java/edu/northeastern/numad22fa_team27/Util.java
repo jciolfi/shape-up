@@ -16,4 +16,8 @@ public class Util {
         Intent intent = new Intent(origin, target);
         origin.startActivity(intent);
     }
+
+    public static boolean stringIsNullOrEmpty(String s) {
+        return s == null || s.trim().isEmpty();
+    }
 }
