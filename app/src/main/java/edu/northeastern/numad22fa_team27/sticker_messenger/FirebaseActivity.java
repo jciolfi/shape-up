@@ -16,6 +16,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.Util;
 import edu.northeastern.numad22fa_team27.sticker_messenger.models.UserDAO;
@@ -32,7 +34,6 @@ public class FirebaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sticker_messenger);
         mDatabase = FirebaseDatabase.getInstance().getReference();
-
         welcomeText = findViewById(R.id.txt_welcome);
 
         /**
@@ -52,6 +53,7 @@ public class FirebaseActivity extends AppCompatActivity {
 
     /**
      * Create an AlertDialog with field for users to enter username
+     * If username exists, log in. If username doesn't exist, create account.
      */
     private void promptLogin() {
         final EditText usernameText = new EditText(this);
@@ -70,59 +72,53 @@ public class FirebaseActivity extends AppCompatActivity {
                 if (Util.stringIsNullOrEmpty(usernameText.getText().toString())) {
                     usernameText.setError("Username can't be empty");
                 } else {
-                    user = getUser(usernameText.getText().toString());
-                    if (user == null) {
-                        addUser(usernameText.getText().toString());
-                    } else {
-                        Toast.makeText(
-                        this,
-                                "Welcome Back!",
-                                Toast.LENGTH_SHORT
-                        ).show();
-                    }
-                    welcomeText.setText(String.format("Welcome %s!", user.username));
+                    // get the user
+                    mDatabase.child("users").child(usernameText.getText().toString())
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (snapshot.exists()) {
+                                    user = snapshot.getValue(UserDAO.class);
+                                    Toast.makeText(
+                                            getApplicationContext(),
+                                            "Welcome Back!",
+                                            Toast.LENGTH_SHORT
+                                    ).show();
+                                } else {
+                                    addUser(usernameText.getText().toString(), true);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) { }
+                        });
+
                     loginDialog.dismiss();
                 }
             });
         });
+
         loginDialog.show();
-    }
-
-    /**
-     * Get the user details from the DB for the user with the given username
-     * @param username the username for the user
-     */
-    private UserDAO getUser(String username) {
-        // For some reason, this is the way to have 'result' be accessed inside of the listener
-        final UserDAO[] result = new UserDAO[1];
-        mDatabase.child("users").child(username).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    result[0] = snapshot.getValue(UserDAO.class);
-                } else {
-                    result[0] = null;
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) { }
-        });
-
-        return result[0];
     }
 
     /**
      * Add a fresh user entry for the given username
      * @param username the username for the user to insert
+     * @param setThisUser if we're adding this user
      */
-    private void addUser(String username) {
+    private void addUser(String username, boolean setThisUser) {
         mDatabase.child("users").child(username).setValue(new UserDAO(username))
-                .addOnSuccessListener(unused -> Toast.makeText(
-                    this,
-                    String.format("Successfully signed up with username %s", username),
-                    Toast.LENGTH_SHORT
-                ).show()).addOnFailureListener(e -> {
+                .addOnSuccessListener(unused -> {
+                    Toast.makeText(
+                            this,
+                            String.format("Successfully signed up with username %s!", username),
+                            Toast.LENGTH_SHORT
+                    ).show();
+
+                    if (setThisUser) {
+                        user = new UserDAO(username);
+                    }
+                }).addOnFailureListener(e -> {
                     Toast.makeText(
                         this,
                         "Failed to sign up. Please retry",
@@ -168,14 +164,24 @@ public class FirebaseActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    if (user.friends.contains(username)) {
+                    if (user.friends != null && user.friends.contains(username)) {
                         Toast.makeText(
                             getApplicationContext(),
                             String.format("You're already friends with %s!", username),
                             Toast.LENGTH_LONG
                         ).show();
+                    } else if (user.username.equals(username)) {
+                        Toast.makeText(
+                            getApplicationContext(),
+                            "You can't be friends with yourself!",
+                            Toast.LENGTH_LONG
+                        ).show();
                     } else {
+                        if (user.friends == null) {
+                            user.friends = new ArrayList<>();
+                        }
                         user.friends.add(username);
+
                         mDatabase.child("users").child(user.username).setValue(user)
                                 .addOnSuccessListener(unused -> Toast.makeText(
                                     getApplicationContext(),
@@ -193,7 +199,7 @@ public class FirebaseActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(
                         getApplicationContext(),
-                        String.format("Couldn't find username \"%s\"", user),
+                        String.format("Couldn't find username \"%s\"", username),
                         Toast.LENGTH_LONG
                     ).show();
                 }
