@@ -151,9 +151,12 @@ public class FirebaseActivity extends AppCompatActivity {
                     friendText.setError("Username can't be empty");
                 } else {
                     tryAddFriend(friendText.getText().toString());
+                    addFriendDialog.dismiss();
                 }
             });
         });
+
+        addFriendDialog.show();
     }
 
     /**
