@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "196017561592",
+    "project_id": "numadfa22stickers",
+    "storage_bucket": "numadfa22stickers.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:196017561592:android:ae83ef87e4a33bd9a9000d",
+        "android_client_info": {
+          "package_name": "edu.northeastern.numad22fa_team27"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "196017561592-8vs9c2nghvb1ectajp5nbs5gvk9qikva.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDy10rOK0gmFJhhYPVKQikBpP2muozPxkY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "196017561592-8vs9c2nghvb1ectajp5nbs5gvk9qikva.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

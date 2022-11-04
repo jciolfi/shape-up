@@ -1,4 +1,4 @@
-package edu.northeastern.numad22fa_team27;
+package edu.northeastern.numad22fa_team27.spotify;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -21,6 +21,8 @@ import android.widget.Switch;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
+import edu.northeastern.numad22fa_team27.R;
 
 public class SearchFragment extends Fragment {
     private SearchItemViewModel viewModel;
