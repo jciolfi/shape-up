@@ -5,6 +5,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,9 +18,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.Util;
+import edu.northeastern.numad22fa_team27.sticker_messenger.models.IncomingMessage;
+import edu.northeastern.numad22fa_team27.sticker_messenger.models.OutgoingMessage;
+import edu.northeastern.numad22fa_team27.sticker_messenger.models.StickerTypes;
 import edu.northeastern.numad22fa_team27.sticker_messenger.models.UserDAO;
 
 public class FirebaseActivity extends AppCompatActivity {
@@ -147,12 +154,108 @@ public class FirebaseActivity extends AppCompatActivity {
                     friendText.setError("Username can't be empty");
                 } else {
                     tryAddFriend(friendText.getText().toString());
+                    trySendSticker(new OutgoingMessage(
+                            new Date(),
+                            friendText.getText().toString(),
+                            StickerTypes.STICKER_1
+                    ));
                     addFriendDialog.dismiss();
                 }
             });
         });
 
         addFriendDialog.show();
+    }
+
+    private UserDAO userFromSnapshot(@NonNull DataSnapshot snapshot, String username) {
+        List<String> friends = new ArrayList<>();
+        List<IncomingMessage> incomingMessages = new ArrayList<>();
+        List<OutgoingMessage> outgoingMessages = new ArrayList<>();
+        for(DataSnapshot ds : snapshot.getChildren()) {
+            String key = Objects.requireNonNull(ds.getKey());
+            try {
+                switch (key) {
+                    case "friends": {
+                        friends = (List<String>) ds.getValue();
+                        break;
+                    }
+                    case "incomingMessages": {
+                        incomingMessages = (List<IncomingMessage>) ds.getValue();
+                        break;
+                    }
+                    case "outgoingMessages": {
+                        outgoingMessages = (List<OutgoingMessage>) ds.getValue();
+                        break;
+                    }
+                    default:
+                        break;
+                }
+            } catch (Exception e) {
+                // Creation of lists failed - this would happen if data present cannot be marshalled
+                // into expected datatype.
+                Log.e(TAG, String.format("Could not load data in DAO field %s", key));
+            }
+        }
+
+        return new UserDAO(
+                username,
+                friends,
+                incomingMessages,
+                outgoingMessages
+        );
+    }
+
+    private void trySendSticker(OutgoingMessage message) {
+        mDatabase.child("users").child(message.getDestUser()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    UserDAO stickerRecipient = userFromSnapshot(snapshot, message.getDestUser());
+                    stickerRecipient.incomingMessages.add(new IncomingMessage(message, user.username));
+
+                    // Submit transaction
+                    mDatabase.child("users").child(message.getDestUser()).setValue(stickerRecipient)
+                            .addOnSuccessListener(unused -> {
+                                // Record that we sent a sticker
+                                user.outgoingMessages.add(message);
+
+                                // Submit change to DB. This shouldn't fail, but handle it just in case
+                                mDatabase.child("users").child(user.username).setValue(user)
+                                        .addOnSuccessListener(u -> Toast.makeText(
+                                                getApplicationContext(),
+                                                String.format("Successfully sent a sticker to %s!", message.getDestUser()),
+                                                Toast.LENGTH_SHORT).show())
+                                        .addOnFailureListener(e -> {
+                                                user.outgoingMessages.remove(message);
+                                                Toast.makeText(
+                                                        getApplicationContext(),
+                                                        "Failed to record that we sent a sticker.",
+                                                        Toast.LENGTH_SHORT
+                                                ).show();
+                                        });
+                            }
+                            ).addOnFailureListener(e -> Toast.makeText(
+                                    getApplicationContext(),
+                                    String.format("Failed to send a sticker to %s. Please try again.", message.getDestUser()),
+                                    Toast.LENGTH_SHORT
+                            ).show());
+
+
+                } else {
+                    // User not found
+                    Toast.makeText(
+                            getApplicationContext(),
+                            String.format("Couldn't find friend \"%s\" to give sticker", message.getDestUser()),
+                            Toast.LENGTH_LONG
+                    ).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     /**
