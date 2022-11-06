@@ -13,11 +13,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.firebase.database.DataSnapshot;
@@ -25,8 +23,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -46,6 +42,7 @@ public class FirebaseActivity extends AppCompatActivity {
     private int notificationId = 0;
 
     private DatabaseReference mDatabase;
+    private FriendsFragment friendsSendFragment;
     private UserDAO user;
     private TextView welcomeText;
     private ValueEventListener userChangeListener = null;
@@ -60,7 +57,7 @@ public class FirebaseActivity extends AppCompatActivity {
         pushStickerUpdate(new IncomingMessage(new Date(), "Admin", StickerTypes.STICKER_1));
 
         //welcomeText = findViewById(R.id.txt_welcome);
-        //updateImages();
+        updateImages();
 
         /**
          * TODO:
@@ -69,7 +66,7 @@ public class FirebaseActivity extends AppCompatActivity {
          * [] incoming message listener (show notification)
          * [x] button to send a sticker
          */
-        //promptLogin();
+        promptLogin();
     }
 
     @Override
@@ -303,36 +300,24 @@ public class FirebaseActivity extends AppCompatActivity {
     /**
      * Show a pop-up to select the sticker to send
      */
-    public void sendMessageDialog(View v) {
-        final EditText friendText = new EditText(this);
+    public void sendStickerDialog(View v) {
+        if (user == null || user.friends == null || user.friends.isEmpty()) {
+            // TODO: toast error
+            Log.e(TAG, "Tried to send to friends without (either) an initialized user or friends");
+            return;
+        }
+        List<String> stickers = new ArrayList<String>();
+        for (StickerTypes s : StickerTypes.values()) {
+            stickers.add(s.name());
+        }
 
-        AlertDialog addFriendDialog = new AlertDialog.Builder(this)
-                .setTitle("Select which sticker and to which user you would like to send it to")
-                .setView(friendText)
-                .setPositiveButton("send", null)
-                .setNegativeButton("Cancel", null)
-                .create();
-
-        addFriendDialog.setOnShowListener(dialogInterface -> {
-            Button addButton = addFriendDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            addButton.setOnClickListener(view -> {
-                if (Util.stringIsNullOrEmpty(friendText.getText().toString())) {
-                    friendText.setError("Username can't be empty");
-                } else {
-                    tryAddFriend(friendText.getText().toString());
-
-                    // TODO - Here for testing purposes. There should be a dialogue that triggers this
-                    trySendSticker(new OutgoingMessage(
-                            new Date(),
-                            friendText.getText().toString(),
-                            StickerTypes.STICKER_1
-                    ));
-                    addFriendDialog.dismiss();
-                }
-            });
-        });
-
-        addFriendDialog.show();
+        friendsSendFragment = FriendsFragment.newInstance(user.friends, stickers);
+        getSupportFragmentManager().beginTransaction()
+                .setReorderingAllowed(true)
+                .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                .add(friendsSendFragment, "send_friends")
+                .show(friendsSendFragment)
+                .commit();
     }
 
     private UserDAO userFromSnapshot(@NonNull DataSnapshot snapshot) {

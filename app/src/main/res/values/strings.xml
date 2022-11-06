@@ -21,5 +21,6 @@
 
     <!-- Sticker activity -->
     <string name="sticker_notification_channel">STICKER_NOTIFICATION</string>
+    <string name="sticker_fragment_send">Send</string>
     <string name="sticker_notification_channel_description">Notifications for the Sticker activity</string>
 </resources>
