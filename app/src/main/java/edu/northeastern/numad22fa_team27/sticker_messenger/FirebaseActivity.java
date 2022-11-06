@@ -195,12 +195,12 @@ public class FirebaseActivity extends AppCompatActivity {
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 if (snapshot.exists()) {
                                     user = userFromSnapshot(snapshot);
+                                    //user = snapshot.getValue(UserDAO.class);
 
-                                    List<MessageCards> newCards = new ArrayList<MessageCards>();
-                                    List<OutgoingMessage> outgoing = snapshot.getValue(UserDAO.class).outgoingMessages;
-                                    for (OutgoingMessage im: outgoing) {
+                                    List<MessageCards> newCards = new ArrayList<>();
+                                    for (OutgoingMessage im: user.outgoingMessages) {
                                         newCards.add(new MessageCards(im.getSticker(),
-                                                im.getDestUser(),im.getDateSent().toString()));
+                                                im.getDestUser(), im.getDateSent().toString()));
                                     }
 
                                     // Display results
@@ -324,9 +324,9 @@ public class FirebaseActivity extends AppCompatActivity {
     public void switchView(View v) {
         isReceive = !isReceive;
         if (isReceive) {
-            List<MessageCards> newCards = new ArrayList<MessageCards>();
-            List<IncomingMessage> inComming = user.incomingMessages;
-            for (IncomingMessage im: inComming) {
+            List<MessageCards> newCards = new ArrayList<>();
+            List<IncomingMessage> inComing = user.incomingMessages;
+            for (IncomingMessage im: inComing) {
                 newCards.add(new MessageCards(im.getSticker(),
                         im.getSourceUser(),im.getDateSent().toString()));
             }
@@ -406,6 +406,30 @@ public class FirebaseActivity extends AppCompatActivity {
                 .commit();
     }
 
+    private List<IncomingMessage> marshalIncoming(DataSnapshot snapshot) {
+        List<IncomingMessage> newIncoming = new ArrayList<>();
+        for (DataSnapshot entry : snapshot.getChildren()) {
+            newIncoming.add(new IncomingMessage(
+                    (Date)entry.child("dateSent").getValue(Date.class),
+                    (String)entry.child("sourceUser").getValue(String.class),
+                    (StickerTypes)entry.child("sticker").getValue(StickerTypes.class)
+            ));
+        }
+        return newIncoming;
+    }
+
+    private List<OutgoingMessage> marshalOutgoing(DataSnapshot snapshot) {
+        List<OutgoingMessage> newOutgoing = new ArrayList<>();
+        for (DataSnapshot entry : snapshot.getChildren()) {
+            newOutgoing.add(new OutgoingMessage(
+                    (Date)entry.child("dateSent").getValue(Date.class),
+                    (String)entry.child("destUser").getValue(String.class),
+                    (StickerTypes)entry.child("sticker").getValue(StickerTypes.class)
+            ));
+        }
+        return newOutgoing;
+    }
+
     private UserDAO userFromSnapshot(@NonNull DataSnapshot snapshot) {
         List<String> friends = new ArrayList<>();
         List<IncomingMessage> incomingMessages = new ArrayList<>();
@@ -419,11 +443,11 @@ public class FirebaseActivity extends AppCompatActivity {
                         break;
                     }
                     case "incomingMessages": {
-                        incomingMessages = (List<IncomingMessage>) ds.getValue();
+                        incomingMessages = marshalIncoming(ds);
                         break;
                     }
                     case "outgoingMessages": {
-                        outgoingMessages = (List<OutgoingMessage>) ds.getValue();
+                        outgoingMessages = marshalOutgoing(ds);
                         break;
                     }
                     default:

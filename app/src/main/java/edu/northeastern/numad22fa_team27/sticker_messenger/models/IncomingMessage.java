@@ -1,6 +1,7 @@
 package edu.northeastern.numad22fa_team27.sticker_messenger.models;
 
 import java.util.Date;
+import java.util.Map;
 
 public class IncomingMessage {
     // date sticker was sent
@@ -22,6 +23,12 @@ public class IncomingMessage {
         this.setDateSent(msg.getDateSent());
         this.setSourceUser(sourceUser);
         this.setSticker(msg.getSticker());
+    }
+
+    public IncomingMessage(Date dateSent, String sourceUser, StickerTypes sticker) {
+        this.setDateSent(dateSent);
+        this.setSourceUser(sourceUser);
+        this.setSticker(sticker);
     }
 
     public Date getDateSent() {
