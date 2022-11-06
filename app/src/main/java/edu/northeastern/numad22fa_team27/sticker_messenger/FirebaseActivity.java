@@ -64,6 +64,14 @@ public class FirebaseActivity extends AppCompatActivity {
     private final List<MessageCards> mCards = new ArrayList<>();
     private RecyclerView lists;
 
+    //sticker values
+    private int stickerOne = 0;
+    private int stickerTwo = 0;
+    private int stickerThree = 0;
+    private int stickerFour = 0;
+    private int stickerFive = 0;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +96,18 @@ public class FirebaseActivity extends AppCompatActivity {
         lists.setLayoutManager(manager);
 
         //welcomeText = findViewById(R.id.txt_welcome);
+        ImageView imgOne = findViewById(R.id.img_sticker_one);
+        ImageView imgTwo = findViewById(R.id.img_sticker_two);
+        ImageView imgThree = findViewById(R.id.img_sticker_three);
+        ImageView imgFour = findViewById(R.id.img_sticker_four);
+        ImageView imgFive = findViewById(R.id.img_sticker_five);
+
+        imgOne.setImageResource(R.drawable.arcade_vectorportal);
+        imgTwo.setImageResource(R.drawable.baseball_vectorportal);
+        imgThree.setImageResource(R.drawable.cassette_vectorportal);
+        imgFour.setImageResource(R.drawable.chicken_bucket_vectorportal);
+        imgFive.setImageResource(R.drawable.vinyl_vectorportal);
+
         updateImages();
 
         /**
@@ -196,7 +216,13 @@ public class FirebaseActivity extends AppCompatActivity {
                                 if (snapshot.exists()) {
                                     user = userFromSnapshot(snapshot);
 
+                                    //TODO: To who ever this chunc of code will update the
+                                    //      recycler so this should be called in an ondataChange
+                                    //      im not sure if this is the right one
                                     populateRecycler();
+                                    stickerSentCounter();
+                                    updateImages();
+
                                     Toast.makeText(
                                             getApplicationContext(),
                                             "Welcome Back!",
@@ -570,32 +596,53 @@ public class FirebaseActivity extends AppCompatActivity {
     }
 
     private void updateImages() {
-        ImageView imgOne = findViewById(R.id.img_sticker_one);
-        ImageView imgTwo = findViewById(R.id.img_sticker_two);
-        ImageView imgThree = findViewById(R.id.img_sticker_three);
-        ImageView imgFour = findViewById(R.id.img_sticker_four);
-        ImageView imgFive = findViewById(R.id.img_sticker_five);
-
-        imgOne.setImageResource(R.drawable.arcade_vectorportal);
-        imgTwo.setImageResource(R.drawable.baseball_vectorportal);
-        imgThree.setImageResource(R.drawable.cassette_vectorportal);
-        imgFour.setImageResource(R.drawable.chicken_bucket_vectorportal);
-        imgFive.setImageResource(R.drawable.vinyl_vectorportal);
-
         TextView txtOne = findViewById(R.id.txt_sticker_one);
         TextView txtTwo = findViewById(R.id.txt_sticker_two);
         TextView txtThree = findViewById(R.id.txt_sticker_three);
         TextView txtFour = findViewById(R.id.txt_sticker_four);
         TextView txtFive = findViewById(R.id.txt_sticker_five);
 
-        txtOne.setText("0");
-        txtTwo.setText("0");
-        txtThree.setText("0");
-        txtFour.setText("0");
-        txtFive.setText("0");
+        txtOne.setText(Integer.toString(stickerOne));
+        txtTwo.setText(Integer.toString(stickerTwo));
+        txtThree.setText(Integer.toString(stickerThree));
+        txtFour.setText(Integer.toString(stickerFour));
+        txtFive.setText(Integer.toString(stickerFive));
     }
 
-    private void StickerSentCounter() {
-        
+    private void stickerSentCounter() {
+        int count1 = 0;
+        int count2 = 0;
+        int count3 = 0;
+        int count4 = 0;
+        int count5 = 0;
+
+        for (OutgoingMessage om: user.outgoingMessages) {
+            StickerTypes sticker = om.getSticker();
+            switch (sticker){
+                case STICKER_1:
+                    count1++;
+                    break;
+                case STICKER_2:
+                    count2++;
+                    break;
+                case STICKER_3:
+                    count3++;
+                    break;
+                case STICKER_4:
+                    count4++;
+                    break;
+                case STICKER_5:
+                    count5++;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        stickerOne = count1;
+        stickerTwo = count2;
+        stickerThree = count3;
+        stickerFour = count4;
+        stickerFive = count5;
     }
 }
