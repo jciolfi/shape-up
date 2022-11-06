@@ -488,11 +488,11 @@ public class FirebaseActivity extends AppCompatActivity {
         ImageView imgFour = findViewById(R.id.img_sticker_four);
         ImageView imgFive = findViewById(R.id.img_sticker_five);
 
-//        imgOne.setImageResource(R.drawable.);
-//        imgTwo.setImageResource(R.drawable.green);
-//        imgThree.setImageResource(R.drawable.blue);
-//        imgFour.setImageResource(R.drawable.red);
-//        imgFive.setImageResource(R.drawable.yellow);
+        imgOne.setImageResource(R.drawable.arcade_vectorportal);
+        imgTwo.setImageResource(R.drawable.baseball_vectorportal);
+        imgThree.setImageResource(R.drawable.cassette_vectorportal);
+        imgFour.setImageResource(R.drawable.chicken_bucket_vectorportal);
+        imgFive.setImageResource(R.drawable.vinyl_vectorportal);
 
         TextView txtOne = findViewById(R.id.txt_sticker_one);
         TextView txtTwo = findViewById(R.id.txt_sticker_two);
