@@ -25,11 +25,6 @@ public class IncomingMessage {
         this.setSticker(msg.getSticker());
     }
 
-    public IncomingMessage(Date dateSent, String sourceUser, StickerTypes sticker) {
-        this.setDateSent(dateSent);
-        this.setSourceUser(sourceUser);
-        this.setSticker(sticker);
-    }
 
     public Date getDateSent() {
         return dateSent;

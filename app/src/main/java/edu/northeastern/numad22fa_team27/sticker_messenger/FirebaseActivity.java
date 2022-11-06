@@ -195,20 +195,8 @@ public class FirebaseActivity extends AppCompatActivity {
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 if (snapshot.exists()) {
                                     user = userFromSnapshot(snapshot);
-                                    //user = snapshot.getValue(UserDAO.class);
 
-                                    List<MessageCards> newCards = new ArrayList<>();
-                                    for (OutgoingMessage im: user.outgoingMessages) {
-                                        newCards.add(new MessageCards(im.getSticker(),
-                                                im.getDestUser(), im.getDateSent().toString()));
-                                    }
-
-                                    // Display results
-                                    new Handler(Looper.getMainLooper()).post(() -> {
-                                        mCards.clear();
-                                        mCards.addAll(newCards);
-                                        Objects.requireNonNull(lists.getAdapter()).notifyDataSetChanged();
-                                    });
+                                    populateRecycler();
                                     Toast.makeText(
                                             getApplicationContext(),
                                             "Welcome Back!",
@@ -317,42 +305,44 @@ public class FirebaseActivity extends AppCompatActivity {
             }
         });
     }
+    public void populateRecycler() {
+        if (isReceive) {
+            List<MessageCards> newCards = new ArrayList<>();
+            List<IncomingMessage> inComing = user.incomingMessages;
+            for (IncomingMessage im: inComing) {
+                newCards.add(new MessageCards(im.getSticker(),
+                        "From: " + im.getSourceUser(),im.getDateSent().toString()));
+            }
+
+            // Display results
+            new Handler(Looper.getMainLooper()).post(() -> {
+                mCards.clear();
+                mCards.addAll(newCards);
+                Objects.requireNonNull(lists.getAdapter()).notifyDataSetChanged();
+            });
+        }
+        List<MessageCards> newCards = new ArrayList<MessageCards>();
+        List<OutgoingMessage> outgoing = user.outgoingMessages;
+        for (OutgoingMessage im: outgoing) {
+            newCards.add(new MessageCards(im.getSticker(),
+                    "To: " + im.getDestUser(),im.getDateSent().toString()));
+        }
+
+        // Display results
+        new Handler(Looper.getMainLooper()).post(() -> {
+            mCards.clear();
+            mCards.addAll(newCards);
+            Objects.requireNonNull(lists.getAdapter()).notifyDataSetChanged();
+        });
+    }
 
     /**
      * when the switch happens
      */
     public void switchView(View v) {
         isReceive = !isReceive;
-        if (isReceive) {
-            List<MessageCards> newCards = new ArrayList<>();
-            List<IncomingMessage> inComing = user.incomingMessages;
-            for (IncomingMessage im: inComing) {
-                newCards.add(new MessageCards(im.getSticker(),
-                        im.getSourceUser(),im.getDateSent().toString()));
-            }
+        populateRecycler();
 
-            // Display results
-            new Handler(Looper.getMainLooper()).post(() -> {
-                mCards.clear();
-                mCards.addAll(newCards);
-                Objects.requireNonNull(lists.getAdapter()).notifyDataSetChanged();
-            });
-        } else {
-            List<MessageCards> newCards = new ArrayList<MessageCards>();
-            List<OutgoingMessage> outgoing = user.outgoingMessages;
-            for (OutgoingMessage im: outgoing) {
-                newCards.add(new MessageCards(im.getSticker(),
-                        im.getDestUser(),im.getDateSent().toString()));
-            }
-
-            // Display results
-            new Handler(Looper.getMainLooper()).post(() -> {
-                mCards.clear();
-                mCards.addAll(newCards);
-                Objects.requireNonNull(lists.getAdapter()).notifyDataSetChanged();
-            });
-
-        }
     }
 
     /**
@@ -600,5 +590,9 @@ public class FirebaseActivity extends AppCompatActivity {
         txtThree.setText("0");
         txtFour.setText("0");
         txtFive.setText("0");
+    }
+
+    private void StickerSentCounter() {
+        
     }
 }
