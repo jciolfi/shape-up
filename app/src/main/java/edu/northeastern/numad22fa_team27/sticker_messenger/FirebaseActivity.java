@@ -33,11 +33,14 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.Util;
@@ -64,12 +67,10 @@ public class FirebaseActivity extends AppCompatActivity {
     private final List<MessageCards> mCards = new ArrayList<>();
     private RecyclerView lists;
 
-    //sticker values
-    private int stickerOne = 0;
-    private int stickerTwo = 0;
-    private int stickerThree = 0;
-    private int stickerFour = 0;
-    private int stickerFive = 0;
+    private Integer[] knownStickerElements;
+
+    // sticker values
+    Map<StickerTypes, Integer> StickerCounts;
 
 
     @Override
@@ -88,6 +89,18 @@ public class FirebaseActivity extends AppCompatActivity {
                 .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
                 .hide(currentFragment).commit();
 
+        // Precompute lists that we'll repeatedly use later
+        knownStickerElements = new Integer[] {
+                R.id.txt_sticker_one,
+                R.id.txt_sticker_two,
+                R.id.txt_sticker_three,
+                R.id.txt_sticker_four,
+                R.id.txt_sticker_five
+        };
+
+        StickerCounts = new HashMap<>();
+        resetStickerCounter();
+
         // Set up our RecyclerView
         RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
         lists = findViewById(R.id.id_rec_sticker);
@@ -102,23 +115,17 @@ public class FirebaseActivity extends AppCompatActivity {
         ImageView imgFour = findViewById(R.id.img_sticker_four);
         ImageView imgFive = findViewById(R.id.img_sticker_five);
 
-        imgOne.setImageResource(R.drawable.arcade_vectorportal);
-        imgTwo.setImageResource(R.drawable.baseball_vectorportal);
-        imgThree.setImageResource(R.drawable.cassette_vectorportal);
-        imgFour.setImageResource(R.drawable.chicken_bucket_vectorportal);
-        imgFive.setImageResource(R.drawable.vinyl_vectorportal);
+        imgOne.setImageResource(getDrawableFromEnum(StickerTypes.STICKER_1));
+        imgTwo.setImageResource(getDrawableFromEnum(StickerTypes.STICKER_2));
+        imgThree.setImageResource(getDrawableFromEnum(StickerTypes.STICKER_3));
+        imgFour.setImageResource(getDrawableFromEnum(StickerTypes.STICKER_4));
+        imgFive.setImageResource(getDrawableFromEnum(StickerTypes.STICKER_5));
 
         updateImages();
 
-        /**
-         * TODO:
-         * [x] login flow (login or signup with username)
-         * [x] add a friend (do we need a notion of a friend request? - assuming no for now)
-         * [] incoming message listener (show notification)
-         * [x] button to send a sticker
-         */
         promptLogin();
 
+        // Callback to send stickers
         StickerSendModel viewModel = new ViewModelProvider(this).get(StickerSendModel.class);
         viewModel.getSelectedItem().observe(this, item -> {
             // Actually send the sticker
@@ -163,8 +170,7 @@ public class FirebaseActivity extends AppCompatActivity {
     }
 
     private void pushStickerUpdate(IncomingMessage sticker) {
-        // TODO: This is a dummy image, emulating a sticker lookup
-        Bitmap stickerBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.arcade_vectorportal);
+        Bitmap stickerBitmap = BitmapFactory.decodeResource(getResources(), getDrawableFromEnum(sticker.getSticker()));
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.mipmap.ic_launcher)
@@ -175,7 +181,6 @@ public class FirebaseActivity extends AppCompatActivity {
                 .setStyle(new NotificationCompat.BigPictureStyle()
                         .bigPicture(stickerBitmap)
                         .bigLargeIcon(null));
-
 
         // Actually push the notification
         getSystemService(NotificationManager.class).notify(notificationId++, notificationBuilder.build());
@@ -205,20 +210,19 @@ public class FirebaseActivity extends AppCompatActivity {
         loginDialog.setOnShowListener(dialogInterface -> {
             Button loginButton = loginDialog.getButton(AlertDialog.BUTTON_POSITIVE);
             loginButton.setOnClickListener(view -> {
-                if (Util.stringIsNullOrEmpty(usernameText.getText().toString())) {
+                String providedUsername = usernameText.getText().toString();
+                if (Util.stringIsNullOrEmpty(providedUsername)) {
                     usernameText.setError("Username can't be empty");
                 } else {
                     // get the user
-                    mDatabase.child("users").child(usernameText.getText().toString())
+                    mDatabase.child("users").child(providedUsername)
                         .addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 if (snapshot.exists()) {
                                     user = userFromSnapshot(snapshot);
 
-                                    //TODO: To who ever this chunc of code will update the
-                                    //      recycler so this should be called in an ondataChange
-                                    //      im not sure if this is the right one
+                                    // Initial draw call to show stickers
                                     populateRecycler();
                                     stickerSentCounter();
                                     updateImages();
@@ -230,7 +234,7 @@ public class FirebaseActivity extends AppCompatActivity {
                                     ).show();
                                     changeListener();
                                 } else {
-                                    addUser(usernameText.getText().toString(), true);
+                                    addUser(providedUsername);
                                 }
                             }
 
@@ -249,9 +253,8 @@ public class FirebaseActivity extends AppCompatActivity {
     /**
      * Add a fresh user entry for the given username
      * @param username the username for the user to insert
-     * @param setThisUser if we're adding this user
      */
-    private void addUser(String username, boolean setThisUser) {
+    private void addUser(String username) {
         mDatabase.child("users").child(username).setValue(new UserDAO(username))
                 .addOnSuccessListener(unused -> {
                     Toast.makeText(
@@ -260,16 +263,17 @@ public class FirebaseActivity extends AppCompatActivity {
                             Toast.LENGTH_SHORT
                     ).show();
 
-                    if (setThisUser) {
-                        user = new UserDAO(username);
-                        changeListener();
-                    }
+                    // Set our user and listen for changes
+                    user = new UserDAO(username);
+                    changeListener();
                 }).addOnFailureListener(e -> {
                     Toast.makeText(
                         this,
                         "Failed to sign up. Please retry",
                             Toast.LENGTH_LONG
                     ).show();
+
+                    // Try again with a different user
                     promptLogin();
                 });
     }
@@ -317,6 +321,10 @@ public class FirebaseActivity extends AppCompatActivity {
                     }
                 }
 
+                populateRecycler();
+                stickerSentCounter();
+                updateImages();
+
                 if (canReplace(user.friends, userDelta.friends)) {
                     Log.v(TAG, "Data consistency error - DB and local mismatch on our friends list");
                 }
@@ -333,35 +341,20 @@ public class FirebaseActivity extends AppCompatActivity {
     }
 
     public void populateRecycler() {
-        if (isReceive) {
-            List<MessageCards> newCards = new ArrayList<>();
-            List<IncomingMessage> inComing = user.incomingMessages;
-            for (IncomingMessage im: inComing) {
-                newCards.add(new MessageCards(im.getSticker(),
-                        "From: " + im.getSourceUser(),im.getDateSent().toString()));
-            }
+        List<MessageCards> newCards = (isReceive)
+                ? user.incomingMessages.stream()
+                    .map(m -> new MessageCards(m.getSticker(), "From: " + m.getSourceUser(), m.getDateSent().toString()))
+                    .collect(Collectors.toList())
+                : user.outgoingMessages.stream()
+                    .map(m -> new MessageCards(m.getSticker(), "To: " + m.getDestUser(), m.getDateSent().toString()))
+                    .collect(Collectors.toList());
 
-            // Display results
-            new Handler(Looper.getMainLooper()).post(() -> {
-                mCards.clear();
-                mCards.addAll(newCards);
-                Objects.requireNonNull(lists.getAdapter()).notifyDataSetChanged();
-            });
-        } else {
-            List<MessageCards> newCards = new ArrayList<MessageCards>();
-            List<OutgoingMessage> outgoing = user.outgoingMessages;
-            for (OutgoingMessage im: outgoing) {
-                newCards.add(new MessageCards(im.getSticker(),
-                        "To: " + im.getDestUser(),im.getDateSent().toString()));
-            }
-
-            // Display results
-            new Handler(Looper.getMainLooper()).post(() -> {
-                mCards.clear();
-                mCards.addAll(newCards);
-                Objects.requireNonNull(lists.getAdapter()).notifyDataSetChanged();
-            });
-        }
+        // Display results
+        new Handler(Looper.getMainLooper()).post(() -> {
+            mCards.clear();
+            mCards.addAll(newCards);
+            Objects.requireNonNull(lists.getAdapter()).notifyDataSetChanged();
+        });
 
     }
 
@@ -371,7 +364,6 @@ public class FirebaseActivity extends AppCompatActivity {
     public void switchView(View v) {
         isReceive = (!isReceive);
         populateRecycler();
-
     }
 
     /**
@@ -414,10 +406,12 @@ public class FirebaseActivity extends AppCompatActivity {
             Log.e(TAG, "Tried to send to friends without (either) an initialized user or friends");
             return;
         }
-        List<String> stickers = new ArrayList<>();
-        for (StickerTypes s : StickerTypes.values()) {
-            stickers.add(s.name());
-        }
+
+        List<String> stickers = Stream.of(StickerTypes.values())
+                .map(Enum::name)
+                .collect(Collectors.toList());
+
+        // Build a fragment with our current friends list
         friendsSendFragment = FriendsFragment.newInstance(user.friends, stickers);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragmentStickerFriends, friendsSendFragment)
@@ -426,27 +420,23 @@ public class FirebaseActivity extends AppCompatActivity {
     }
 
     private List<IncomingMessage> marshalIncoming(DataSnapshot snapshot) {
-        List<IncomingMessage> newIncoming = new ArrayList<>();
-        for (DataSnapshot entry : snapshot.getChildren()) {
-            newIncoming.add(new IncomingMessage(
-                    (Date)entry.child("dateSent").getValue(Date.class),
-                    (String)entry.child("sourceUser").getValue(String.class),
-                    (StickerTypes)entry.child("sticker").getValue(StickerTypes.class)
-            ));
-        }
-        return newIncoming;
+        return StreamSupport.stream(snapshot.getChildren().spliterator(), false)
+                .map(e -> new IncomingMessage(
+                        (Date)e.child("dateSent").getValue(Date.class),
+                        (String)e.child("sourceUser").getValue(String.class),
+                        (StickerTypes)e.child("sticker").getValue(StickerTypes.class)
+                ))
+                .collect(Collectors.toList());
     }
 
     private List<OutgoingMessage> marshalOutgoing(DataSnapshot snapshot) {
-        List<OutgoingMessage> newOutgoing = new ArrayList<>();
-        for (DataSnapshot entry : snapshot.getChildren()) {
-            newOutgoing.add(new OutgoingMessage(
-                    (Date)entry.child("dateSent").getValue(Date.class),
-                    (String)entry.child("destUser").getValue(String.class),
-                    (StickerTypes)entry.child("sticker").getValue(StickerTypes.class)
-            ));
-        }
-        return newOutgoing;
+        return StreamSupport.stream(snapshot.getChildren().spliterator(), false)
+                .map(e -> new OutgoingMessage(
+                        (Date)e.child("dateSent").getValue(Date.class),
+                        (String)e.child("destUser").getValue(String.class),
+                        (StickerTypes)e.child("sticker").getValue(StickerTypes.class)
+                ))
+                .collect(Collectors.toList());
     }
 
     private UserDAO userFromSnapshot(@NonNull DataSnapshot snapshot) {
@@ -596,53 +586,47 @@ public class FirebaseActivity extends AppCompatActivity {
     }
 
     private void updateImages() {
-        TextView txtOne = findViewById(R.id.txt_sticker_one);
-        TextView txtTwo = findViewById(R.id.txt_sticker_two);
-        TextView txtThree = findViewById(R.id.txt_sticker_three);
-        TextView txtFour = findViewById(R.id.txt_sticker_four);
-        TextView txtFive = findViewById(R.id.txt_sticker_five);
+        int index = 0;
+        for (StickerTypes s : StickerTypes.values()) {
+            if (index >= knownStickerElements.length) {
+                break;
+            }
+            TextView countBox = findViewById(knownStickerElements[index++]);
+            countBox.setText(Integer.toString(StickerCounts.get(s)));
+        }
+    }
 
-        txtOne.setText(Integer.toString(stickerOne));
-        txtTwo.setText(Integer.toString(stickerTwo));
-        txtThree.setText(Integer.toString(stickerThree));
-        txtFour.setText(Integer.toString(stickerFour));
-        txtFive.setText(Integer.toString(stickerFive));
+    private int getDrawableFromEnum(StickerTypes sticker) {
+        switch (sticker) {
+            case STICKER_1:
+                return R.drawable.arcade_vectorportal;
+            case STICKER_2:
+                return R.drawable.baseball_vectorportal;
+            case STICKER_3:
+                return R.drawable.vinyl_vectorportal;
+            case STICKER_4:
+                return R.drawable.chicken_bucket_vectorportal;
+            case STICKER_5:
+                return R.drawable.cassette_vectorportal;
+            default:
+                // We don't know
+                return R.drawable.ufo_vectorportal;
+        }
+    }
+
+    private void resetStickerCounter() {
+        for (StickerTypes s : StickerTypes.values()) {
+            StickerCounts.put(s, 0);
+        }
     }
 
     private void stickerSentCounter() {
-        int count1 = 0;
-        int count2 = 0;
-        int count3 = 0;
-        int count4 = 0;
-        int count5 = 0;
+        resetStickerCounter();
 
         for (OutgoingMessage om: user.outgoingMessages) {
+            // count = (old count if present, else 0) + 1
             StickerTypes sticker = om.getSticker();
-            switch (sticker){
-                case STICKER_1:
-                    count1++;
-                    break;
-                case STICKER_2:
-                    count2++;
-                    break;
-                case STICKER_3:
-                    count3++;
-                    break;
-                case STICKER_4:
-                    count4++;
-                    break;
-                case STICKER_5:
-                    count5++;
-                    break;
-                default:
-                    break;
-            }
+            StickerCounts.put(sticker, StickerCounts.getOrDefault(sticker, 0) + 1);
         }
-
-        stickerOne = count1;
-        stickerTwo = count2;
-        stickerThree = count3;
-        stickerFour = count4;
-        stickerFive = count5;
     }
 }
