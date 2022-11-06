@@ -3,8 +3,10 @@ package edu.northeastern.numad22fa_team27.sticker_messenger;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +15,13 @@ import android.widget.Button;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import edu.northeastern.numad22fa_team27.R;
+import edu.northeastern.numad22fa_team27.spotify.SearchItem;
+import edu.northeastern.numad22fa_team27.spotify.SearchItemViewModel;
+import edu.northeastern.numad22fa_team27.sticker_messenger.models.StickerSendModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,6 +33,7 @@ public class FriendsFragment extends Fragment {
     private static final String ARG_PARAM1 = "friendsList";
     private static final String ARG_PARAM2 = "stickerOptions";
 
+    private StickerSendModel viewModel;
     private List<String> friendsList;
     private List<String> stickerOptions;
 
@@ -87,9 +94,16 @@ public class FriendsFragment extends Fragment {
 
         Log.v(TAG, String.format("We have %d friends and %d possible stickers", friendsList.size(), stickerOptions.size()));
 
+        viewModel = new ViewModelProvider(requireActivity()).get(StickerSendModel.class);
+
         // Add callbacks
         final Button sendButton = sendView.findViewById(R.id.sticker_send_button);
         sendButton.setOnClickListener(c -> {
+            viewModel.selectItem(new Pair<>(
+                    friends.getSelectedItem().toString(),
+                    stickers.getSelectedItem().toString()
+            ));
+
             // Hide this fragment
             getActivity().getSupportFragmentManager().beginTransaction()
                     .hide(this)

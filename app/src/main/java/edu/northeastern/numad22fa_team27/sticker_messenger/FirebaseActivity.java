@@ -5,6 +5,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -32,8 +33,10 @@ import java.util.Objects;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.Util;
+import edu.northeastern.numad22fa_team27.spotify.SearchItemViewModel;
 import edu.northeastern.numad22fa_team27.sticker_messenger.models.IncomingMessage;
 import edu.northeastern.numad22fa_team27.sticker_messenger.models.OutgoingMessage;
+import edu.northeastern.numad22fa_team27.sticker_messenger.models.StickerSendModel;
 import edu.northeastern.numad22fa_team27.sticker_messenger.models.StickerTypes;
 import edu.northeastern.numad22fa_team27.sticker_messenger.models.UserDAO;
 
@@ -57,9 +60,6 @@ public class FirebaseActivity extends AppCompatActivity {
         // Set up our ability to send push messages
         createNotificationChannel();
 
-        // TODO - here for testing purposes
-        pushStickerUpdate(new IncomingMessage(new Date(), "Admin", StickerTypes.STICKER_1));
-
         // Set up the sticker send fragment
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragmentStickerFriends);
         getSupportFragmentManager().beginTransaction()
@@ -79,6 +79,15 @@ public class FirebaseActivity extends AppCompatActivity {
          */
         promptLogin();
 
+        StickerSendModel viewModel = new ViewModelProvider(this).get(StickerSendModel.class);
+        viewModel.getSelectedItem().observe(this, item -> {
+            // Actually send the sticker
+            trySendSticker(new OutgoingMessage(
+                    new Date(),
+                    item.first,
+                    StickerTypes.valueOf(item.second)
+            ));
+        });
     }
 
     @Override
@@ -294,13 +303,6 @@ public class FirebaseActivity extends AppCompatActivity {
                     friendText.setError("Username can't be empty");
                 } else {
                     tryAddFriend(friendText.getText().toString());
-
-                    // TODO - Here for testing purposes. There should be a dialogue that triggers this
-                    trySendSticker(new OutgoingMessage(
-                            new Date(),
-                            friendText.getText().toString(),
-                            StickerTypes.STICKER_1
-                    ));
                     addFriendDialog.dismiss();
                 }
             });
@@ -322,7 +324,7 @@ public class FirebaseActivity extends AppCompatActivity {
             Log.e(TAG, "Tried to send to friends without (either) an initialized user or friends");
             return;
         }
-        List<String> stickers = new ArrayList<String>();
+        List<String> stickers = new ArrayList<>();
         for (StickerTypes s : StickerTypes.values()) {
             stickers.add(s.name());
         }
