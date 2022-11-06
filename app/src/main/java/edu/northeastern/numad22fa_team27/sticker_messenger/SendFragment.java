@@ -22,6 +22,11 @@ public class SendFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -42,9 +47,16 @@ public class SendFragment extends Fragment {
         // Set up friend dropdown
         // TODO - don't hardcode this
 
+        String[] input;
+        if (friendsList.size() != 0) {
+            input = (String[]) friendsList.toArray();
+        } else {
+            input = new String[]{};
+        }
+
         Spinner friends = searchView.findViewById(R.id.spn_friend_dd);
         ArrayAdapter<String> adapterTwo = new ArrayAdapter<>(searchView.getContext(),
-                android.R.layout.simple_spinner_item, (String[]) friendsList.toArray());
+                android.R.layout.simple_spinner_item, input);
         adapterTwo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         friends.setAdapter(adapterTwo);
         friends.setSelection(0);

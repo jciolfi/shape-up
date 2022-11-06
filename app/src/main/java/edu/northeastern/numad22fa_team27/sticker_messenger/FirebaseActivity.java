@@ -3,24 +3,23 @@ package edu.northeastern.numad22fa_team27.sticker_messenger;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,6 +41,9 @@ public class FirebaseActivity extends AppCompatActivity {
     private TextView welcomeText;
     private ValueEventListener userChangeListener = null;
 
+    private SendFragment send;
+    private boolean showingSend;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +52,29 @@ public class FirebaseActivity extends AppCompatActivity {
 
         //welcomeText = findViewById(R.id.txt_welcome);
         updateImages();
+
+
+
+        // Make the send button pull up our fragment
+        final ImageView searchButton = findViewById(R.id.img_send_message);
+        searchButton.setOnClickListener(v -> {
+            List<String> input;
+            if (user != null) {
+                input = user.friends;
+            } else {
+                input = new ArrayList<>();
+            }
+
+            send = new SendFragment(input);
+            getSupportFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)
+                    .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                    .add(R.id.sendMessageFragment, send, "send")
+                    .hide(send)
+                    .commit();
+            toggleFragment();
+            //searchButton.setVisibility(View.GONE);
+        });
 
         /**
          * TODO:
@@ -418,6 +443,20 @@ public class FirebaseActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) { }
         });
+    }
+
+    /**
+     * Toggle the visibility of the search fragment
+     */
+    private void toggleFragment() {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        showingSend = !showingSend;
+        if (showingSend) {
+            transaction.show(send);
+        } else {
+            transaction.hide(send);
+        }
+        transaction.commit();
     }
 
     private void updateImages() {
