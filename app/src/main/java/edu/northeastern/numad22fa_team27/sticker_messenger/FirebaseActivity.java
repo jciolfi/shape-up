@@ -488,7 +488,7 @@ public class FirebaseActivity extends AppCompatActivity {
         ImageView imgFour = findViewById(R.id.img_sticker_four);
         ImageView imgFive = findViewById(R.id.img_sticker_five);
 
-        imgOne.setImageResource(R.drawable.weights);
+        imgOne.setImageResource(R.drawable);
         imgTwo.setImageResource(R.drawable.green);
         imgThree.setImageResource(R.drawable.blue);
         imgFour.setImageResource(R.drawable.red);
