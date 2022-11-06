@@ -18,4 +18,8 @@
     <string name="txt_welcome">Welcome</string>
     <string name="btn_about">About</string>
     <string name="add_friend_desc">Add Friend</string>
+
+    <!-- Sticker activity -->
+    <string name="sticker_notification_channel">STICKER_NOTIFICATION</string>
+    <string name="sticker_notification_channel_description">Notifications for the Sticker activity</string>
 </resources>

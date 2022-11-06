@@ -3,7 +3,11 @@ package edu.northeastern.numad22fa_team27.sticker_messenger;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -36,6 +40,7 @@ import edu.northeastern.numad22fa_team27.sticker_messenger.models.UserDAO;
 
 public class FirebaseActivity extends AppCompatActivity {
     private final String TAG = FirebaseActivity.class.getSimpleName();
+    private final String CHANNEL_ID = "STICKER_CHANNEL";
 
     private DatabaseReference mDatabase;
     private UserDAO user;
@@ -48,8 +53,11 @@ public class FirebaseActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sticker_messenger);
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
+        createNotificationChannel();
+        pushStickerUpdate(new IncomingMessage(new Date(), "Admin", StickerTypes.STICKER_1));
+
         //welcomeText = findViewById(R.id.txt_welcome);
-        updateImages();
+        //updateImages();
 
         /**
          * TODO:
@@ -58,7 +66,7 @@ public class FirebaseActivity extends AppCompatActivity {
          * [] incoming message listener (show notification)
          * [x] button to send a sticker
          */
-        promptLogin();
+        //promptLogin();
     }
 
     @Override
@@ -70,6 +78,40 @@ public class FirebaseActivity extends AppCompatActivity {
             mDatabase.removeEventListener(userChangeListener);
         }
     }
+
+    private void createNotificationChannel() {
+        // Similar to the official documentation at
+        // https://developer.android.com/develop/ui/views/notifications/channels#java
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            // Only proceed if API is 26+ due to incompatibility
+            return;
+        }
+
+        String description = getString(R.string.sticker_notification_channel_description);
+        NotificationChannel channel = new NotificationChannel(
+                CHANNEL_ID,
+                getString(R.string.sticker_notification_channel),
+                NotificationManager.IMPORTANCE_DEFAULT
+        );
+        channel.setDescription(description);
+
+        // Register the channel with the system
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
+    }
+
+    private void pushStickerUpdate(IncomingMessage sticker) {
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setContentTitle("New Sticker!")
+                .setContentText(String.format("%s just gave you a new %s sticker!", sticker.getSourceUser(), sticker.getSticker()))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        notificationManager.notify(1, notificationBuilder.build());
+    }
+
 
     public void showTeamDetails(View v) {
         String message = "Team 27:\nBen, Fabian, Farzad, John";
@@ -109,10 +151,10 @@ public class FirebaseActivity extends AppCompatActivity {
                                             "Welcome Back!",
                                             Toast.LENGTH_SHORT
                                     ).show();
+                                    changeListener();
                                 } else {
                                     addUser(usernameText.getText().toString(), true);
                                 }
-                                changeListener();
                             }
 
                             @Override
@@ -143,6 +185,7 @@ public class FirebaseActivity extends AppCompatActivity {
 
                     if (setThisUser) {
                         user = new UserDAO(username);
+                        changeListener();
                     }
                 }).addOnFailureListener(e -> {
                     Toast.makeText(
@@ -175,18 +218,25 @@ public class FirebaseActivity extends AppCompatActivity {
                     Log.v(TAG, "Data consistency error - DB and local mismatch on our sent messages");
                 }
 
-                // TODO - Notify user with push
+                // Determine the number of new stickers
+                List<IncomingMessage> newStickers = new ArrayList<>();
                 if (canReplace(user.incomingMessages, userDelta.incomingMessages)) {
                     if (userDelta.incomingMessages == null) {
                         Log.v(TAG, "Data consistency error - DB has been wiped");
                     } else if (userDelta.incomingMessages != null && user.incomingMessages == null) {
-                        if (!userDelta.incomingMessages.isEmpty()) {
-                            Log.v(TAG, String.format("We got %d new sticker(s)!", userDelta.incomingMessages.size()));
-                        }
+                        newStickers = userDelta.incomingMessages;
                     } else if (userDelta.incomingMessages.size() > user.incomingMessages.size()) {
-                        Log.v(TAG, String.format("We got %d new sticker(s)!", userDelta.incomingMessages.size() - user.incomingMessages.size()));
+                        userDelta.incomingMessages.removeAll(user.incomingMessages);
+                        newStickers = userDelta.incomingMessages;
                     } else {
                         Log.v(TAG, "Data consistency error - DB has less received stickers than we have");
+                    }
+                }
+
+                // Push notify the number of new stickers
+                if (!newStickers.isEmpty()) {
+                    for (IncomingMessage sticker : newStickers) {
+                        pushStickerUpdate(sticker);
                     }
                 }
 
