@@ -7,8 +7,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.firebase.database.DataSnapshot;
@@ -16,6 +19,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,14 +47,16 @@ public class FirebaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sticker_messenger);
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        welcomeText = findViewById(R.id.txt_welcome);
+
+        //welcomeText = findViewById(R.id.txt_welcome);
+        updateImages();
 
         /**
          * TODO:
          * [x] login flow (login or signup with username)
          * [x] add a friend (do we need a notion of a friend request? - assuming no for now)
          * [] incoming message listener (show notification)
-         * [] button to send a sticker
+         * [x] button to send a sticker
          */
         promptLogin();
     }
@@ -232,6 +239,41 @@ public class FirebaseActivity extends AppCompatActivity {
         addFriendDialog.show();
     }
 
+    /**
+     * Show a pop-up to select the sticker to send
+     */
+    public void sendMessageDialog(View v) {
+        final EditText friendText = new EditText(this);
+
+        AlertDialog addFriendDialog = new AlertDialog.Builder(this)
+                .setTitle("Select which sticker and to which user you would like to send it to")
+                .setView(friendText)
+                .setPositiveButton("send", null)
+                .setNegativeButton("Cancel", null)
+                .create();
+
+        addFriendDialog.setOnShowListener(dialogInterface -> {
+            Button addButton = addFriendDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            addButton.setOnClickListener(view -> {
+                if (Util.stringIsNullOrEmpty(friendText.getText().toString())) {
+                    friendText.setError("Username can't be empty");
+                } else {
+                    tryAddFriend(friendText.getText().toString());
+
+                    // TODO - Here for testing purposes. There should be a dialogue that triggers this
+                    trySendSticker(new OutgoingMessage(
+                            new Date(),
+                            friendText.getText().toString(),
+                            StickerTypes.STICKER_1
+                    ));
+                    addFriendDialog.dismiss();
+                }
+            });
+        });
+
+        addFriendDialog.show();
+    }
+
     private UserDAO userFromSnapshot(@NonNull DataSnapshot snapshot) {
         List<String> friends = new ArrayList<>();
         List<IncomingMessage> incomingMessages = new ArrayList<>();
@@ -376,5 +418,33 @@ public class FirebaseActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) { }
         });
+    }
+
+    private void updateImages() {
+        ImageView imgOne = findViewById(R.id.img_sticker_one);
+        ImageView imgTwo = findViewById(R.id.img_sticker_two);
+        ImageView imgThree = findViewById(R.id.img_sticker_three);
+        ImageView imgFour = findViewById(R.id.img_sticker_four);
+        ImageView imgFive = findViewById(R.id.img_sticker_five);
+
+        imgOne.setImageResource(R.drawable.weights);
+        imgTwo.setImageResource(R.drawable.green);
+        imgThree.setImageResource(R.drawable.blue);
+        imgFour.setImageResource(R.drawable.red);
+        imgFive.setImageResource(R.drawable.yellow);
+
+        TextView txtOne = findViewById(R.id.txt_sticker_one);
+        TextView txtTwo = findViewById(R.id.txt_sticker_two);
+        TextView txtThree = findViewById(R.id.txt_sticker_three);
+        TextView txtFour = findViewById(R.id.txt_sticker_four);
+        TextView txtFive = findViewById(R.id.txt_sticker_five);
+
+        txtOne.setText("0");
+        txtTwo.setText("0");
+        txtThree.setText("0");
+        txtFour.setText("0");
+        txtFive.setText("0");
+
+
     }
 }
