@@ -39,7 +39,6 @@ public class FirebaseActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private UserDAO user;
     private TextView welcomeText;
-    private ValueEventListener userChangeListener = null;
 
     private SendFragment send;
     private boolean showingSend;
@@ -51,7 +50,7 @@ public class FirebaseActivity extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         //welcomeText = findViewById(R.id.txt_welcome);
-        updateImages();
+        //updateImages();
 
 
 
@@ -86,16 +85,6 @@ public class FirebaseActivity extends AppCompatActivity {
         promptLogin();
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        // Destroy our event listener if the activity is over
-        if (mDatabase != null && userChangeListener != null) {
-            mDatabase.removeEventListener(userChangeListener);
-        }
-    }
-
     public void showTeamDetails(View v) {
         String message = "Team 27:\nBen, Fabian, Farzad, John";
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
@@ -128,7 +117,7 @@ public class FirebaseActivity extends AppCompatActivity {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 if (snapshot.exists()) {
-                                    user = userFromSnapshot(snapshot);
+                                    user = snapshot.getValue(UserDAO.class);
                                     Toast.makeText(
                                             getApplicationContext(),
                                             "Welcome Back!",
@@ -137,7 +126,6 @@ public class FirebaseActivity extends AppCompatActivity {
                                 } else {
                                     addUser(usernameText.getText().toString(), true);
                                 }
-                                changeListener();
                             }
 
                             @Override
@@ -179,57 +167,6 @@ public class FirebaseActivity extends AppCompatActivity {
                 });
     }
 
-    public void changeListener() {
-        userChangeListener = mDatabase.child("users").child(user.username).addValueEventListener(new ValueEventListener() {
-
-            /**
-             * Check if we can merge new data into old data list
-             * @param oldData
-             * @param newData
-             * @return
-             */
-            private boolean canReplace(List oldData, List newData) {
-                return (oldData == null && newData != null) || (oldData != null && newData != null && !newData.equals(oldData));
-            }
-
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                UserDAO userDelta = userFromSnapshot(snapshot);
-
-                if (canReplace(user.outgoingMessages, userDelta.outgoingMessages)) {
-                    Log.v(TAG, "Data consistency error - DB and local mismatch on our sent messages");
-                }
-
-                // TODO - Notify user with push
-                if (canReplace(user.incomingMessages, userDelta.incomingMessages)) {
-                    if (userDelta.incomingMessages == null) {
-                        Log.v(TAG, "Data consistency error - DB has been wiped");
-                    } else if (userDelta.incomingMessages != null && user.incomingMessages == null) {
-                        if (!userDelta.incomingMessages.isEmpty()) {
-                            Log.v(TAG, String.format("We got %d new sticker(s)!", userDelta.incomingMessages.size()));
-                        }
-                    } else if (userDelta.incomingMessages.size() > user.incomingMessages.size()) {
-                        Log.v(TAG, String.format("We got %d new sticker(s)!", userDelta.incomingMessages.size() - user.incomingMessages.size()));
-                    } else {
-                        Log.v(TAG, "Data consistency error - DB has less received stickers than we have");
-                    }
-                }
-
-                if (canReplace(user.friends, userDelta.friends)) {
-                    Log.v(TAG, "Data consistency error - DB and local mismatch on our friends list");
-                }
-
-                // In all cases, assume the DB is correct and update
-                user = userDelta;
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
-
     /**
      * Show a pop-up to enter the username of a friend
      */
@@ -249,8 +186,6 @@ public class FirebaseActivity extends AppCompatActivity {
                     friendText.setError("Username can't be empty");
                 } else {
                     tryAddFriend(friendText.getText().toString());
-
-                    // TODO - Here for testing purposes. There should be a dialogue that triggers this
                     trySendSticker(new OutgoingMessage(
                             new Date(),
                             friendText.getText().toString(),
@@ -264,6 +199,7 @@ public class FirebaseActivity extends AppCompatActivity {
         addFriendDialog.show();
     }
 
+<<<<<<< HEAD
     /**
      * Show a pop-up to select the sticker to send
      */
@@ -300,6 +236,9 @@ public class FirebaseActivity extends AppCompatActivity {
     }
 
     private UserDAO userFromSnapshot(@NonNull DataSnapshot snapshot) {
+=======
+    private UserDAO userFromSnapshot(@NonNull DataSnapshot snapshot, String username) {
+>>>>>>> parent of df1b602... Add DB event listener
         List<String> friends = new ArrayList<>();
         List<IncomingMessage> incomingMessages = new ArrayList<>();
         List<OutgoingMessage> outgoingMessages = new ArrayList<>();
@@ -330,7 +269,7 @@ public class FirebaseActivity extends AppCompatActivity {
         }
 
         return new UserDAO(
-                snapshot.getKey(),
+                username,
                 friends,
                 incomingMessages,
                 outgoingMessages
@@ -342,7 +281,7 @@ public class FirebaseActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    UserDAO stickerRecipient = userFromSnapshot(snapshot);
+                    UserDAO stickerRecipient = userFromSnapshot(snapshot, message.getDestUser());
                     stickerRecipient.incomingMessages.add(new IncomingMessage(message, user.username));
 
                     // Submit transaction
