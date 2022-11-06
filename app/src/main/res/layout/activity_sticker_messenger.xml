@@ -27,6 +27,30 @@
         android:onClick="showTeamDetails"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+    <ImageView
+        android:id="@+id/img_send_message"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="8dp"
+        android:onClick="addFriendDialog"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/img_switch_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/send"
+        tools:ignore="MissingConstraints"
+        android:contentDescription="Send Message" />
+    <ImageView
+        android:id="@+id/img_switch_view"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="8dp"
+        android:onClick="addFriendDialog"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/img_add_friend"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/change"
+        tools:ignore="MissingConstraints"
+        android:contentDescription="Switch View" />
 
     <ImageView
         android:id="@+id/img_add_friend"
