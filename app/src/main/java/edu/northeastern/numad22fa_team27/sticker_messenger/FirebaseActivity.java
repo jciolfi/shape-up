@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -13,6 +15,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -27,14 +31,19 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.Util;
-import edu.northeastern.numad22fa_team27.spotify.SearchItemViewModel;
+
 import edu.northeastern.numad22fa_team27.sticker_messenger.models.IncomingMessage;
+import edu.northeastern.numad22fa_team27.sticker_messenger.models.MessageInfo;
 import edu.northeastern.numad22fa_team27.sticker_messenger.models.OutgoingMessage;
 import edu.northeastern.numad22fa_team27.sticker_messenger.models.StickerSendModel;
 import edu.northeastern.numad22fa_team27.sticker_messenger.models.StickerTypes;
@@ -51,6 +60,10 @@ public class FirebaseActivity extends AppCompatActivity {
     private TextView welcomeText;
     private ValueEventListener userChangeListener = null;
 
+    private boolean isReceive = false;
+    private final List<MessageCards> mCards = new ArrayList<>();
+    private RecyclerView lists;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +79,13 @@ public class FirebaseActivity extends AppCompatActivity {
                 .setReorderingAllowed(true)
                 .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
                 .hide(currentFragment).commit();
+
+        // Set up our RecyclerView
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
+        lists = findViewById(R.id.id_rec_sticker);
+        lists.setHasFixedSize(true);
+        lists.setAdapter(new MessageInfo(mCards));
+        lists.setLayoutManager(manager);
 
         //welcomeText = findViewById(R.id.txt_welcome);
         updateImages();
@@ -124,7 +144,7 @@ public class FirebaseActivity extends AppCompatActivity {
 
     private void pushStickerUpdate(IncomingMessage sticker) {
         // TODO: This is a dummy image, emulating a sticker lookup
-        Bitmap stickerBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.blue);
+        Bitmap stickerBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.arcade_vectorportal);
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.mipmap.ic_launcher)
@@ -175,6 +195,20 @@ public class FirebaseActivity extends AppCompatActivity {
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 if (snapshot.exists()) {
                                     user = userFromSnapshot(snapshot);
+
+                                    List<MessageCards> newCards = new ArrayList<MessageCards>();
+                                    List<OutgoingMessage> outgoing = snapshot.getValue(UserDAO.class).outgoingMessages;
+                                    for (OutgoingMessage im: outgoing) {
+                                        newCards.add(new MessageCards(im.getSticker(),
+                                                im.getDestUser(),im.getDateSent().toString()));
+                                    }
+
+                                    // Display results
+                                    new Handler(Looper.getMainLooper()).post(() -> {
+                                        mCards.clear();
+                                        mCards.addAll(newCards);
+                                        Objects.requireNonNull(lists.getAdapter()).notifyDataSetChanged();
+                                    });
                                     Toast.makeText(
                                             getApplicationContext(),
                                             "Welcome Back!",
@@ -282,6 +316,43 @@ public class FirebaseActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    /**
+     * when the switch happens
+     */
+    public void switchView(View v) {
+        isReceive = !isReceive;
+        if (isReceive) {
+            List<MessageCards> newCards = new ArrayList<MessageCards>();
+            List<IncomingMessage> inComming = user.incomingMessages;
+            for (IncomingMessage im: inComming) {
+                newCards.add(new MessageCards(im.getSticker(),
+                        im.getSourceUser(),im.getDateSent().toString()));
+            }
+
+            // Display results
+            new Handler(Looper.getMainLooper()).post(() -> {
+                mCards.clear();
+                mCards.addAll(newCards);
+                Objects.requireNonNull(lists.getAdapter()).notifyDataSetChanged();
+            });
+        } else {
+            List<MessageCards> newCards = new ArrayList<MessageCards>();
+            List<OutgoingMessage> outgoing = user.outgoingMessages;
+            for (OutgoingMessage im: outgoing) {
+                newCards.add(new MessageCards(im.getSticker(),
+                        im.getDestUser(),im.getDateSent().toString()));
+            }
+
+            // Display results
+            new Handler(Looper.getMainLooper()).post(() -> {
+                mCards.clear();
+                mCards.addAll(newCards);
+                Objects.requireNonNull(lists.getAdapter()).notifyDataSetChanged();
+            });
+
+        }
     }
 
     /**
@@ -505,7 +576,5 @@ public class FirebaseActivity extends AppCompatActivity {
         txtThree.setText("0");
         txtFour.setText("0");
         txtFive.setText("0");
-
-
     }
 }
