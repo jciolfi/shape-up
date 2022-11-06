@@ -305,6 +305,7 @@ public class FirebaseActivity extends AppCompatActivity {
             }
         });
     }
+
     public void populateRecycler() {
         if (isReceive) {
             List<MessageCards> newCards = new ArrayList<>();
@@ -320,27 +321,29 @@ public class FirebaseActivity extends AppCompatActivity {
                 mCards.addAll(newCards);
                 Objects.requireNonNull(lists.getAdapter()).notifyDataSetChanged();
             });
-        }
-        List<MessageCards> newCards = new ArrayList<MessageCards>();
-        List<OutgoingMessage> outgoing = user.outgoingMessages;
-        for (OutgoingMessage im: outgoing) {
-            newCards.add(new MessageCards(im.getSticker(),
-                    "To: " + im.getDestUser(),im.getDateSent().toString()));
+        } else {
+            List<MessageCards> newCards = new ArrayList<MessageCards>();
+            List<OutgoingMessage> outgoing = user.outgoingMessages;
+            for (OutgoingMessage im: outgoing) {
+                newCards.add(new MessageCards(im.getSticker(),
+                        "To: " + im.getDestUser(),im.getDateSent().toString()));
+            }
+
+            // Display results
+            new Handler(Looper.getMainLooper()).post(() -> {
+                mCards.clear();
+                mCards.addAll(newCards);
+                Objects.requireNonNull(lists.getAdapter()).notifyDataSetChanged();
+            });
         }
 
-        // Display results
-        new Handler(Looper.getMainLooper()).post(() -> {
-            mCards.clear();
-            mCards.addAll(newCards);
-            Objects.requireNonNull(lists.getAdapter()).notifyDataSetChanged();
-        });
     }
 
     /**
      * when the switch happens
      */
     public void switchView(View v) {
-        isReceive = !isReceive;
+        isReceive = (!isReceive);
         populateRecycler();
 
     }
