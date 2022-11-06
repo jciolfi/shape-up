@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
+import androidx.fragment.app.Fragment;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -53,8 +54,18 @@ public class FirebaseActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sticker_messenger);
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
+        // Set up our ability to send push messages
         createNotificationChannel();
+
+        // TODO - here for testing purposes
         pushStickerUpdate(new IncomingMessage(new Date(), "Admin", StickerTypes.STICKER_1));
+
+        // Set up the sticker send fragment
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragmentStickerFriends);
+        getSupportFragmentManager().beginTransaction()
+                .setReorderingAllowed(true)
+                .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                .hide(currentFragment).commit();
 
         //welcomeText = findViewById(R.id.txt_welcome);
         updateImages();
@@ -67,6 +78,7 @@ public class FirebaseActivity extends AppCompatActivity {
          * [x] button to send a sticker
          */
         promptLogin();
+
     }
 
     @Override
@@ -302,7 +314,11 @@ public class FirebaseActivity extends AppCompatActivity {
      */
     public void sendStickerDialog(View v) {
         if (user == null || user.friends == null || user.friends.isEmpty()) {
-            // TODO: toast error
+            Toast.makeText(
+                    getApplicationContext(),
+                    "No friends to send a sticker to.",
+                    Toast.LENGTH_SHORT).show();
+
             Log.e(TAG, "Tried to send to friends without (either) an initialized user or friends");
             return;
         }
@@ -310,12 +326,9 @@ public class FirebaseActivity extends AppCompatActivity {
         for (StickerTypes s : StickerTypes.values()) {
             stickers.add(s.name());
         }
-
         friendsSendFragment = FriendsFragment.newInstance(user.friends, stickers);
         getSupportFragmentManager().beginTransaction()
-                .setReorderingAllowed(true)
-                .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
-                .add(friendsSendFragment, "send_friends")
+                .replace(R.id.fragmentStickerFriends, friendsSendFragment)
                 .show(friendsSendFragment)
                 .commit();
     }

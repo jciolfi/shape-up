@@ -4,10 +4,13 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +23,7 @@ import edu.northeastern.numad22fa_team27.R;
  * create an instance of this fragment.
  */
 public class FriendsFragment extends Fragment {
-
+    private static final String TAG = "FriendsFragment";
     private static final String ARG_PARAM1 = "friendsList";
     private static final String ARG_PARAM2 = "stickerOptions";
 
@@ -54,6 +57,9 @@ public class FriendsFragment extends Fragment {
         if (getArguments() != null) {
             friendsList = getArguments().getStringArrayList(ARG_PARAM1);
             stickerOptions = getArguments().getStringArrayList(ARG_PARAM2);
+        } else {
+            friendsList = new ArrayList<>();
+            stickerOptions = new ArrayList<>();
         }
     }
 
@@ -63,14 +69,42 @@ public class FriendsFragment extends Fragment {
         // Inflate the layout for this fragment
         View sendView = inflater.inflate(R.layout.fragment_friends, container, false);
 
+        // Friends spinner
+        Spinner friends = sendView.findViewById(R.id.friends_spinner);
+        ArrayAdapter<String> friendAdapter = new ArrayAdapter<>(sendView.getContext(),
+                android.R.layout.simple_spinner_item, friendsList);
+        friendAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        friends.setAdapter(friendAdapter);
+        friends.setSelection(0);
+
+        // Sticker spinner
+        Spinner stickers = sendView.findViewById(R.id.sticker_spinner);
+        ArrayAdapter<String> stickerAdapter = new ArrayAdapter<>(sendView.getContext(),
+                android.R.layout.simple_spinner_item, stickerOptions);
+        stickerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        stickers.setAdapter(stickerAdapter);
+        stickers.setSelection(0);
+
+        Log.v(TAG, String.format("We have %d friends and %d possible stickers", friendsList.size(), stickerOptions.size()));
+
         // Add callbacks
         final Button sendButton = sendView.findViewById(R.id.sticker_send_button);
         sendButton.setOnClickListener(c -> {
-            // Destroy this fragment
+            // Hide this fragment
             getActivity().getSupportFragmentManager().beginTransaction()
                     .hide(this)
                     .commit();
         });
+
+        final Button cancelButton = sendView.findViewById(R.id.sticker_cancel_button);
+        cancelButton.setOnClickListener(c -> {
+            // Hide this fragment
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .hide(this)
+                    .commit();
+        });
+
+        Log.v(TAG, "Created!");
 
         return sendView;
     }

@@ -163,9 +163,11 @@
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentStickerFriends"
         android:name="edu.northeastern.numad22fa_team27.sticker_messenger.FriendsFragment"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:background="@color/white"
+        android:elevation="4dp"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
