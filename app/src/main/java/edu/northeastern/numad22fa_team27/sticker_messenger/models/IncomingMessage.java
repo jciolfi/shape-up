@@ -12,6 +12,12 @@ public class IncomingMessage {
 
     public IncomingMessage() {}
 
+    public IncomingMessage(Date dateSent, String sourceUser, StickerTypes sticker) {
+        this.setDateSent(dateSent);
+        this.setSourceUser(sourceUser);
+        this.setSticker(sticker);
+    }
+
     public IncomingMessage(OutgoingMessage msg, String sourceUser) {
         this.setDateSent(msg.getDateSent());
         this.setSourceUser(sourceUser);

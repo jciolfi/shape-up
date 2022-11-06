@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="100dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txt_sticker_one" />
 
@@ -121,19 +122,18 @@
         app:layout_constraintEnd_toEndOf="parent"/>
 
 
-
     <ImageView
         android:id="@+id/img_send_message"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginEnd="8dp"
-        android:onClick="addFriendDialog"
         android:layout_marginBottom="8dp"
+        android:contentDescription="Send Message"
+        android:onClick="sendStickerDialog"
         app:layout_constraintBottom_toTopOf="@+id/img_switch_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/send"
-        tools:ignore="MissingConstraints"
-        android:contentDescription="Send Message" />
+        tools:ignore="MissingConstraints" />
     <ImageView
         android:id="@+id/img_switch_view"
         android:layout_width="50dp"
@@ -159,6 +159,18 @@
         app:srcCompat="@drawable/add_friend"
         tools:ignore="MissingConstraints"
         android:contentDescription="@string/add_friend_desc" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentStickerFriends"
+        android:name="edu.northeastern.numad22fa_team27.sticker_messenger.FriendsFragment"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:elevation="4dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

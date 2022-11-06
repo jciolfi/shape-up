@@ -3,15 +3,21 @@ package edu.northeastern.numad22fa_team27.sticker_messenger;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.firebase.database.DataSnapshot;
@@ -20,8 +26,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,15 +33,20 @@ import java.util.Objects;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.Util;
+import edu.northeastern.numad22fa_team27.spotify.SearchItemViewModel;
 import edu.northeastern.numad22fa_team27.sticker_messenger.models.IncomingMessage;
 import edu.northeastern.numad22fa_team27.sticker_messenger.models.OutgoingMessage;
+import edu.northeastern.numad22fa_team27.sticker_messenger.models.StickerSendModel;
 import edu.northeastern.numad22fa_team27.sticker_messenger.models.StickerTypes;
 import edu.northeastern.numad22fa_team27.sticker_messenger.models.UserDAO;
 
 public class FirebaseActivity extends AppCompatActivity {
     private final String TAG = FirebaseActivity.class.getSimpleName();
+    private final String CHANNEL_ID = "STICKER_CHANNEL";
+    private int notificationId = 0;
 
     private DatabaseReference mDatabase;
+    private FriendsFragment friendsSendFragment;
     private UserDAO user;
     private TextView welcomeText;
     private ValueEventListener userChangeListener = null;
@@ -47,6 +56,16 @@ public class FirebaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sticker_messenger);
         mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        // Set up our ability to send push messages
+        createNotificationChannel();
+
+        // Set up the sticker send fragment
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragmentStickerFriends);
+        getSupportFragmentManager().beginTransaction()
+                .setReorderingAllowed(true)
+                .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                .hide(currentFragment).commit();
 
         //welcomeText = findViewById(R.id.txt_welcome);
         updateImages();
@@ -59,6 +78,16 @@ public class FirebaseActivity extends AppCompatActivity {
          * [x] button to send a sticker
          */
         promptLogin();
+
+        StickerSendModel viewModel = new ViewModelProvider(this).get(StickerSendModel.class);
+        viewModel.getSelectedItem().observe(this, item -> {
+            // Actually send the sticker
+            trySendSticker(new OutgoingMessage(
+                    new Date(),
+                    item.first,
+                    StickerTypes.valueOf(item.second)
+            ));
+        });
     }
 
     @Override
@@ -70,6 +99,48 @@ public class FirebaseActivity extends AppCompatActivity {
             mDatabase.removeEventListener(userChangeListener);
         }
     }
+
+    private void createNotificationChannel() {
+        // Similar to the official documentation at
+        // https://developer.android.com/develop/ui/views/notifications/channels#java
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            // Only proceed if API is 26+ due to incompatibility
+            return;
+        }
+
+        String description = getString(R.string.sticker_notification_channel_description);
+        NotificationChannel channel = new NotificationChannel(
+                CHANNEL_ID,
+                getString(R.string.sticker_notification_channel),
+                NotificationManager.IMPORTANCE_DEFAULT
+        );
+        channel.setDescription(description);
+
+        // Register the channel with the system
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
+    }
+
+    private void pushStickerUpdate(IncomingMessage sticker) {
+        // TODO: This is a dummy image, emulating a sticker lookup
+        Bitmap stickerBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.blue);
+
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("New Sticker!")
+                .setContentText(String.format("%s just gave you a new %s sticker!", sticker.getSourceUser(), sticker.getSticker()))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setLargeIcon(stickerBitmap)
+                .setStyle(new NotificationCompat.BigPictureStyle()
+                        .bigPicture(stickerBitmap)
+                        .bigLargeIcon(null));
+
+
+        // Actually push the notification
+        getSystemService(NotificationManager.class).notify(notificationId++, notificationBuilder.build());
+    }
+
 
     public void showTeamDetails(View v) {
         String message = "Team 27:\nBen, Fabian, Farzad, John";
@@ -109,10 +180,10 @@ public class FirebaseActivity extends AppCompatActivity {
                                             "Welcome Back!",
                                             Toast.LENGTH_SHORT
                                     ).show();
+                                    changeListener();
                                 } else {
                                     addUser(usernameText.getText().toString(), true);
                                 }
-                                changeListener();
                             }
 
                             @Override
@@ -143,6 +214,7 @@ public class FirebaseActivity extends AppCompatActivity {
 
                     if (setThisUser) {
                         user = new UserDAO(username);
+                        changeListener();
                     }
                 }).addOnFailureListener(e -> {
                     Toast.makeText(
@@ -175,18 +247,25 @@ public class FirebaseActivity extends AppCompatActivity {
                     Log.v(TAG, "Data consistency error - DB and local mismatch on our sent messages");
                 }
 
-                // TODO - Notify user with push
+                // Determine the number of new stickers
+                List<IncomingMessage> newStickers = new ArrayList<>();
                 if (canReplace(user.incomingMessages, userDelta.incomingMessages)) {
                     if (userDelta.incomingMessages == null) {
                         Log.v(TAG, "Data consistency error - DB has been wiped");
                     } else if (userDelta.incomingMessages != null && user.incomingMessages == null) {
-                        if (!userDelta.incomingMessages.isEmpty()) {
-                            Log.v(TAG, String.format("We got %d new sticker(s)!", userDelta.incomingMessages.size()));
-                        }
+                        newStickers = userDelta.incomingMessages;
                     } else if (userDelta.incomingMessages.size() > user.incomingMessages.size()) {
-                        Log.v(TAG, String.format("We got %d new sticker(s)!", userDelta.incomingMessages.size() - user.incomingMessages.size()));
+                        userDelta.incomingMessages.removeAll(user.incomingMessages);
+                        newStickers = userDelta.incomingMessages;
                     } else {
                         Log.v(TAG, "Data consistency error - DB has less received stickers than we have");
+                    }
+                }
+
+                // Push notify the number of new stickers
+                if (!newStickers.isEmpty()) {
+                    for (IncomingMessage sticker : newStickers) {
+                        pushStickerUpdate(sticker);
                     }
                 }
 
@@ -224,13 +303,6 @@ public class FirebaseActivity extends AppCompatActivity {
                     friendText.setError("Username can't be empty");
                 } else {
                     tryAddFriend(friendText.getText().toString());
-
-                    // TODO - Here for testing purposes. There should be a dialogue that triggers this
-                    trySendSticker(new OutgoingMessage(
-                            new Date(),
-                            friendText.getText().toString(),
-                            StickerTypes.STICKER_1
-                    ));
                     addFriendDialog.dismiss();
                 }
             });
@@ -242,36 +314,25 @@ public class FirebaseActivity extends AppCompatActivity {
     /**
      * Show a pop-up to select the sticker to send
      */
-    public void sendMessageDialog(View v) {
-        final EditText friendText = new EditText(this);
+    public void sendStickerDialog(View v) {
+        if (user == null || user.friends == null || user.friends.isEmpty()) {
+            Toast.makeText(
+                    getApplicationContext(),
+                    "No friends to send a sticker to.",
+                    Toast.LENGTH_SHORT).show();
 
-        AlertDialog addFriendDialog = new AlertDialog.Builder(this)
-                .setTitle("Select which sticker and to which user you would like to send it to")
-                .setView(friendText)
-                .setPositiveButton("send", null)
-                .setNegativeButton("Cancel", null)
-                .create();
-
-        addFriendDialog.setOnShowListener(dialogInterface -> {
-            Button addButton = addFriendDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            addButton.setOnClickListener(view -> {
-                if (Util.stringIsNullOrEmpty(friendText.getText().toString())) {
-                    friendText.setError("Username can't be empty");
-                } else {
-                    tryAddFriend(friendText.getText().toString());
-
-                    // TODO - Here for testing purposes. There should be a dialogue that triggers this
-                    trySendSticker(new OutgoingMessage(
-                            new Date(),
-                            friendText.getText().toString(),
-                            StickerTypes.STICKER_1
-                    ));
-                    addFriendDialog.dismiss();
-                }
-            });
-        });
-
-        addFriendDialog.show();
+            Log.e(TAG, "Tried to send to friends without (either) an initialized user or friends");
+            return;
+        }
+        List<String> stickers = new ArrayList<>();
+        for (StickerTypes s : StickerTypes.values()) {
+            stickers.add(s.name());
+        }
+        friendsSendFragment = FriendsFragment.newInstance(user.friends, stickers);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentStickerFriends, friendsSendFragment)
+                .show(friendsSendFragment)
+                .commit();
     }
 
     private UserDAO userFromSnapshot(@NonNull DataSnapshot snapshot) {
