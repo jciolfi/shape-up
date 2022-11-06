@@ -7,6 +7,8 @@ import androidx.core.app.NotificationCompat;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -41,6 +43,7 @@ import edu.northeastern.numad22fa_team27.sticker_messenger.models.UserDAO;
 public class FirebaseActivity extends AppCompatActivity {
     private final String TAG = FirebaseActivity.class.getSimpleName();
     private final String CHANNEL_ID = "STICKER_CHANNEL";
+    private int notificationId = 0;
 
     private DatabaseReference mDatabase;
     private UserDAO user;
@@ -102,14 +105,22 @@ public class FirebaseActivity extends AppCompatActivity {
     }
 
     private void pushStickerUpdate(IncomingMessage sticker) {
+        // TODO: This is a dummy image, emulating a sticker lookup
+        Bitmap stickerBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.blue);
+
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("New Sticker!")
                 .setContentText(String.format("%s just gave you a new %s sticker!", sticker.getSourceUser(), sticker.getSticker()))
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setLargeIcon(stickerBitmap)
+                .setStyle(new NotificationCompat.BigPictureStyle()
+                        .bigPicture(stickerBitmap)
+                        .bigLargeIcon(null));
 
-        NotificationManager notificationManager = getSystemService(NotificationManager.class);
-        notificationManager.notify(1, notificationBuilder.build());
+
+        // Actually push the notification
+        getSystemService(NotificationManager.class).notify(notificationId++, notificationBuilder.build());
     }
 
 
