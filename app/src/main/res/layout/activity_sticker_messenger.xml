@@ -6,27 +6,122 @@
     android:layout_height="match_parent"
     tools:context=".sticker_messenger.FirebaseActivity">
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/id_rec_sticker"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="100dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txt_sticker_one" />
+
+
+    <ImageView
+        android:id="@+id/img_sticker_one"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintBottom_toTopOf="@+id/txt_sticker_one"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/img_sticker_two"
+        tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
-        android:id="@+id/txt_welcome"
+        android:id="@+id/txt_sticker_one"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/txt_welcome"
-        app:layout_constraintEnd_toStartOf="@+id/btn_about"
+        android:layout_marginTop="6dp"
+        android:text="TextView"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/img_sticker_one"
+        app:layout_constraintEnd_toStartOf="@+id/img_sticker_two"/>
 
-    <Button
-        android:id="@+id/btn_about"
+    <ImageView
+        android:id="@+id/img_sticker_two"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintBottom_toTopOf="@+id/txt_sticker_two"
+        app:layout_constraintStart_toEndOf="@+id/img_sticker_one"
+        app:layout_constraintEnd_toStartOf="@+id/img_sticker_three"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/txt_sticker_two"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/btn_about"
-        android:onClick="showTeamDetails"
+        android:layout_marginTop="6dp"
+        android:text="TextView"
+        app:layout_constraintStart_toEndOf="@+id/img_sticker_one"
+        app:layout_constraintEnd_toStartOf="@+id/img_sticker_three"
+        app:layout_constraintTop_toBottomOf="@+id/img_sticker_two"/>
+
+    <ImageView
+        android:id="@+id/img_sticker_three"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintBottom_toTopOf="@+id/txt_sticker_three"
+        app:layout_constraintStart_toEndOf="@+id/img_sticker_two"
+        app:layout_constraintEnd_toStartOf="@+id/img_sticker_four"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/txt_sticker_three"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="TextView"
+        app:layout_constraintStart_toEndOf="@+id/img_sticker_two"
+        app:layout_constraintEnd_toStartOf="@+id/img_sticker_four"
+        app:layout_constraintTop_toBottomOf="@+id/img_sticker_three"/>
+
+    <ImageView
+        android:id="@+id/img_sticker_four"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintBottom_toTopOf="@+id/txt_sticker_four"
+        app:layout_constraintStart_toEndOf="@+id/img_sticker_three"
+        app:layout_constraintEnd_toStartOf="@+id/img_sticker_five"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/txt_sticker_four"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="TextView"
+        app:layout_constraintStart_toEndOf="@+id/img_sticker_three"
+        app:layout_constraintEnd_toStartOf="@+id/img_sticker_five"
+        app:layout_constraintTop_toBottomOf="@+id/img_sticker_four"/>
+
+    <ImageView
+        android:id="@+id/img_sticker_five"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintBottom_toTopOf="@+id/txt_sticker_five"
+        app:layout_constraintStart_toEndOf="@+id/img_sticker_four"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/txt_sticker_five"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="TextView"
+        app:layout_constraintStart_toEndOf="@+id/img_sticker_four"
+        app:layout_constraintTop_toBottomOf="@+id/img_sticker_five"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+
     <ImageView
         android:id="@+id/img_send_message"
         android:layout_width="50dp"
