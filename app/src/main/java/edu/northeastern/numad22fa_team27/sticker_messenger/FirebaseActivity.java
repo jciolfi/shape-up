@@ -460,29 +460,29 @@ public class FirebaseActivity extends AppCompatActivity {
     }
 
     private void updateImages() {
-        ImageView imgOne = findViewById(R.id.img_sticker_one);
-        ImageView imgTwo = findViewById(R.id.img_sticker_two);
-        ImageView imgThree = findViewById(R.id.img_sticker_three);
-        ImageView imgFour = findViewById(R.id.img_sticker_four);
-        ImageView imgFive = findViewById(R.id.img_sticker_five);
-
-        imgOne.setImageResource(R.drawable.weights);
-        imgTwo.setImageResource(R.drawable.green);
-        imgThree.setImageResource(R.drawable.blue);
-        imgFour.setImageResource(R.drawable.red);
-        imgFive.setImageResource(R.drawable.yellow);
-
-        TextView txtOne = findViewById(R.id.txt_sticker_one);
-        TextView txtTwo = findViewById(R.id.txt_sticker_two);
-        TextView txtThree = findViewById(R.id.txt_sticker_three);
-        TextView txtFour = findViewById(R.id.txt_sticker_four);
-        TextView txtFive = findViewById(R.id.txt_sticker_five);
-
-        txtOne.setText("0");
-        txtTwo.setText("0");
-        txtThree.setText("0");
-        txtFour.setText("0");
-        txtFive.setText("0");
+//        ImageView imgOne = findViewById(R.id.img_sticker_one);
+//        ImageView imgTwo = findViewById(R.id.img_sticker_two);
+//        ImageView imgThree = findViewById(R.id.img_sticker_three);
+//        ImageView imgFour = findViewById(R.id.img_sticker_four);
+//        ImageView imgFive = findViewById(R.id.img_sticker_five);
+//
+//        imgOne.setImageResource(R.drawable.weights);
+//        imgTwo.setImageResource(R.drawable.green);
+//        imgThree.setImageResource(R.drawable.blue);
+//        imgFour.setImageResource(R.drawable.red);
+//        imgFive.setImageResource(R.drawable.yellow);
+//
+//        TextView txtOne = findViewById(R.id.txt_sticker_one);
+//        TextView txtTwo = findViewById(R.id.txt_sticker_two);
+//        TextView txtThree = findViewById(R.id.txt_sticker_three);
+//        TextView txtFour = findViewById(R.id.txt_sticker_four);
+//        TextView txtFive = findViewById(R.id.txt_sticker_five);
+//
+//        txtOne.setText("0");
+//        txtTwo.setText("0");
+//        txtThree.setText("0");
+//        txtFour.setText("0");
+//        txtFive.setText("0");
 
 
     }
