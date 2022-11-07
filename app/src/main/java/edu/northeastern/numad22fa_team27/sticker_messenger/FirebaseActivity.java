@@ -30,17 +30,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.Util;
@@ -55,21 +52,24 @@ import edu.northeastern.numad22fa_team27.sticker_messenger.models.UserDAO;
 public class FirebaseActivity extends AppCompatActivity {
     private final String TAG = FirebaseActivity.class.getSimpleName();
     private final String CHANNEL_ID = "STICKER_CHANNEL";
+    private final String USER_KEY = "user";
+    private final String STICKER_COUNTS_UI_KEY = "UIStickerCountElements";
+    private final String CHANNEL_KEY = "CreatedChannel";
+    private final String STICKER_COUNTS_KEY = "StickerCounts";
+
     private int notificationId = 0;
 
     private DatabaseReference mDatabase;
-    private FriendsFragment friendsSendFragment;
-    private UserDAO user;
-    private TextView welcomeText;
     private ValueEventListener userChangeListener = null;
 
     private boolean isReceive = false;
     private final List<MessageCards> mCards = new ArrayList<>();
     private RecyclerView lists;
 
-    private Integer[] knownStickerElements;
-
-    // sticker values
+    // Stateful or expensive-to-compute data we need to preserve
+    private UserDAO user;
+    private int[] knownStickerElements;
+    private boolean createdMessageChannel;
     Map<StickerTypes, Integer> StickerCounts;
 
 
@@ -79,8 +79,43 @@ public class FirebaseActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sticker_messenger);
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        // Set up our ability to send push messages
-        createNotificationChannel();
+        if (savedInstanceState != null) {
+            // Load previously populated data if present
+            knownStickerElements = savedInstanceState.getIntArray(STICKER_COUNTS_UI_KEY);
+            createdMessageChannel = savedInstanceState.getBoolean(CHANNEL_KEY);
+            StickerCounts = (Map<StickerTypes, Integer>) savedInstanceState.getSerializable(STICKER_COUNTS_KEY);
+
+            user = savedInstanceState.getParcelable(USER_KEY);
+        } else {
+            // Compute data for the first time
+            knownStickerElements = new int[] {
+                    R.id.txt_sticker_one,
+                    R.id.txt_sticker_two,
+                    R.id.txt_sticker_three,
+                    R.id.txt_sticker_four,
+                    R.id.txt_sticker_five
+            };
+
+            createdMessageChannel = false;
+            StickerCounts = new HashMap<>();
+            resetStickerCounter();
+
+            user = null;
+        }
+
+        if (!createdMessageChannel) {
+            // Set up our ability to send push messages
+            createdMessageChannel = createNotificationChannel();
+        }
+
+        if (user == null){
+            // If this is the first time, we need to prompt login
+            promptLogin();
+        } else {
+            // We have a user. Make sure we show their data
+            populateRecycler();
+            stickerSentCounter();
+        }
 
         // Set up the sticker send fragment
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragmentStickerFriends);
@@ -89,41 +124,20 @@ public class FirebaseActivity extends AppCompatActivity {
                 .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
                 .hide(currentFragment).commit();
 
-        // Precompute lists that we'll repeatedly use later
-        knownStickerElements = new Integer[] {
-                R.id.txt_sticker_one,
-                R.id.txt_sticker_two,
-                R.id.txt_sticker_three,
-                R.id.txt_sticker_four,
-                R.id.txt_sticker_five
-        };
-
-        StickerCounts = new HashMap<>();
-        resetStickerCounter();
-
-        // Set up our RecyclerView
-        RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
+        // Set up our sticker RecyclerView
         lists = findViewById(R.id.id_rec_sticker);
         lists.setHasFixedSize(true);
         lists.setAdapter(new MessageInfo(mCards));
-        lists.setLayoutManager(manager);
+        lists.setLayoutManager(new LinearLayoutManager(this));
 
-        //welcomeText = findViewById(R.id.txt_welcome);
-        ImageView imgOne = findViewById(R.id.img_sticker_one);
-        ImageView imgTwo = findViewById(R.id.img_sticker_two);
-        ImageView imgThree = findViewById(R.id.img_sticker_three);
-        ImageView imgFour = findViewById(R.id.img_sticker_four);
-        ImageView imgFive = findViewById(R.id.img_sticker_five);
-
-        imgOne.setImageResource(getDrawableFromEnum(StickerTypes.STICKER_1));
-        imgTwo.setImageResource(getDrawableFromEnum(StickerTypes.STICKER_2));
-        imgThree.setImageResource(getDrawableFromEnum(StickerTypes.STICKER_3));
-        imgFour.setImageResource(getDrawableFromEnum(StickerTypes.STICKER_4));
-        imgFive.setImageResource(getDrawableFromEnum(StickerTypes.STICKER_5));
+        // Set the icons of the stickers we can send/receive
+        ((ImageView)findViewById(R.id.img_sticker_one)).setImageResource(StickerTypes.STICKER_1.imgId);
+        ((ImageView)findViewById(R.id.img_sticker_two)).setImageResource(StickerTypes.STICKER_2.imgId);
+        ((ImageView)findViewById(R.id.img_sticker_three)).setImageResource(StickerTypes.STICKER_3.imgId);
+        ((ImageView)findViewById(R.id.img_sticker_four)).setImageResource(StickerTypes.STICKER_4.imgId);
+        ((ImageView)findViewById(R.id.img_sticker_five)).setImageResource(StickerTypes.STICKER_5.imgId);
 
         updateImages();
-
-        promptLogin();
 
         // Callback to send stickers
         StickerSendModel viewModel = new ViewModelProvider(this).get(StickerSendModel.class);
@@ -138,6 +152,15 @@ public class FirebaseActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putIntArray(STICKER_COUNTS_UI_KEY, knownStickerElements);
+        savedInstanceState.putBoolean(CHANNEL_KEY, createdMessageChannel);
+        savedInstanceState.putSerializable(STICKER_COUNTS_KEY, (Serializable) StickerCounts);
+        savedInstanceState.putParcelable(USER_KEY, user);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
 
@@ -147,13 +170,16 @@ public class FirebaseActivity extends AppCompatActivity {
         }
     }
 
-    private void createNotificationChannel() {
+    /**
+     * One-time initialization of the notification channel. This allows us to create push messages.
+     */
+    private boolean createNotificationChannel() {
         // Similar to the official documentation at
         // https://developer.android.com/develop/ui/views/notifications/channels#java
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             // Only proceed if API is 26+ due to incompatibility
-            return;
+            return false;
         }
 
         String description = getString(R.string.sticker_notification_channel_description);
@@ -167,15 +193,20 @@ public class FirebaseActivity extends AppCompatActivity {
         // Register the channel with the system
         NotificationManager notificationManager = getSystemService(NotificationManager.class);
         notificationManager.createNotificationChannel(channel);
+        return true;
     }
 
+    /**
+     * Push a notification about a received sticker to the user
+     * @param sticker Received sticker to notify to user
+     */
     private void pushStickerUpdate(IncomingMessage sticker) {
-        Bitmap stickerBitmap = BitmapFactory.decodeResource(getResources(), getDrawableFromEnum(sticker.getSticker()));
+        Bitmap stickerBitmap = BitmapFactory.decodeResource(getResources(), sticker.getSticker().imgId);
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("New Sticker!")
-                .setContentText(String.format("%s just gave you a new %s sticker!", sticker.getSourceUser(), sticker.getSticker()))
+                .setContentText(String.format("%s just gave you a new %s sticker!", sticker.getSourceUser(), StickerTypes.getNameFromEnum(sticker.getSticker())))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setLargeIcon(stickerBitmap)
                 .setStyle(new NotificationCompat.BigPictureStyle()
@@ -183,7 +214,8 @@ public class FirebaseActivity extends AppCompatActivity {
                         .bigLargeIcon(null));
 
         // Actually push the notification
-        getSystemService(NotificationManager.class).notify(notificationId++, notificationBuilder.build());
+        getSystemService(NotificationManager.class)
+                .notify(notificationId++, notificationBuilder.build());
     }
 
 
@@ -220,7 +252,7 @@ public class FirebaseActivity extends AppCompatActivity {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 if (snapshot.exists()) {
-                                    user = userFromSnapshot(snapshot);
+                                    user = new FirebaseUserDaoConverter().convert(snapshot);
 
                                     // Initial draw call to show stickers
                                     populateRecycler();
@@ -283,9 +315,9 @@ public class FirebaseActivity extends AppCompatActivity {
 
             /**
              * Check if we can merge new data into old data list
-             * @param oldData
-             * @param newData
-             * @return
+             * @param oldData Original data list
+             * @param newData Potentially updated version of the old data list
+             * @return true if new data is a valid replacement for the old data list
              */
             private boolean canReplace(List oldData, List newData) {
                 return (oldData == null && newData != null) || (oldData != null && newData != null && !newData.equals(oldData));
@@ -293,7 +325,7 @@ public class FirebaseActivity extends AppCompatActivity {
 
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                UserDAO userDelta = userFromSnapshot(snapshot);
+                UserDAO userDelta = new FirebaseUserDaoConverter().convert(snapshot);
 
                 if (canReplace(user.outgoingMessages, userDelta.outgoingMessages)) {
                     Log.v(TAG, "Data consistency error - DB and local mismatch on our sent messages");
@@ -407,74 +439,12 @@ public class FirebaseActivity extends AppCompatActivity {
             return;
         }
 
-        List<String> stickers = Stream.of(StickerTypes.values())
-                .map(Enum::name)
-                .collect(Collectors.toList());
-
         // Build a fragment with our current friends list
-        friendsSendFragment = FriendsFragment.newInstance(user.friends, stickers);
+        FriendsFragment friendsSendFragment = FriendsFragment.newInstance(user.friends);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragmentStickerFriends, friendsSendFragment)
                 .show(friendsSendFragment)
                 .commit();
-    }
-
-    private List<IncomingMessage> marshalIncoming(DataSnapshot snapshot) {
-        return StreamSupport.stream(snapshot.getChildren().spliterator(), false)
-                .map(e -> new IncomingMessage(
-                        (Date)e.child("dateSent").getValue(Date.class),
-                        (String)e.child("sourceUser").getValue(String.class),
-                        (StickerTypes)e.child("sticker").getValue(StickerTypes.class)
-                ))
-                .collect(Collectors.toList());
-    }
-
-    private List<OutgoingMessage> marshalOutgoing(DataSnapshot snapshot) {
-        return StreamSupport.stream(snapshot.getChildren().spliterator(), false)
-                .map(e -> new OutgoingMessage(
-                        (Date)e.child("dateSent").getValue(Date.class),
-                        (String)e.child("destUser").getValue(String.class),
-                        (StickerTypes)e.child("sticker").getValue(StickerTypes.class)
-                ))
-                .collect(Collectors.toList());
-    }
-
-    private UserDAO userFromSnapshot(@NonNull DataSnapshot snapshot) {
-        List<String> friends = new ArrayList<>();
-        List<IncomingMessage> incomingMessages = new ArrayList<>();
-        List<OutgoingMessage> outgoingMessages = new ArrayList<>();
-        for(DataSnapshot ds : snapshot.getChildren()) {
-            String key = Objects.requireNonNull(ds.getKey());
-            try {
-                switch (key) {
-                    case "friends": {
-                        friends = (List<String>) ds.getValue();
-                        break;
-                    }
-                    case "incomingMessages": {
-                        incomingMessages = marshalIncoming(ds);
-                        break;
-                    }
-                    case "outgoingMessages": {
-                        outgoingMessages = marshalOutgoing(ds);
-                        break;
-                    }
-                    default:
-                        break;
-                }
-            } catch (Exception e) {
-                // Creation of lists failed - this would happen if data present cannot be marshalled
-                // into expected datatype.
-                Log.e(TAG, String.format("Could not load data in DAO field %s", key));
-            }
-        }
-
-        return new UserDAO(
-                snapshot.getKey(),
-                friends,
-                incomingMessages,
-                outgoingMessages
-        );
     }
 
     private void trySendSticker(OutgoingMessage message) {
@@ -482,7 +452,7 @@ public class FirebaseActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    UserDAO stickerRecipient = userFromSnapshot(snapshot);
+                    UserDAO stickerRecipient = new FirebaseUserDaoConverter().convert(snapshot);
                     stickerRecipient.incomingMessages.add(new IncomingMessage(message, user.username));
 
                     // Submit transaction
@@ -593,24 +563,6 @@ public class FirebaseActivity extends AppCompatActivity {
             }
             TextView countBox = findViewById(knownStickerElements[index++]);
             countBox.setText(Integer.toString(StickerCounts.get(s)));
-        }
-    }
-
-    private int getDrawableFromEnum(StickerTypes sticker) {
-        switch (sticker) {
-            case STICKER_1:
-                return R.drawable.arcade_vectorportal;
-            case STICKER_2:
-                return R.drawable.baseball_vectorportal;
-            case STICKER_3:
-                return R.drawable.vinyl_vectorportal;
-            case STICKER_4:
-                return R.drawable.chicken_bucket_vectorportal;
-            case STICKER_5:
-                return R.drawable.cassette_vectorportal;
-            default:
-                // We don't know
-                return R.drawable.ufo_vectorportal;
         }
     }
 

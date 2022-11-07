@@ -15,13 +15,13 @@ import android.widget.Button;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import edu.northeastern.numad22fa_team27.R;
-import edu.northeastern.numad22fa_team27.spotify.SearchItem;
-import edu.northeastern.numad22fa_team27.spotify.SearchItemViewModel;
 import edu.northeastern.numad22fa_team27.sticker_messenger.models.StickerSendModel;
+import edu.northeastern.numad22fa_team27.sticker_messenger.models.StickerTypes;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,9 +29,7 @@ import edu.northeastern.numad22fa_team27.sticker_messenger.models.StickerSendMod
  * create an instance of this fragment.
  */
 public class FriendsFragment extends Fragment {
-    private static final String TAG = "FriendsFragment";
     private static final String ARG_PARAM1 = "friendsList";
-    private static final String ARG_PARAM2 = "stickerOptions";
 
     private StickerSendModel viewModel;
     private List<String> friendsList;
@@ -46,14 +44,12 @@ public class FriendsFragment extends Fragment {
      * this fragment using the provided parameters.
      *
      * @param friendsList Parameter 1.
-     * @param stickerOptions Parameter 2.
      * @return A new instance of fragment FriendsFragment.
      */
-    public static FriendsFragment newInstance(List<String> friendsList, List<String> stickerOptions) {
+    public static FriendsFragment newInstance(List<String> friendsList) {
         FriendsFragment fragment = new FriendsFragment();
         Bundle args = new Bundle();
         args.putStringArrayList(ARG_PARAM1, (ArrayList<String>) friendsList);
-        args.putStringArrayList(ARG_PARAM2, (ArrayList<String>) stickerOptions);
         fragment.setArguments(args);
         return fragment;
     }
@@ -61,13 +57,13 @@ public class FriendsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            friendsList = getArguments().getStringArrayList(ARG_PARAM1);
-            stickerOptions = getArguments().getStringArrayList(ARG_PARAM2);
-        } else {
-            friendsList = new ArrayList<>();
-            stickerOptions = new ArrayList<>();
-        }
+        friendsList = (getArguments() != null)
+            ? getArguments().getStringArrayList(ARG_PARAM1)
+            : new ArrayList<>();
+
+        stickerOptions = Stream.of(StickerTypes.values())
+                .map(Enum::name)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -92,8 +88,6 @@ public class FriendsFragment extends Fragment {
         stickers.setAdapter(stickerAdapter);
         stickers.setSelection(0);
 
-        Log.v(TAG, String.format("We have %d friends and %d possible stickers", friendsList.size(), stickerOptions.size()));
-
         viewModel = new ViewModelProvider(requireActivity()).get(StickerSendModel.class);
 
         // Add callbacks
@@ -117,8 +111,6 @@ public class FriendsFragment extends Fragment {
                     .hide(this)
                     .commit();
         });
-
-        Log.v(TAG, "Created!");
 
         return sendView;
     }

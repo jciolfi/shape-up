@@ -1,8 +1,9 @@
 package edu.northeastern.numad22fa_team27.sticker_messenger.models;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class OutgoingMessage {
+public class OutgoingMessage implements Serializable {
     // date sticker was sent
     private Date dateSent;
     // user the sticker will go to
