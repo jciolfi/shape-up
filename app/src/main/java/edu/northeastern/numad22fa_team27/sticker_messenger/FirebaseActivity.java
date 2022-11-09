@@ -407,6 +407,8 @@ public class FirebaseActivity extends AppCompatActivity {
      */
     public void addFriendDialog(View v) {
         final EditText friendText = new EditText(this);
+        friendText.setInputType(InputType.TYPE_CLASS_TEXT);
+
         AlertDialog addFriendDialog = new AlertDialog.Builder(this)
                 .setTitle("Enter username of friend")
                 .setView(friendText)
