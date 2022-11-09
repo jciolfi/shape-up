@@ -17,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -230,6 +231,8 @@ public class FirebaseActivity extends AppCompatActivity {
      */
     private void promptLogin() {
         final EditText usernameText = new EditText(this);
+        usernameText.setInputType(InputType.TYPE_CLASS_TEXT);
+
         AlertDialog loginDialog = new AlertDialog.Builder(this)
                 .setTitle("Log in with your username")
                 .setMessage("If you don't have an account, one will be made for you")
