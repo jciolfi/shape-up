@@ -348,6 +348,7 @@ public class FirebaseActivity extends AppCompatActivity {
 
                 // Push notify the number of new stickers
                 if (!newStickers.isEmpty()) {
+                    Log.v(TAG, String.format("We have %d new stickers!", newStickers.size()));
                     for (IncomingMessage sticker : newStickers) {
                         pushStickerUpdate(sticker);
                     }

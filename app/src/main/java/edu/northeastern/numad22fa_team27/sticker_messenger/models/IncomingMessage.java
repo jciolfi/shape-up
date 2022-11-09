@@ -50,4 +50,21 @@ public class IncomingMessage implements Serializable {
     public void setSticker(StickerTypes sticker) {
         this.sticker = sticker;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        IncomingMessage other = (IncomingMessage) o;
+
+        return other.sourceUser.equals(this.sourceUser)
+                && other.sticker == this.sticker
+                && other.dateSent.equals(this.dateSent);
+    }
 }
