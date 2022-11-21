@@ -1,17 +1,20 @@
 package edu.northeastern.numad22fa_team27.workout.models;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Object representation of a single workout exercise
  */
-public class WorkoutDAO {
+public class Workout {
+    private UUID workoutID;
     private String workoutName;
     private List<MediaParagraph> workoutDescription;
     private List<WorkoutCategory> categoriesPresent;
     private float difficulty;
 
-    public WorkoutDAO(String workoutName, List<MediaParagraph> workoutDescription, List<WorkoutCategory> categoriesPresent, float difficulty) {
+    public Workout(UUID workoutID, String workoutName, List<MediaParagraph> workoutDescription, List<WorkoutCategory> categoriesPresent, float difficulty) {
+        this.workoutID = workoutID;
         this.workoutName = workoutName;
         this.workoutDescription = workoutDescription;
         this.categoriesPresent = categoriesPresent;
@@ -84,10 +87,14 @@ public class WorkoutDAO {
 
     @Override
     public String toString() {
-        return "WorkoutDAO{" +
+        return "Workout{" +
                 "workoutName='" + workoutName + '\'' +
                 ", categoriesPresent=" + categoriesPresent +
                 ", difficulty=" + difficulty +
                 '}';
+    }
+
+    public UUID getWorkoutID() {
+        return workoutID;
     }
 }

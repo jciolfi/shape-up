@@ -20,7 +20,7 @@ public enum WorkoutCategory {
     BALANCE, // The ability to control the placement of the body’s center of gravity in relation to its support base
     ACCURACY; // The ability to control movement in a given direction or at a given intensity
 
-    public static String Describe(WorkoutCategory w) {
+    public static String describe(WorkoutCategory w) {
         switch (w) {
             case ENDURANCE:
                 return Resources.getSystem().getString(R.string.workout_endurance_description);
