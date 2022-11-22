@@ -84,33 +84,27 @@ public class RegisterActivity extends AppCompatActivity {
                 String pass = usr_pass.getText().toString();
                 String pass_confirm = usr_pass_confirm.getText().toString();
 
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                if (user != null) {
-                    Toast.makeText(RegisterActivity.this, "User already exists! Please log in.", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                    startActivity(intent);
-                } else {
-
-                    if (!TextUtils.isEmpty(email) || !TextUtils.isEmpty(pass) || !TextUtils.isEmpty(pass_confirm)) {
-                        if (pass.equals(pass_confirm)) {
-                            user_auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.isSuccessful()) {
-                                        showMainPage();
-                                    } else {
-                                        String error = task.getException().getMessage();
-                                        Toast.makeText(RegisterActivity.this, "Error: " + error, Toast.LENGTH_SHORT).show();
-                                    }
+                if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass) && !TextUtils.isEmpty(pass_confirm)) {
+                    if (pass.equals(pass_confirm)) {
+                        user_auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    showMainPage();
+                                } else {
+                                    Toast.makeText(RegisterActivity.this, "User already exists! Please log in.", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                                    startActivity(intent);
                                 }
-                            });
-                        } else {
-                            Toast.makeText(RegisterActivity.this, "Passwords doesn't match! Please Try again.", Toast.LENGTH_SHORT).show();
-                        }
+                            }
+                        });
                     } else {
-                        Toast.makeText(RegisterActivity.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegisterActivity.this, "Passwords doesn't match! Please Try again.", Toast.LENGTH_SHORT).show();
                     }
+                } else {
+                    Toast.makeText(RegisterActivity.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
                 }
+
             }
         });
     }
