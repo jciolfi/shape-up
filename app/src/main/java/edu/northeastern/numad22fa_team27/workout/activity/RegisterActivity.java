@@ -10,19 +10,46 @@ import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
+import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.text.style.ClickableSpan;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import edu.northeastern.numad22fa_team27.R;
 
 public class RegisterActivity extends AppCompatActivity {
 
+    private TextView usr_email, usr_pass, usr_pass_confirm;
+    private Button sign_up_btn;
+    // TODO
+    // Add progressbar
+    private ProgressBar pb;
+    private FirebaseAuth user_auth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        usr_email = findViewById(R.id.register_EmailAddress);
+        usr_pass = findViewById(R.id.register_password);
+        usr_pass_confirm = findViewById(R.id.repeat_register_Password);
+        sign_up_btn = findViewById(R.id.btn_signup);
+        user_auth = FirebaseAuth.getInstance();
+
+        setPassword();
+        registerButtonClicked();
 
         TextView tv = findViewById(R.id.already_have_account);
         String txt = "Already have an account? Sign in here";
@@ -42,5 +69,55 @@ public class RegisterActivity extends AppCompatActivity {
         ss.setSpan(cs, 25, 37, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         tv.setText(ss);
         tv.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
+    private void setPassword() {
+        usr_email.setTransformationMethod(PasswordTransformationMethod.getInstance());
+        usr_pass_confirm.setTransformationMethod(PasswordTransformationMethod.getInstance());
+    }
+
+    private void registerButtonClicked() {
+        sign_up_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String email = usr_email.getText().toString();
+                String pass = usr_pass.getText().toString();
+                String pass_confirm = usr_pass_confirm.getText().toString();
+
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user != null) {
+                    Toast.makeText(RegisterActivity.this, "User already exists! Please log in.", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                } else {
+
+                    if (!TextUtils.isEmpty(email) || !TextUtils.isEmpty(pass) || !TextUtils.isEmpty(pass_confirm)) {
+                        if (pass.equals(pass_confirm)) {
+                            user_auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        showMainPage();
+                                    } else {
+                                        String error = task.getException().getMessage();
+                                        Toast.makeText(RegisterActivity.this, "Error: " + error, Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                        } else {
+                            Toast.makeText(RegisterActivity.this, "Passwords doesn't match! Please Try again.", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(RegisterActivity.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+    }
+
+    public void showMainPage() {
+        // TODO
+        // This should redirect the user to the main page
+        Toast.makeText(RegisterActivity.this, "User Created", Toast.LENGTH_SHORT).show();
     }
 }
