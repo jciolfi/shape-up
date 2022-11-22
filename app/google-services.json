@@ -1,33 +1,34 @@
 {
   "project_info": {
-    "project_number": "196017561592",
-    "project_id": "numadfa22stickers",
-    "storage_bucket": "numadfa22stickers.appspot.com"
+    "project_number": "279324485328",
+    "firebase_url": "https://numad22fa-team27-workout-default-rtdb.firebaseio.com",
+    "project_id": "numad22fa-team27-workout",
+    "storage_bucket": "numad22fa-team27-workout.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:196017561592:android:ae83ef87e4a33bd9a9000d",
+        "mobilesdk_app_id": "1:279324485328:android:865d3d6af7d6e04672e0d5",
         "android_client_info": {
           "package_name": "edu.northeastern.numad22fa_team27"
         }
       },
       "oauth_client": [
         {
-          "client_id": "196017561592-8vs9c2nghvb1ectajp5nbs5gvk9qikva.apps.googleusercontent.com",
+          "client_id": "279324485328-427ejbcr7k29pkf540l7k30cm2ug5kkr.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDy10rOK0gmFJhhYPVKQikBpP2muozPxkY"
+          "current_key": "AIzaSyDr8QzmWqfBsQlzQ4VEvxRdFp-5rDUe_x4"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "196017561592-8vs9c2nghvb1ectajp5nbs5gvk9qikva.apps.googleusercontent.com",
+              "client_id": "279324485328-427ejbcr7k29pkf540l7k30cm2ug5kkr.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
