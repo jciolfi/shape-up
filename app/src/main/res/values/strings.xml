@@ -31,4 +31,7 @@
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="create_account_message">Don\'t have an account? Create one here</string>
+    <string name="sign_up_btn">Sign Up</string>
+    <string name="repeat_password">Repeat Password</string>
+    <string name="have_an_account_txt">Already have an account? Sign in here</string>
 </resources>

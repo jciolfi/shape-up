@@ -3,6 +3,7 @@ package edu.northeastern.numad22fa_team27.workout.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -12,6 +13,7 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import edu.northeastern.numad22fa_team27.R;
 
@@ -28,7 +30,8 @@ public class LoginActivity extends AppCompatActivity {
         ClickableSpan cs = new ClickableSpan() {
             @Override
             public void onClick(@NonNull View widget) {
-
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(intent);
             }
             @Override
             public void updateDrawState(@NonNull TextPaint ds) {
