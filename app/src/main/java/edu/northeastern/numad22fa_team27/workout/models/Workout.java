@@ -1,5 +1,6 @@
 package edu.northeastern.numad22fa_team27.workout.models;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,6 +13,14 @@ public class Workout {
     private List<MediaParagraph> workoutDescription;
     private List<WorkoutCategory> categoriesPresent;
     private float difficulty;
+
+    public Workout() {
+        this.workoutID = UUID.randomUUID();
+        this.workoutName = new String();
+        this.workoutDescription = new ArrayList<>();
+        this.categoriesPresent = new ArrayList<>();
+        this.difficulty = -1.0f;
+    }
 
     public Workout(UUID workoutID, String workoutName, List<MediaParagraph> workoutDescription, List<WorkoutCategory> categoriesPresent, float difficulty) {
         this.workoutID = workoutID;
@@ -96,5 +105,9 @@ public class Workout {
 
     public UUID getWorkoutID() {
         return workoutID;
+    }
+
+    public void setWorkoutID(UUID id) {
+        workoutID = id;
     }
 }

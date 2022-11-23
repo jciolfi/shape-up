@@ -1,5 +1,8 @@
 package edu.northeastern.numad22fa_team27;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import android.widget.Toast;
@@ -7,7 +10,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,6 +38,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import edu.northeastern.numad22fa_team27.sticker_messenger.FirebaseUserDaoConverter;
+import edu.northeastern.numad22fa_team27.workout.converters.WorkoutSnapshotConverter;
 import edu.northeastern.numad22fa_team27.workout.models.MediaParagraph;
 import edu.northeastern.numad22fa_team27.workout.models.Workout;
 import edu.northeastern.numad22fa_team27.workout.models.WorkoutCategory;
@@ -43,11 +50,11 @@ import edu.northeastern.numad22fa_team27.workout.models.WorkoutCategory;
  */
 @RunWith(Parameterized.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class ExampleInstrumentedTest {
-    private final String WORKOUT_TABLE = "workouts";
+public class WorkoutDBInstrumentedTest {
+    private static final String WORKOUT_TABLE = "workouts";
+    private static DatabaseReference mDatabase;
+    private static Workout currWorkout;
     private CountDownLatch latch = new CountDownLatch(1);
-    private DatabaseReference mDatabase;
-    private Workout currWorkout;
 
     static class AttributeGenerator {
         private Random random = new java.util.Random();
@@ -109,12 +116,17 @@ public class ExampleInstrumentedTest {
         }
     }
 
-    @Before
-    public void setUp() {
+    @BeforeClass
+    public static void setUp() {
         mDatabase = FirebaseDatabase.getInstance().getReference();
     }
 
-    public ExampleInstrumentedTest(UUID id, String name, List<MediaParagraph> text, List<WorkoutCategory> categories, float difficulty) {
+    @AfterClass
+    public static void tearDown() {
+        mDatabase.child(WORKOUT_TABLE).child(currWorkout.getWorkoutID().toString()).setValue(null);
+    }
+
+    public WorkoutDBInstrumentedTest(UUID id, String name, List<MediaParagraph> text, List<WorkoutCategory> categories, float difficulty) {
         currWorkout = new Workout(id, name, text, categories, difficulty);
     }
 
@@ -160,7 +172,15 @@ public class ExampleInstrumentedTest {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         assertTrue(snapshot.exists());
 
-                        // TODO: Conversion code, then compare original vs converted
+                        Workout retrievedWorkout = new WorkoutSnapshotConverter().unpack(snapshot);
+
+                        assertNotNull(retrievedWorkout);
+
+                        assertEquals(retrievedWorkout.getDifficulty(), currWorkout.getDifficulty(), 0);
+                        assertTrue(retrievedWorkout.getWorkoutName().equals(currWorkout.getWorkoutName()));
+                        assertEquals(retrievedWorkout.getWorkoutID().hashCode(), currWorkout.getWorkoutID().hashCode());
+                        assertArrayEquals(retrievedWorkout.getWorkoutDescription().toArray(), currWorkout.getWorkoutDescription().toArray());
+                        assertArrayEquals(retrievedWorkout.getCategoriesPresent().toArray(), currWorkout.getCategoriesPresent().toArray());
                     }
 
                     @Override
