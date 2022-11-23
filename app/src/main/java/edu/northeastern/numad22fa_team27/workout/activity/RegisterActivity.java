@@ -27,6 +27,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import edu.northeastern.numad22fa_team27.R;
+import edu.northeastern.numad22fa_team27.Util;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -58,8 +59,7 @@ public class RegisterActivity extends AppCompatActivity {
         ClickableSpan cs = new ClickableSpan() {
             @Override
             public void onClick(@NonNull View widget) {
-                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                startActivity(intent);
+                Util.openActivity(RegisterActivity.this, LoginActivity.class);
             }
             @Override
             public void updateDrawState(@NonNull TextPaint ds) {
@@ -99,8 +99,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 } else {
                                     // If registration not successful that means there is a user with this credentials in our DB
                                     Toast.makeText(RegisterActivity.this, "User already exists! Please log in.", Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                                    startActivity(intent);
+                                    Util.openActivity(RegisterActivity.this, LoginActivity.class);
                                 }
                             }
                         });

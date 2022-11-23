@@ -27,6 +27,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import edu.northeastern.numad22fa_team27.R;
+import edu.northeastern.numad22fa_team27.Util;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -56,8 +57,7 @@ public class LoginActivity extends AppCompatActivity {
         ClickableSpan cs = new ClickableSpan() {
             @Override
             public void onClick(@NonNull View widget) {
-                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-                startActivity(intent);
+                Util.openActivity(LoginActivity.this, RegisterActivity.class);
             }
             @Override
             public void updateDrawState(@NonNull TextPaint ds) {
@@ -110,8 +110,7 @@ public class LoginActivity extends AppCompatActivity {
                 } else {
                     // The user does not exist in our DB and redirect user to the register page
                     Toast.makeText(LoginActivity.this, "User does not exist! Please Sign up!", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-                    startActivity(intent);
+                    Util.openActivity(LoginActivity.this, RegisterActivity.class);
                 }
 
             }
