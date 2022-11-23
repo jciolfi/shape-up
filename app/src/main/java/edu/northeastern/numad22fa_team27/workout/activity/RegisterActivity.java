@@ -48,9 +48,10 @@ public class RegisterActivity extends AppCompatActivity {
         sign_up_btn = findViewById(R.id.btn_signup);
         user_auth = FirebaseAuth.getInstance();
 
-        setPassword();
+
         registerButtonClicked();
 
+        // Specify the part of the test where user can click to register an account
         TextView tv = findViewById(R.id.already_have_account);
         String txt = "Already have an account? Sign in here";
         SpannableString ss = new SpannableString(txt);
@@ -71,20 +72,24 @@ public class RegisterActivity extends AppCompatActivity {
         tv.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
-    private void setPassword() {
+    private void registerButtonClicked() {
         usr_email.setTransformationMethod(PasswordTransformationMethod.getInstance());
         usr_pass_confirm.setTransformationMethod(PasswordTransformationMethod.getInstance());
-    }
-
-    private void registerButtonClicked() {
         sign_up_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Get the entered email, pass, and pass confirmation
                 String email = usr_email.getText().toString();
                 String pass = usr_pass.getText().toString();
                 String pass_confirm = usr_pass_confirm.getText().toString();
 
-                if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass) && !TextUtils.isEmpty(pass_confirm)) {
+                // Checks the empty Fields
+                boolean isNotEmptyField = !TextUtils.isEmpty(email)
+                                          && !TextUtils.isEmpty(pass)
+                                          && !TextUtils.isEmpty(pass_confirm);
+                // If the fields are not empty
+                if (isNotEmptyField) {
+                    // if the pass and pass_confirm matches
                     if (pass.equals(pass_confirm)) {
                         user_auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
@@ -92,6 +97,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     showMainPage();
                                 } else {
+                                    // If registration not successful that means there is a user with this credentials in our DB
                                     Toast.makeText(RegisterActivity.this, "User already exists! Please log in.", Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                                     startActivity(intent);
