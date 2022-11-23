@@ -121,5 +121,9 @@ public class LoginActivity extends AppCompatActivity {
         // TODO
         // This should redirect the user to the main page
         Toast.makeText(LoginActivity.this, "Successfully Signed in", Toast.LENGTH_SHORT).show();
+        Util.openActivity(LoginActivity.this, ProfileActivity.class);
     }
+
+    // TODO
+    // Implement the logic when user presses back button after logging in.
 }

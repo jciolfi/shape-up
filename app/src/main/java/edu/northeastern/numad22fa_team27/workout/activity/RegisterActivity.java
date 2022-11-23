@@ -115,8 +115,8 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     public void showMainPage() {
-        // TODO
-        // This should redirect the user to the main page
-        Toast.makeText(RegisterActivity.this, "User Created", Toast.LENGTH_SHORT).show();
+        // This should redirect the user to the login page
+        Toast.makeText(RegisterActivity.this, "User successfully created. Please log in!", Toast.LENGTH_SHORT).show();
+        Util.openActivity(RegisterActivity.this, LoginActivity.class);
     }
 }
