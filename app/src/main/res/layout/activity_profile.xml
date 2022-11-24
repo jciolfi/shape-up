@@ -40,12 +40,14 @@
             tools:srcCompat="@tools:sample/avatars" />
     </androidx.cardview.widget.CardView>
 
-    <TextView
+    <Button
         android:id="@+id/profWorkOuts"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
-        android:drawableStart="@drawable/workout"
+        android:drawableLeft="@drawable/workout"
+        android:textColor="#070707"
+        android:background="?attr/selectableItemBackground"
         android:gravity="center"
         android:ems="10"
         android:inputType="textPersonName"
@@ -58,12 +60,14 @@
         android:clickable="true"
         android:importantForAutofill="no" />
 
-    <TextView
+    <Button
         android:id="@+id/profFriends"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:drawableStart="@drawable/friends"
+        android:drawableLeft="@drawable/friends"
+        android:textColor="#070707"
+        android:background="?attr/selectableItemBackground"
         android:gravity="center"
         android:ems="10"
         android:inputType="textPersonName"
@@ -74,12 +78,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profWorkOuts" />
 
-    <TextView
+    <Button
         android:id="@+id/profGroups"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:drawableStart="@drawable/groups"
+        android:drawableLeft="@drawable/groups"
+        android:textColor="#070707"
+        android:background="?attr/selectableItemBackground"
         android:gravity="center"
         android:ems="10"
         android:inputType="textPersonName"
@@ -90,12 +96,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profFriends" />
 
-    <TextView
+    <Button
         android:id="@+id/profMessages"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:drawableStart="@drawable/messages"
+        android:drawableLeft="@drawable/messages"
+        android:textColor="#070707"
+        android:background="?attr/selectableItemBackground"
         android:gravity="center"
         android:ems="10"
         android:inputType="textPersonName"
@@ -106,12 +114,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profGroups" />
 
-    <TextView
+    <Button
         android:id="@+id/profSettings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:drawableStart="@drawable/settings"
+        android:drawableLeft="@drawable/settings"
+        android:textColor="#070707"
+        android:background="?attr/selectableItemBackground"
         android:gravity="center"
         android:ems="10"
         android:inputType="textPersonName"
