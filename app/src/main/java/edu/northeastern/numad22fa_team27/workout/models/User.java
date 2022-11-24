@@ -1,7 +1,5 @@
 package edu.northeastern.numad22fa_team27.workout.models;
 
-import static java.lang.System.out;
-
 import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
 
@@ -13,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class UserDAO {
+public class User {
     private String username;
     private String encryptedPassword;
 
@@ -34,7 +32,7 @@ public class UserDAO {
      * @param username Unique string identifying user
      * @param encryptedPassword Hashed password
      */
-    public UserDAO(String username, String encryptedPassword) {
+    public User(String username, String encryptedPassword) {
         this.friendUsernames = new ArrayList<>();
         this.joinedGroups = new ArrayList<>();
         this.currentCategoryStreaks = new HashMap<>();
@@ -51,7 +49,7 @@ public class UserDAO {
      * @param currentCategoryStreaks Map of streak category to current streak info
      * @param bestCategoryStreaks Map of streak category to best streak info
      */
-    public UserDAO(String username, String encryptedPassword, List<String> friendUsernames, List<UUID> joinedGroups, Map<WorkoutCategory, Pair<Integer, LocalDate>> currentCategoryStreaks, Map<WorkoutCategory, Integer> bestCategoryStreaks) {
+    public User(String username, String encryptedPassword, List<String> friendUsernames, List<UUID> joinedGroups, Map<WorkoutCategory, Pair<Integer, LocalDate>> currentCategoryStreaks, Map<WorkoutCategory, Integer> bestCategoryStreaks) {
         this.username = username;
         this.friendUsernames = friendUsernames;
         this.joinedGroups = joinedGroups;
@@ -65,7 +63,7 @@ public class UserDAO {
      * @param workout Workout just now finished
      * @param when Timestamp when the workout occurred
      */
-    public void recordWorkout(@NonNull WorkoutDAO workout, LocalDate when) {
+    public void recordWorkout(@NonNull Workout workout, LocalDate when) {
         for (WorkoutCategory w : workout.getCategoriesPresent()) {
             this.addToStreak(w, when);
         }
