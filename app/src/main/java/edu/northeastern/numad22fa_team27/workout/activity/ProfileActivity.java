@@ -47,4 +47,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
     }
+
+    // TODO
+    // Implement the logic when user presses back button.
 }

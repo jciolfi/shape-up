@@ -25,6 +25,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.SignInMethodQueryResult;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.Util;
@@ -78,41 +79,42 @@ public class LoginActivity extends AppCompatActivity {
                 // Get the user and pass of the user
                 String email = usr_email.getText().toString();
                 String pass = usr_pass.getText().toString();
+                // Check if the user already exists
+                user_auth.fetchSignInMethodsForEmail(email).addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
+                        // Boolean to check if it is a new user or an old one
+                        boolean isNewUser = task.getResult().getSignInMethods().isEmpty();
+                        // Check if all fields are filled
+                        boolean isNotEmptyField = !TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass);
 
-                // Boolean to see whether user already exist in the DB or not
-                boolean isUser = email.equals(user_auth.getCurrentUser().getEmail());
-                // Checks the empty Fields
-                boolean isNotEmptyField = !TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass);
-
-                // Start with checking if the user is in the DB id Not show the proper message and
-                // redirect to register page
-                if (isUser) {
-                    // If any of the fields are empty show proper message
-                    if (isNotEmptyField) {
-                        user_auth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                // If login was successful go to app;s main page
-                                if (task.isSuccessful()) {
-                                    showMainPage();
-                                } else {
-                                    // Otherwise show a message that the password is wrong and
-                                    // make the password box empty
-                                    Toast.makeText(LoginActivity.this, "Password is wrong!", Toast.LENGTH_SHORT).show();
-                                    usr_pass.setText("");
-                                }
+                        if (isNotEmptyField) {
+                            // If it is a new user show a proper message
+                            if (isNewUser) {
+                                Toast.makeText(LoginActivity.this, "User does not exist! Please Sign up!", Toast.LENGTH_SHORT).show();
+                                Util.openActivity(LoginActivity.this, RegisterActivity.class);
                             }
-                        });
-                    } else {
-                        // At least one of the login fields are empty
-                        Toast.makeText(LoginActivity.this, "Please fill all fields!", Toast.LENGTH_SHORT).show();
+                            else {
+                                // If user exists sign in the user
+                                user_auth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    // If login was successful go to app's main page
+                                    if (task.isSuccessful()) {
+                                        showMainPage();
+                                    } else {
+                                        // Otherwise show a message that the password is wrong and
+                                        // make the password box empty
+                                        Toast.makeText(LoginActivity.this, "Password is wrong!", Toast.LENGTH_SHORT).show();
+                                        usr_pass.setText("");
+                                    }
+                                }
+                            });}
+                        } else {
+                            Toast.makeText(LoginActivity.this, "Please fill all fields!", Toast.LENGTH_SHORT).show();
+                        }
                     }
-                } else {
-                    // The user does not exist in our DB and redirect user to the register page
-                    Toast.makeText(LoginActivity.this, "User does not exist! Please Sign up!", Toast.LENGTH_SHORT).show();
-                    Util.openActivity(LoginActivity.this, RegisterActivity.class);
-                }
-
+                });
             }
         });
     }
