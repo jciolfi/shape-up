@@ -88,10 +88,19 @@ public class GroupDAO {
     }
 
     // --------------------------------------------------------------------
+    @Override
+    public String toString() {
+        return "GroupDAO{" +
+                "groupID=" + groupID +
+                ", name='" + name + '\'' +
+                ", members=" + members +
+                '}';
+    }
 
     public class Group {
-        private String name;
-        private List<String> members;
+        // Fields must be public to be set in Firebase DB
+        public String name;
+        public List<String> members;
 
         private Group(String name, List<String> members) {
             this.name = name;

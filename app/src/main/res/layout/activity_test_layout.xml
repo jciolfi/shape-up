@@ -1,6 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <Button
+        android:id="@+id/btn_create_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create Group"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_find_groups"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Find Groups"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_create_group" />
+
+    <Button
+        android:id="@+id/btn_find_users"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Find Users"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_find_groups" />
+
+    <Button
+        android:id="@+id/btn_find_user_groups"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Find User Groups"
+        app:layout_constraintTop_toBottomOf="@+id/btn_find_users"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btn_find_workouts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Find workouts"
+        app:layout_constraintTop_toBottomOf="@+id/btn_find_user_groups"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
