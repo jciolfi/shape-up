@@ -5,19 +5,20 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import edu.northeastern.numad22fa_team27.Util;
 
 public class GroupDAO {
     private UUID groupID;
     private String name;
-    private Set<String> members;
+    private Set<UUID> members;
 
-    public GroupDAO(String groupName, String creatorUsername) {
+    public GroupDAO(String groupName, UUID creatorID) {
         groupID = UUID.randomUUID();
         this.name = groupName;
         // new LinkedList<String>() {{  add(genres.getSelectedItem().toString()); }},
-        this.members = new HashSet<>() {{ add(creatorUsername); }};
+        this.members = new HashSet<>() {{ add(creatorID); }};
     }
 
     // ---------- UUID Code ----------
@@ -57,34 +58,34 @@ public class GroupDAO {
      * Get members in this group, returned as a list
      * @return members' usernames in this group
      */
-    public Set<String> getMembers() {
+    public Set<UUID> getMembers() {
         return new HashSet<>(this.members);
     }
 
     /**
      * Add member to this group
-     * @param username member joining this group
+     * @param userID member joining this group
      * @return true if they were newly added to group, false otherwise
      */
-    public boolean tryAddMember(String username) {
-        if (this.members.contains(username)) {
+    public boolean tryAddMember(UUID userID) {
+        if (this.members.contains(userID)) {
             return false;
         }
 
-        return this.members.add(username);
+        return this.members.add(userID);
     }
 
     /**
      * Remove member from this group
-     * @param username member leaving this group
+     * @param userID member leaving this group
      * @return true if they're in this group and were removed, false otherwise.
      */
-    public boolean tryRemoveMember(String username) {
-        if (!this.members.contains(username)) {
+    public boolean tryRemoveMember(UUID userID) {
+        if (!this.members.contains(userID)) {
             return false;
         }
 
-        return this.members.remove(username);
+        return this.members.remove(userID);
     }
 
     // --------------------------------------------------------------------
@@ -97,6 +98,7 @@ public class GroupDAO {
                 '}';
     }
 
+    // This is inserted into the DB (without a reference to groupID & list of string IDs for members)
     public class Group {
         // Fields must be public to be set in Firebase DB
         public String name;
@@ -109,6 +111,7 @@ public class GroupDAO {
     }
 
     public Group pack() {
-        return new Group(this.name, new ArrayList<>(this.members));
+        List<String> membersString = this.members.stream().map(String::valueOf).collect(Collectors.toList());
+        return new Group(this.name, membersString);
     }
 }

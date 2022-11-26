@@ -12,8 +12,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class UserDAO {
+    private UUID userID;
     private String username;
     private String encryptedPassword;
 
@@ -30,11 +32,19 @@ public class UserDAO {
     private Map<WorkoutCategory, Integer> bestCategoryStreaks;
 
     /**
+     * Default constructor
+     */
+    public UserDAO() {}
+
+    /**
      * New user constructor
      * @param username Unique string identifying user
      * @param encryptedPassword Hashed password
      */
     public UserDAO(String username, String encryptedPassword) {
+        this.userID = UUID.randomUUID();
+        this.username = username;
+        this.encryptedPassword = encryptedPassword;
         this.friendUsernames = new ArrayList<>();
         this.joinedGroups = new ArrayList<>();
         this.currentCategoryStreaks = new HashMap<>();
@@ -52,6 +62,7 @@ public class UserDAO {
      * @param bestCategoryStreaks Map of streak category to best streak info
      */
     public UserDAO(String username, String encryptedPassword, List<String> friendUsernames, List<UUID> joinedGroups, Map<WorkoutCategory, Pair<Integer, LocalDate>> currentCategoryStreaks, Map<WorkoutCategory, Integer> bestCategoryStreaks) {
+        this.userID = UUID.randomUUID();
         this.username = username;
         this.friendUsernames = friendUsernames;
         this.joinedGroups = joinedGroups;
@@ -102,6 +113,10 @@ public class UserDAO {
         }
     }
 
+    public UUID getUserID() {
+        return this.userID;
+    }
+
     public List<String> getFriendUsernames() {
         return friendUsernames;
     }
@@ -116,6 +131,14 @@ public class UserDAO {
 
     public void setJoinedGroups(List<UUID> joinedGroups) {
         this.joinedGroups = joinedGroups;
+    }
+
+    public boolean addGroup(UUID groupID) {
+        return this.joinedGroups.add(groupID);
+    }
+
+    public boolean removeGroup(UUID groupID) {
+        return this.joinedGroups.remove(groupID);
     }
 
     /**
@@ -138,5 +161,62 @@ public class UserDAO {
             return 0;
         }
         return this.bestCategoryStreaks.get(w);
+    }
+
+    public static class User {
+        public String username;
+        public List<String> friendUsernames;
+        public List<String> joinedGroups;
+
+        public User() { }
+
+        public User(String username, List<String> friendUsernames, List<String> joinedGroups) {
+            this.username = username;
+            this.friendUsernames = friendUsernames;
+            this.joinedGroups = joinedGroups;
+        }
+
+        public List<String> getJoinedGroups() {
+            return joinedGroups;
+        }
+
+        public void setJoinedGroups(List<String> joinedGroups) {
+            this.joinedGroups = joinedGroups;
+        }
+
+        public boolean addGroup(UUID groupID) {
+            return this.joinedGroups.add(String.valueOf(groupID));
+        }
+
+        public boolean removeGroup(UUID groupID) {
+            return this.joinedGroups.remove(String.valueOf(groupID));
+        }
+
+        @Override
+        public String toString() {
+            return "User{" +
+                    "username='" + username + '\'' +
+                    ", friendUsernames=" + friendUsernames +
+                    ", joinedGroups=" + joinedGroups +
+                    '}';
+        }
+    }
+
+    public User pack() {
+        List<String> joinedGroupsStr = this.joinedGroups.stream().map(String::valueOf).collect(Collectors.toList());
+        return new User(this.username, this.friendUsernames, joinedGroupsStr);
+    }
+
+    @Override
+    public String toString() {
+        return "UserDAO{" +
+                "userID=" + userID +
+                ", username='" + username + '\'' +
+                ", encryptedPassword='" + encryptedPassword + '\'' +
+                ", friendUsernames=" + friendUsernames +
+                ", joinedGroups=" + joinedGroups +
+                ", currentCategoryStreaks=" + currentCategoryStreaks +
+                ", bestCategoryStreaks=" + bestCategoryStreaks +
+                '}';
     }
 }

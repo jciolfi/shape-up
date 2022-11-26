@@ -1,6 +1,8 @@
 package edu.northeastern.numad22fa_team27.workout.models;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Object representation of a single workout exercise
@@ -8,10 +10,10 @@ import java.util.List;
 public class WorkoutDAO {
     private String workoutName;
     private List<MediaParagraph> workoutDescription;
-    private List<WorkoutCategory> categoriesPresent;
+    private Map<WorkoutCategory, Boolean> categoriesPresent;
     private float difficulty;
 
-    public WorkoutDAO(String workoutName, List<MediaParagraph> workoutDescription, List<WorkoutCategory> categoriesPresent, float difficulty) {
+    public WorkoutDAO(String workoutName, List<MediaParagraph> workoutDescription, Map<WorkoutCategory, Boolean> categoriesPresent, float difficulty) {
         this.workoutName = workoutName;
         this.workoutDescription = workoutDescription;
         this.categoriesPresent = categoriesPresent;
@@ -50,15 +52,25 @@ public class WorkoutDAO {
         return true;
     }
 
+    public boolean containsCategory(WorkoutCategory category) {
+        return categoriesPresent.containsKey(category);
+    }
+
     public List<WorkoutCategory> getCategoriesPresent() {
-        return categoriesPresent;
+        List<WorkoutCategory> result = new ArrayList<>();
+        for (Map.Entry<WorkoutCategory, Boolean> entry : categoriesPresent.entrySet()) {
+            if (entry.getValue()) {
+                result.add(entry.getKey());
+            }
+        }
+        return result;
     }
 
     /**
      * @param categoriesPresent Applicable workout categories that describe this exercise
      * @return True on setter success, false on failure
      */
-    public boolean setCategoriesPresent(List<WorkoutCategory> categoriesPresent) {
+    public boolean setCategoriesPresent(Map<WorkoutCategory, Boolean> categoriesPresent) {
         if (categoriesPresent.isEmpty()) {
             return false;
         }
