@@ -26,6 +26,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.Util;
 
@@ -87,27 +90,31 @@ public class RegisterActivity extends AppCompatActivity {
                 boolean isNotEmptyField = !TextUtils.isEmpty(email)
                                           && !TextUtils.isEmpty(pass)
                                           && !TextUtils.isEmpty(pass_confirm);
-                // If the fields are not empty
-                if (isNotEmptyField) {
-                    // if the pass and pass_confirm matches
-                    if (pass.equals(pass_confirm)) {
-                        user_auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    showMainPage();
-                                } else {
-                                    // If registration not successful that means there is a user with this credentials in our DB
-                                    Toast.makeText(RegisterActivity.this, "User already exists! Please log in.", Toast.LENGTH_SHORT).show();
-                                    Util.openActivity(RegisterActivity.this, LoginActivity.class);
+                if (isEmailValid(email)) {
+                    // If the fields are not empty
+                    if (isNotEmptyField) {
+                        // if the pass and pass_confirm matches
+                        if (pass.equals(pass_confirm)) {
+                            user_auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        showMainPage();
+                                    } else {
+                                        // If registration not successful that means there is a user with this credentials in our DB
+                                        Toast.makeText(RegisterActivity.this, "User already exists! Please log in.", Toast.LENGTH_SHORT).show();
+                                        Util.openActivity(RegisterActivity.this, LoginActivity.class);
+                                    }
                                 }
-                            }
-                        });
+                            });
+                        } else {
+                            Toast.makeText(RegisterActivity.this, "Passwords doesn't match! Please Try again.", Toast.LENGTH_SHORT).show();
+                        }
                     } else {
-                        Toast.makeText(RegisterActivity.this, "Passwords doesn't match! Please Try again.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegisterActivity.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(RegisterActivity.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "Please enter a valid email address!", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -118,5 +125,18 @@ public class RegisterActivity extends AppCompatActivity {
         // This should redirect the user to the login page
         Toast.makeText(RegisterActivity.this, "User successfully created. Please log in!", Toast.LENGTH_SHORT).show();
         Util.openActivity(RegisterActivity.this, LoginActivity.class);
+    }
+
+    /**
+     * method is used for checking valid email id format.
+     *
+     * @param email
+     * @return boolean true for valid false for invalid
+     */
+    public static boolean isEmailValid(String email) {
+        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 }
