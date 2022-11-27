@@ -55,4 +55,5 @@
     <string name="workout_accuracy_description">The ability to control movement in a given direction or at a given intensity</string>
     <string name="login_banner">login_banner</string>
     <string name="log_in_btn">Log In</string>
+    <string name="sign_out">Sign Out</string>
 </resources>
