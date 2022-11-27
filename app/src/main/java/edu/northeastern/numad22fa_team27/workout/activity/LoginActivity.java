@@ -27,6 +27,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.SignInMethodQueryResult;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.Util;
 
@@ -51,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
 
         loginButtonClicked();
 
-        // Specify the part of the test where user can click to register an account
+        // Specify the part of the text where user can click to register an account
         TextView tv = findViewById(R.id.create_account_login_page);
         String txt = "Don't have an account? Create one here";
         SpannableString ss =new SpannableString(txt);
@@ -80,41 +83,46 @@ public class LoginActivity extends AppCompatActivity {
                 String email = usr_email.getText().toString();
                 String pass = usr_pass.getText().toString();
                 // Check if the user already exists
-                user_auth.fetchSignInMethodsForEmail(email).addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
-                        // Boolean to check if it is a new user or an old one
-                        boolean isNewUser = task.getResult().getSignInMethods().isEmpty();
-                        // Check if all fields are filled
-                        boolean isNotEmptyField = !TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass);
+                if (isEmailValid(email)) {
+                    user_auth.fetchSignInMethodsForEmail(email).addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
+                            // Boolean to check if it is a new user or an old one
+                            boolean isNewUser = task.getResult().getSignInMethods().isEmpty();
+                            // Check if all fields are filled
+                            boolean isNotEmptyField = !TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass);
+                            boolean isEmailValid = android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
 
-                        if (isNotEmptyField) {
-                            // If it is a new user show a proper message
-                            if (isNewUser) {
-                                Toast.makeText(LoginActivity.this, "User does not exist! Please Sign up!", Toast.LENGTH_SHORT).show();
-                                Util.openActivity(LoginActivity.this, RegisterActivity.class);
-                            }
-                            else {
-                                // If user exists sign in the user
-                                user_auth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    // If login was successful go to app's main page
-                                    if (task.isSuccessful()) {
-                                        showMainPage();
-                                    } else {
-                                        // Otherwise show a message that the password is wrong and
-                                        // make the password box empty
-                                        Toast.makeText(LoginActivity.this, "Password is wrong!", Toast.LENGTH_SHORT).show();
-                                        usr_pass.setText("");
-                                    }
+                            if (isNotEmptyField) {
+                                // If it is a new user show a proper message
+                                if (isNewUser) {
+                                    Toast.makeText(LoginActivity.this, "User does not exist! Please Sign up!", Toast.LENGTH_SHORT).show();
+                                    Util.openActivity(LoginActivity.this, RegisterActivity.class);
                                 }
-                            });}
-                        } else {
-                            Toast.makeText(LoginActivity.this, "Please fill all fields!", Toast.LENGTH_SHORT).show();
+                                else {
+                                    // If user exists sign in the user
+                                    user_auth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<AuthResult> task) {
+                                            // If login was successful go to app's main page
+                                            if (task.isSuccessful()) {
+                                                showMainPage();
+                                            } else {
+                                                // Otherwise show a message that the password is wrong and
+                                                // make the password box empty
+                                                Toast.makeText(LoginActivity.this, "Password is wrong!", Toast.LENGTH_SHORT).show();
+                                                usr_pass.setText("");
+                                            }
+                                        }
+                                    });}
+                            } else {
+                                Toast.makeText(LoginActivity.this, "Please fill all fields!", Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
-                });
+                    });
+                } else {
+                    Toast.makeText(LoginActivity.this, "Please enter a valid email address!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -124,6 +132,19 @@ public class LoginActivity extends AppCompatActivity {
         // This should redirect the user to the main page
         Toast.makeText(LoginActivity.this, "Successfully Signed in", Toast.LENGTH_SHORT).show();
         Util.openActivity(LoginActivity.this, ProfileActivity.class);
+    }
+
+    /**
+     * method is used for checking valid email id format.
+     *
+     * @param email
+     * @return boolean true for valid false for invalid
+     */
+    public static boolean isEmailValid(String email) {
+        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 
     // TODO
