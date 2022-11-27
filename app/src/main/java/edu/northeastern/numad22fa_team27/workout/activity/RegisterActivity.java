@@ -76,7 +76,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void registerButtonClicked() {
-        usr_email.setTransformationMethod(PasswordTransformationMethod.getInstance());
+        usr_pass.setTransformationMethod(PasswordTransformationMethod.getInstance());
         usr_pass_confirm.setTransformationMethod(PasswordTransformationMethod.getInstance());
         sign_up_btn.setOnClickListener(new View.OnClickListener() {
             @Override
