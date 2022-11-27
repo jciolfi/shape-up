@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/gradient"
+        android:gravity="center"
+        tools:context=".workout.activity.ProfileActivity">
+
+        <TextView
+            android:id="@+id/pusername"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="@string/profUsername"
+            android:textColor="#E1BEE7"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cardView" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="50dp"
+            app:cardCornerRadius="75dp"
+            app:cardPreventCornerOverlap="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/profilePic"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/profilepic"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/defaultpic" />
+        </androidx.cardview.widget.CardView>
+
+        <Button
+            android:id="@+id/signOutBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:background="?attr/selectableItemBackground"
+            android:text="@string/sign_out"
+            android:textColor="#070707"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mySettings" />
+
+        <Button
+            android:id="@+id/myWorkouts"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:gravity="left|center_vertical"
+            android:paddingLeft="25dp"
+            android:background="?attr/selectableItemBackground"
+            android:text="@string/my_workouts"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            app:icon="@drawable/workout"
+            app:iconTint="#070707"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pusername" />
+
+        <Button
+            android:id="@+id/myFriends"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="left|center_vertical"
+            android:paddingLeft="25dp"
+            android:background="?attr/selectableItemBackground"
+            android:text="@string/my_friends"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            app:icon="@drawable/friends"
+            app:iconTint="#070707"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/myWorkouts" />
+
+        <Button
+            android:id="@+id/myGroups"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="left|center_vertical"
+            android:paddingLeft="25dp"
+            android:background="?attr/selectableItemBackground"
+            android:text="@string/my_groups"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            app:icon="@drawable/groups"
+            app:iconTint="#070707"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/myFriends" />
+
+        <Button
+            android:id="@+id/myMessages"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="left|center_vertical"
+            android:paddingLeft="25dp"
+            android:background="?attr/selectableItemBackground"
+            android:text="@string/my_messages"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            app:icon="@drawable/messages"
+            app:iconTint="#070707"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/myGroups" />
+
+        <Button
+            android:id="@+id/mySettings"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="left|center_vertical"
+            android:paddingLeft="25dp"
+            android:background="?attr/selectableItemBackground"
+            android:text="@string/settings"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            app:icon="@drawable/settings"
+            app:iconTint="#070707"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/myMessages" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
