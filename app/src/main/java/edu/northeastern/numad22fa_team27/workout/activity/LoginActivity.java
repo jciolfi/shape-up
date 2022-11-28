@@ -37,8 +37,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private TextView usr_email, usr_pass;
     private Button sign_in_btn;
-    // TODO
-    // Add progressbar
     private ProgressBar pb;
     private FirebaseAuth user_auth;
 
@@ -50,6 +48,7 @@ public class LoginActivity extends AppCompatActivity {
         usr_email = findViewById(R.id.editTextTextEmailAddress);
         usr_pass = findViewById(R.id.editTextTextPassword);
         sign_in_btn = findViewById(R.id.btn_login);
+        pb = findViewById(R.id.progressbar_login);
         user_auth = FirebaseAuth.getInstance();
 
         loginButtonClicked();
@@ -100,14 +99,17 @@ public class LoginActivity extends AppCompatActivity {
                                     Util.openActivity(LoginActivity.this, RegisterActivity.class);
                                 }
                                 else {
+                                    pb.setVisibility(View.VISIBLE);
                                     // If user exists sign in the user
                                     user_auth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                         @Override
                                         public void onComplete(@NonNull Task<AuthResult> task) {
                                             // If login was successful go to app's main page
                                             if (task.isSuccessful()) {
+                                                pb.setVisibility(View.INVISIBLE);
                                                 showMainPage();
                                             } else {
+                                                pb.setVisibility(View.INVISIBLE);
                                                 // Otherwise show a message that the password is wrong and
                                                 // make the password box empty
                                                 Toast.makeText(LoginActivity.this, "Password is wrong!", Toast.LENGTH_SHORT).show();
