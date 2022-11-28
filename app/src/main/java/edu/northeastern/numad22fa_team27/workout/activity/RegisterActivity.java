@@ -35,8 +35,6 @@ public class RegisterActivity extends AppCompatActivity {
 
     private TextView usr_email, usr_pass, usr_pass_confirm;
     private Button sign_up_btn;
-    // TODO
-    // Add progressbar
     private ProgressBar pb;
     private FirebaseAuth user_auth;
 
@@ -49,6 +47,7 @@ public class RegisterActivity extends AppCompatActivity {
         usr_pass = findViewById(R.id.register_password);
         usr_pass_confirm = findViewById(R.id.repeat_register_Password);
         sign_up_btn = findViewById(R.id.btn_signup);
+        pb = findViewById(R.id.progressbar_register);
         user_auth = FirebaseAuth.getInstance();
 
 
@@ -94,10 +93,12 @@ public class RegisterActivity extends AppCompatActivity {
                     if (isNotEmptyField) {
                         // if the pass and pass_confirm matches
                         if (pass.equals(pass_confirm)) {
+                            pb.setVisibility(View.VISIBLE);
                             user_auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
+                                        pb.setVisibility(View.INVISIBLE);
                                         showMainPage();
                                     } else {
                                         // If registration not successful that means there is a user with this credentials in our DB
@@ -107,6 +108,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 }
                             });
                         } else {
+                            pb.setVisibility(View.INVISIBLE);
                             Toast.makeText(RegisterActivity.this, "Passwords doesn't match! Please Try again.", Toast.LENGTH_SHORT).show();
                         }
                     } else {
