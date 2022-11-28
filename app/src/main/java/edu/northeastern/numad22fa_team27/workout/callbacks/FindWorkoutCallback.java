@@ -19,7 +19,7 @@ public class FindWorkoutCallback extends WorkoutCallback {
     }
 
     @Override
-    public void processWorkout(List<WorkoutDAO> workouts) {
+    public void processWorkouts(List<WorkoutDAO> workouts) {
         for (WorkoutDAO workout : workouts) {
             Log.d("FindWorkoutCallback", workout.toString());
         }

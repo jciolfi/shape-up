@@ -68,7 +68,7 @@ public class TestActivity extends AppCompatActivity {
 
         Button findWorkouts = findViewById(R.id.btn_find_workouts);
         findWorkouts.setOnClickListener(view ->
-                findWorkoutsByCriteria("test", null, new FindWorkoutCallback()));
+                findWorkoutsByCriteria("test",null, new FindWorkoutCallback()));
     }
 
     private void getUser(String userID) {
@@ -114,34 +114,41 @@ public class TestActivity extends AppCompatActivity {
     private void findWorkoutsByCriteria(String workoutName, WorkoutCategory workoutCategory, WorkoutCallback callback) {
         if (Util.stringIsNullOrEmpty(workoutName) && workoutCategory == null) {
             warnBadParam("findWorkoutsByCriteria");
-        } else if (Util.stringIsNullOrEmpty(workoutName)) {
-            // search by ONLY workout category
-            // https://stackoverflow.com/questions/40656589/firebase-query-if-child-of-child-contains-a-value
-
-        } else {
-            // Firebase can't do compound queries, Firestore can :(
-            // search by workout name (and filter by workout category)
+        } else if (workoutCategory == null) {
+            // search by ONLY workoutName
             mDatabase.child("workouts")
                     .orderByChild("workoutName")
                     .startAt(workoutName)
                     .endAt(workoutName + '\uf8ff')
+                    .addListenerForSingleValueEvent(new SearchListener(callback));
+        } else if (Util.stringIsNullOrEmpty(workoutName)) {
+            // search by ONLY workoutCategory
+            mDatabase.child("workouts")
+                    .orderByChild(String.format("categoriesPresent/%s", workoutCategory))
+                    .equalTo(true)
+                    .addListenerForSingleValueEvent(new SearchListener(callback));
+        } else {
+            // search by workoutCategory AND filter on workoutName. We prefer this order to conserve
+            // memory in the case a user performs a vague search that matches a lot of entries.
+            mDatabase.child("workouts")
+                    .orderByChild(String.format("categoriesPresent/%s", workoutCategory))
+                    .equalTo(true)
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             List<WorkoutDAO> workouts = new ArrayList<>();
-                            for (DataSnapshot ds: snapshot.getChildren()) {
+                            for (DataSnapshot ds : snapshot.getChildren()) {
                                 WorkoutDAO workout = ds.getValue(WorkoutDAO.class);
-                                if (workout != null && workout.containsCategory(workoutCategory)) {
+                                if (workout != null
+                                    && workout.getWorkoutName().toLowerCase().startsWith(workoutName.toLowerCase())) {
                                     workouts.add(workout);
                                 }
                             }
-                            callback.processWorkout(workouts);
+                            callback.processWorkouts(workouts);
                         }
 
                         @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-
-                        }
+                        public void onCancelled(@NonNull DatabaseError error) { }
                     });
         }
     }
@@ -156,15 +163,7 @@ public class TestActivity extends AppCompatActivity {
                 .orderByChild("username")
                 .startAt(username)
                 .endAt(username + '\uf8ff')
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        callback.process(snapshot);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) { }
-                });
+                .addListenerForSingleValueEvent(new SearchListener(callback));
     }
 
     private void findUserGroups(String userID, WorkoutCallback callback) {
@@ -176,15 +175,7 @@ public class TestActivity extends AppCompatActivity {
         mDatabase.child("users")
                 .child(userID)
                 .child("joinedGroups")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        callback.process(snapshot);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) { }
-                });
+                .addListenerForSingleValueEvent(new SearchListener(callback));
     }
 
     private void findGroupsByName(String groupName, WorkoutCallback callback) {
@@ -197,10 +188,18 @@ public class TestActivity extends AppCompatActivity {
                 .orderByChild("name")
                 .startAt(groupName)
                 .endAt(groupName + "\uf8ff")
+                .addListenerForSingleValueEvent(new SearchListener(callback));
+    }
+
+    private void findStreaksLeaderboard(String userID) {
+        // get this user's friends, then get each's streak and sort by streak.
+        mDatabase.child("users")
+                .child(userID)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        callback.process(snapshot);
+                        UserDAO user = snapshot.getValue(UserDAO.class);
+
                     }
 
                     @Override
@@ -208,7 +207,27 @@ public class TestActivity extends AppCompatActivity {
                 });
     }
 
+    // --------------- HELPERS ---------------
+
     private void warnBadParam(String methodName) {
         Log.w("Test", String.format("%s: fields were null", methodName));
+    }
+
+    private static class SearchListener implements ValueEventListener {
+        private WorkoutCallback callback;
+
+        public SearchListener(WorkoutCallback callback) {
+            this.callback = callback;
+        }
+
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            callback.process(snapshot);
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+
+        }
     }
 }
