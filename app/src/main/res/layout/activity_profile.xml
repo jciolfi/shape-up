@@ -43,7 +43,7 @@
                 android:layout_height="match_parent"
                 android:contentDescription="@string/profilepic"
                 android:scaleType="fitCenter"
-                app:srcCompat="@drawable/defaultpic" />
+                app:srcCompat="@drawable/account" />
         </androidx.cardview.widget.CardView>
 
         <Button
