@@ -3,6 +3,7 @@ package edu.northeastern.numad22fa_team27.workout.activity;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,7 +21,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private TextView usr_email;
     private FirebaseAuth user_auth;
-    private Button signOutBtn;
+    private Button signOutBtn, settingsBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,9 +33,11 @@ public class ProfileActivity extends AppCompatActivity {
         usr_email = findViewById(R.id.pusername);
         user_auth = FirebaseAuth.getInstance();
         signOutBtn = findViewById(R.id.signOutBtn);
+        settingsBtn = findViewById(R.id.mySettings);
 
         loadUser();
         setSignOutBtnClicked();
+        settingsBtnClicked();
     }
 
     public void loadUser() {
@@ -49,6 +52,15 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+
+    public void settingsBtnClicked() {
+        settingsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Util.openActivity(ProfileActivity.this, SettingsActivity.class);
+            }
+        });
+    }
 
     // TODO
     // Implement the logic when user presses back button.
