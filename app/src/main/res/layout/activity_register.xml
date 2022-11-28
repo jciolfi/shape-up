@@ -104,5 +104,17 @@
             android:text="@string/have_an_account_txt"
             app:layout_constraintStart_toStartOf="@+id/view_register"
             app:layout_constraintTop_toBottomOf="@+id/view_register" />
+
+        <ProgressBar
+            android:id="@+id/progressbar_register"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:visibility="invisible"
+            android:indeterminateTint="@color/purple_700"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.53"
+            tools:layout_editor_absoluteX="0dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
