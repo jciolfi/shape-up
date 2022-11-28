@@ -1,4 +1,45 @@
 package edu.northeastern.numad22fa_team27.workout.activities;
 
-public class WorkoutList {
+import android.os.Bundle;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.tabs.TabLayout;
+
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+
+import edu.northeastern.numad22fa_team27.workout.activities.ui.main.SectionsPagerAdapter;
+import edu.northeastern.numad22fa_team27.workout.activities.databinding.ActivityWorkoutListBinding;
+
+public class WorkoutList extends AppCompatActivity {
+
+    private ActivityWorkoutListBinding binding;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        binding = ActivityWorkoutListBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
+        ViewPager viewPager = binding.viewPager;
+        viewPager.setAdapter(sectionsPagerAdapter);
+        TabLayout tabs = binding.tabs;
+        tabs.setupWithViewPager(viewPager);
+        FloatingActionButton fab = binding.fab;
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+    }
 }
