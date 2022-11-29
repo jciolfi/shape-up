@@ -15,7 +15,7 @@ import java.util.UUID;
 
 public class User {
     private String username;
-    private ImageView profilePic;
+    private String profilePic;
     private String encryptedPassword;
 
     // List of the usernames of our friends
@@ -35,7 +35,7 @@ public class User {
      * @param username Unique string identifying user
      * @param encryptedPassword Hashed password
      */
-    public User(String username, String encryptedPassword, ImageView profilePic) {
+    public User(String username, String encryptedPassword, String profilePic) {
         this.username = username;
         this.encryptedPassword = encryptedPassword;
         this.profilePic = profilePic;
@@ -55,7 +55,7 @@ public class User {
      * @param currentCategoryStreaks Map of streak category to current streak info
      * @param bestCategoryStreaks Map of streak category to best streak info
      */
-    public User(String username, String encryptedPassword, ImageView profilePic, List<String> friendUsernames, List<UUID> joinedGroups, Map<WorkoutCategory, Pair<Integer, LocalDate>> currentCategoryStreaks, Map<WorkoutCategory, Integer> bestCategoryStreaks) {
+    public User(String username, String encryptedPassword, String profilePic, List<String> friendUsernames, List<UUID> joinedGroups, Map<WorkoutCategory, Pair<Integer, LocalDate>> currentCategoryStreaks, Map<WorkoutCategory, Integer> bestCategoryStreaks) {
         this.username = username;
         this.friendUsernames = friendUsernames;
         this.joinedGroups = joinedGroups;
@@ -126,7 +126,7 @@ public class User {
         this.joinedGroups = joinedGroups;
     }
 
-    public ImageView getProfilePic() {
+    public String getProfilePic() {
         return profilePic;
     }
 
