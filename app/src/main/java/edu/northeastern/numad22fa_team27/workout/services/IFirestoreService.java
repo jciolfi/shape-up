@@ -28,11 +28,10 @@ public interface IFirestoreService {
     void findUserByUsername(String username, WorkoutCallback callback);
 
     /**
-     * Find groups a user is a part of
-     * @param userID the ID for the user
+     * Find groups the current user is a part of
      * @param callback executed on the entries returned by the query
      */
-    void findUserGroups(String userID, WorkoutCallback callback);
+    void findUserGroups(WorkoutCallback callback);
 
     /**
      * Find groups with a given groupName

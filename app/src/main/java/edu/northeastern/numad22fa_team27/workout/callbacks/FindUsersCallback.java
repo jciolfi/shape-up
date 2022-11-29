@@ -2,14 +2,17 @@ package edu.northeastern.numad22fa_team27.workout.callbacks;
 
 import android.util.Log;
 
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-public class FindUsersCallback implements WorkoutCallback {
-    @Override
-    public void process(@NonNull QuerySnapshot snapshot) {
+import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
 
+public class FindUsersCallback extends WorkoutCallback {
+    @Override
+    public void processQuery(@NonNull QuerySnapshot snapshot) {
+        for (UserDAO user : snapshot.toObjects(UserDAO.class)) {
+            Log.d("FINDUSERSCALLBACK", user.toString());
+        }
     }
 }

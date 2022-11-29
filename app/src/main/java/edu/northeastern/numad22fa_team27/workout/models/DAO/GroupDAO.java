@@ -18,4 +18,12 @@ public class GroupDAO {
         this.groupName = g.getGroupName();
         this.members = new ArrayList<>(g.getMembers());
     }
+
+    @Override
+    public String toString() {
+        return "GroupDAO{" +
+                "groupName='" + groupName + '\'' +
+                ", members=" + members +
+                '}';
+    }
 }

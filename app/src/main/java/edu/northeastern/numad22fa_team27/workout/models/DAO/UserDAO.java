@@ -26,4 +26,15 @@ public class UserDAO {
         this.currentCategoryStreaks = u.getCurrentCategoryStreaks();
         this.bestCategoryStreak = u.getBestCategoryStreaks();
     }
+
+    @Override
+    public String toString() {
+        return "UserDAO{" +
+                "username='" + username + '\'' +
+                ", friends=" + friends +
+                ", joinedGroups=" + joinedGroups +
+                ", currentCategoryStreaks=" + currentCategoryStreaks +
+                ", bestCategoryStreak=" + bestCategoryStreak +
+                '}';
+    }
 }

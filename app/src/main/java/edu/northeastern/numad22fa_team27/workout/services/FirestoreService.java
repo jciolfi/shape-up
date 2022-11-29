@@ -72,7 +72,7 @@ public class FirestoreService implements IFirestoreService {
             firestoreDB.collection("workouts")
                     .whereArrayContains("categoriesPresent", String.valueOf(workoutCategory))
                     .get()
-                    .addOnSuccessListener(callback::process)
+                    .addOnSuccessListener(callback::processQuery)
                     .addOnFailureListener(e -> logFailure("findWorkoutsByCriteria", e.getMessage()));
         } else if (workoutCategory == null) {
             // search ONLY by workoutName
@@ -81,7 +81,7 @@ public class FirestoreService implements IFirestoreService {
                     .startAt(workoutName)
                     .endAt(workoutName + "\uf8ff")
                     .get()
-                    .addOnSuccessListener(callback::process)
+                    .addOnSuccessListener(callback::processQuery)
                     .addOnFailureListener(e -> logFailure("findWorkoutsByCriteria", e.getMessage()));
         } else {
             // search by workoutCategory AND workoutName
@@ -91,7 +91,7 @@ public class FirestoreService implements IFirestoreService {
                     .startAt(workoutName)
                     .endAt(workoutName + "\uf8ff")
                     .get()
-                    .addOnSuccessListener(callback::process)
+                    .addOnSuccessListener(callback::processQuery)
                     .addOnFailureListener(e -> logFailure("findWorkoutsByCriteria", e.getMessage()));
         }
     }
@@ -108,23 +108,31 @@ public class FirestoreService implements IFirestoreService {
                 .startAt(username)
                 .endAt(username + "\uf8ff")
                 .get()
-                .addOnSuccessListener(callback::process)
+                .addOnSuccessListener(callback::processQuery)
                 .addOnFailureListener(e -> logFailure("findUserByUsername", e.getMessage()));
     }
 
     @Override
-    public void findUserGroups(String userID, WorkoutCallback callback) {
-        if (Util.stringIsNullOrEmpty(userID)) {
-            warnBadParam("findUserGroups");
-            return;
-        } else if (!tryFetchUserDetails()) {
-            return;
-        }
+    public void findUserGroups(WorkoutCallback callback) {
+        String userID = Objects.requireNonNull(userAuth.getCurrentUser()).getUid();
+        Log.d(TAG, userID);
 
-        firestoreDB.collection("groups")
-                .whereIn(FieldPath.documentId(), currentUser.friends)
+        firestoreDB.collection("users")
+                .document(userID)
                 .get()
-                .addOnSuccessListener(callback::process)
+                .addOnSuccessListener(documentSnapshot -> {
+                    UserDAO user = documentSnapshot.toObject(UserDAO.class);
+                    if (user == null) {
+                        logFailure("findUserGroups", String.format("%s doesn't exist", userID));
+                    }
+
+                    // get groups
+                    firestoreDB.collection("groups")
+                            .whereIn(FieldPath.documentId(), user.joinedGroups)
+                            .get()
+                            .addOnSuccessListener(callback::processQuery)
+                            .addOnFailureListener(e -> logFailure("findUserGroups", e.getMessage()));
+                })
                 .addOnFailureListener(e -> logFailure("findUserGroups", e.getMessage()));
     }
 
@@ -140,7 +148,7 @@ public class FirestoreService implements IFirestoreService {
                 .startAt(groupName)
                 .endAt(groupName + "\uf8ff")
                 .get()
-                .addOnSuccessListener(callback::process)
+                .addOnSuccessListener(callback::processQuery)
                 .addOnFailureListener(e -> logFailure("findGroupsByName", e.getMessage()));
     }
 
@@ -151,7 +159,7 @@ public class FirestoreService implements IFirestoreService {
             return;
         }
 
-        // go 10 by 10 getting all friends, can only specify up to 10
+        // TODO: go 10 by 10 getting all friends, can only specify up to 10 items in whereIn clause
         List<User> friends = new ArrayList<>();
 
     }
@@ -173,7 +181,7 @@ public class FirestoreService implements IFirestoreService {
                 .addOnSuccessListener(documentSnapshot -> currentUser = documentSnapshot.toObject(UserDAO.class))
                 .addOnFailureListener(e -> success.set(false));
 
-        return success.get();
+        return currentUser != null && success.get();
     }
 
     private void warnBadParam(String methodName) {
