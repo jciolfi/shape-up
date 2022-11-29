@@ -5,9 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
@@ -18,6 +20,7 @@ import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.common.collect.BiMap;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -29,6 +32,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,35 +45,46 @@ import edu.northeastern.numad22fa_team27.workout.models.User;
 public class SettingsActivity extends AppCompatActivity {
 
     private ImageView imageView;
-    private Uri imageUri;
     private Button saveBtn;
-    private static final int PICK_IMAGE = 1;
-    UploadTask uploadTask;
-    StorageReference storageReference;
-    FirebaseFirestore  db = FirebaseFirestore.getInstance();
-    DocumentReference documentReference;
-    User user;
-    String currentUID;
+    private Uri imageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        imageView = findViewById(R.id.profilePic);
+        saveBtn = findViewById(R.id.saveButton);
+
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent photoIntent = new Intent(Intent.ACTION_PICK);
+                photoIntent.setType("image/*");
+                startActivityForResult(photoIntent, 1);
+            }
+        });
+
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        try {
-            if (requestCode == PICK_IMAGE || resultCode == RESULT_OK || data != null || data.getData() != null) {
-                imageUri = data.getData();
-                Picasso.get().load(imageUri).into(imageView);
-            }
-        } catch (Exception e) {
-            Toast.makeText(this, "No file selected", Toast.LENGTH_SHORT).show();
+        if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
+            imageUri = data.getData();
+            getImage();
         }
 
+    }
+
+    private void getImage() {
+        Bitmap bitmap = null;
+        try {
+            bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+        } catch (IOException e) {
+            Toast.makeText(this, "Upload not successful! Try again!", Toast.LENGTH_SHORT).show();
+        }
+        imageView.setImageBitmap(bitmap);
     }
 
 
