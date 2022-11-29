@@ -3,8 +3,6 @@ package edu.northeastern.numad22fa_team27.workout.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -24,13 +22,14 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.Util;
+import edu.northeastern.numad22fa_team27.workout.models.User;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -99,6 +98,11 @@ public class RegisterActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
+                                        User user = new User(email, pass, null);
+                                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                        db.collection("users")
+                                                .document(user_auth.getCurrentUser().getUid())
+                                                .set(user);
                                         pb.setVisibility(View.INVISIBLE);
                                         showMainPage();
                                     } else {
