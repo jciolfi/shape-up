@@ -11,8 +11,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.Util;
-import edu.northeastern.numad22fa_team27.workout.callbacks.FindWorkoutsCallback;
-import edu.northeastern.numad22fa_team27.workout.models.WorkoutCategory;
+import edu.northeastern.numad22fa_team27.workout.callbacks.FindGroupsCallback;
 import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -53,38 +52,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void groupsBtnClicked() {
-        // firestoreService.findUserGroups(new FindUserGroupsCallback());
-        // firestoreService.findGroupsByName("test", new FindGroupsCallback());
-        firestoreService.findWorkoutsByCriteria("Accuracy", null, new FindWorkoutsCallback());
-        firestoreService.findWorkoutsByCriteria("Accuracy", WorkoutCategory.ACCURACY, new FindWorkoutsCallback());
-
-
-
-//        final EditText groupName = new EditText(this);
-//        groupName.setInputType(InputType.TYPE_CLASS_TEXT);
-//
-//        AlertDialog groupDialog = new AlertDialog.Builder(this)
-//                .setTitle("Create New Group")
-//                .setMessage("Enter the name for your group")
-//                .setView(groupName)
-//                .setPositiveButton("Create", null)
-//                .setCancelable(false)
-//                .create();
-//
-//        groupDialog.setOnShowListener(dialogInterface -> {
-//            Button createButton = groupDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-//            createButton.setOnClickListener(view -> {
-//                String providedGroupName = groupName.getText().toString();
-//                if (Util.stringIsNullOrEmpty(providedGroupName)) {
-//                    groupName.setError("Group name can't be empty");
-//                } else {
-//                    firestoreService.createGroup(providedGroupName);
-//                    groupDialog.dismiss();
-//                }
-//            });
-//        });
-//
-//        groupDialog.show();
+        firestoreService.findUserGroups(new FindGroupsCallback());
     }
 
 
