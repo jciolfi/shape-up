@@ -33,6 +33,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     private ImageView imageView;
     private Button saveBtn;
+    private Button cancelBtn;
     private ProgressBar pb;
     private Uri imageUri;
 
@@ -44,11 +45,19 @@ public class SettingsActivity extends AppCompatActivity {
         imageView = findViewById(R.id.profilePic);
         saveBtn = findViewById(R.id.saveButton);
         pb = findViewById(R.id.save_progressbar);
+        cancelBtn = findViewById(R.id.cancelButton);
 
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 uploadImage();
+            }
+        });
+
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Util.openActivity(SettingsActivity.this, ProfileActivity.class);
             }
         });
 

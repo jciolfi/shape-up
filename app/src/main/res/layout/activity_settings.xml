@@ -36,13 +36,25 @@
         </androidx.cardview.widget.CardView>
 
         <Button
+            android:id="@+id/cancelButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="156dp"
+            android:layout_marginEnd="20dp"
+            android:text="@string/cancelBtn"
+            app:layout_constraintEnd_toStartOf="@+id/saveButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cardViewSetting" />
+
+        <Button
             android:id="@+id/saveButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="100dp"
-            android:text="Save"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="36dp"
+            android:layout_marginTop="156dp"
+            android:text="@string/saveBtn"
+            app:layout_constraintStart_toEndOf="@+id/cancelButton"
             app:layout_constraintTop_toBottomOf="@+id/cardViewSetting" />
 
         <ProgressBar
