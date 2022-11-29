@@ -15,7 +15,7 @@ import java.util.UUID;
 
 public class User {
     private String username;
-    private ImageView profilePic;
+    private String profilePic;
     private String encryptedPassword;
 
     // List of the usernames of our friends
@@ -36,8 +36,7 @@ public class User {
      * @param encryptedPassword Hashed password
      */
 
-
-    public User(String username, String encryptedPassword, ImageView profilePic) {
+    public User(String username, String encryptedPassword, String profilePic) {
         this.username = username;
         this.encryptedPassword = encryptedPassword;
         this.profilePic = profilePic;
@@ -139,7 +138,7 @@ public class User {
     }
 
 
-    public ImageView getProfilePic() {
+    public String getProfilePic() {
         return profilePic;
     }
 
