@@ -1,13 +1,9 @@
 package edu.northeastern.numad22fa_team27.workout.activity;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.text.InputType;
-import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,8 +11,8 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.Util;
-import edu.northeastern.numad22fa_team27.workout.callbacks.FindGroupsCallback;
-import edu.northeastern.numad22fa_team27.workout.callbacks.FindUserGroupsCallback;
+import edu.northeastern.numad22fa_team27.workout.callbacks.FindWorkoutsCallback;
+import edu.northeastern.numad22fa_team27.workout.models.WorkoutCategory;
 import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -59,7 +55,8 @@ public class ProfileActivity extends AppCompatActivity {
     private void groupsBtnClicked() {
         // firestoreService.findUserGroups(new FindUserGroupsCallback());
         // firestoreService.findGroupsByName("test", new FindGroupsCallback());
-
+        firestoreService.findWorkoutsByCriteria("Accuracy", null, new FindWorkoutsCallback());
+        firestoreService.findWorkoutsByCriteria("Accuracy", WorkoutCategory.ACCURACY, new FindWorkoutsCallback());
 
 
 
