@@ -6,6 +6,8 @@ public class MediaParagraph {
     private String paragraphText;
     private String mediaURL;
 
+    public MediaParagraph() {}
+
     public MediaParagraph(String paragraphText, String mediaURL) {
         this.paragraphText = paragraphText;
         this.mediaURL = mediaURL;
