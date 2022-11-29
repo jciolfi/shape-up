@@ -46,8 +46,6 @@ public class SettingsActivity extends AppCompatActivity {
     private static final int PICK_IMAGE = 1;
     UploadTask uploadTask;
     StorageReference storageReference;
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference databaseReference;
     FirebaseFirestore  db = FirebaseFirestore.getInstance();
     DocumentReference documentReference;
     User user;
@@ -58,32 +56,6 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        imageView = findViewById(R.id.profilePic);
-        saveBtn = findViewById(R.id.saveButton);
-        FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
-        assert fbUser != null;
-        currentUID = fbUser.getUid();
-
-        documentReference = db.collection("user").document(currentUID);
-        storageReference = FirebaseStorage.getInstance().getReference("Profile Images");
-        databaseReference = database.getReference("Users");
-
-        saveBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                uploadData();
-            }
-        });
-
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivity(intent);
-            }
-        });
     }
 
     @Override
@@ -100,51 +72,5 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
-    private String getImageExt(Uri uri) {
-        ContentResolver contentResolver = getContentResolver();
-        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
-    }
 
-    private void uploadData() {
-        if (imageUri != null) {
-            final StorageReference reference = storageReference.child(System.currentTimeMillis() + "." + getImageExt(imageUri));
-            uploadTask = reference.putFile(imageUri);
-
-            Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                @Override
-                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                    if (!task.isSuccessful()) {
-                        throw task.getException();
-                    }
-                    return reference.getDownloadUrl();
-                }
-            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                    if (task.isSuccessful()) {
-                        Uri downloadUri = task.getResult();
-
-                        Map<String, String> profile = new HashMap<>();
-                        profile.put("url", downloadUri.toString());
-
-                        documentReference.set(profile).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void unused) {
-                                Toast.makeText(SettingsActivity.this, "Changes Saved!", Toast.LENGTH_SHORT).show();
-
-                                Handler handler = new Handler();
-                                handler.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Util.openActivity(SettingsActivity.this, ProfileActivity.class);
-                                    }
-                                }, 2000);
-                            }
-                        });
-                    }
-                }
-            });
-        }
-    }
 }
