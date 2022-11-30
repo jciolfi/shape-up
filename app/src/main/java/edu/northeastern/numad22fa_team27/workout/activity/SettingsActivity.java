@@ -29,6 +29,8 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 
@@ -96,30 +98,29 @@ public class SettingsActivity extends AppCompatActivity {
             String username = emailChange.getText().toString();
 
             if (!username.isEmpty()) {
-                if (!username.equals(user.getEmail())) {
-                    user.updateEmail(username).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                credsUpdated = true;
-                                documentReference.update("username", username);
+                if(isEmailValid(username)) {
+                    if (!username.equals(user.getEmail())) {
+                        credsUpdated = true;
+                        user.updateEmail(username).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    credsUpdated = true;
+                                    documentReference.update("username", username);
+                                } else {
+                                    Toast.makeText(SettingsActivity.this, "Couldn't update the email!", Toast.LENGTH_SHORT).show();
+                                }
                             }
-                            else {
-                                Toast.makeText(SettingsActivity.this, "Couldn't update the email!", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-                    credsUpdated = true;
+                        });
+                    } else {
+                        Toast.makeText(this, "New username cannot be same as the previous one!", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    credsUpdated = false;
-                    Toast.makeText(this, "New username cannot be same as the previous one!", Toast.LENGTH_SHORT).show();
+                    pb.setVisibility(View.INVISIBLE);
+                    Toast.makeText(SettingsActivity.this, "Please enter a valid email address!", Toast.LENGTH_SHORT).show();
                 }
-            } else {
-                credsUpdated = true;
             }
         }
-
-
     }
 
     private void changeProfilePic() {
@@ -147,34 +148,21 @@ public class SettingsActivity extends AppCompatActivity {
                     });
             profilePicUpdated = true;
         }
-        else {
-            profilePicUpdated = true;
-        }
     }
 
     private void saveChanges() {
         pb.setVisibility(View.VISIBLE);
         changeProfilePic();
         updateCreds();
-        if (profilePicUpdated && credsUpdated) {
+        if (credsUpdated) {
             pb.setVisibility(View.INVISIBLE);
-            Toast.makeText(SettingsActivity.this, "Changes Successfully Saved!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SettingsActivity.this, "Changes Successfully Saved! Please sign in again!", Toast.LENGTH_SHORT).show();
+            Util.openActivity(SettingsActivity.this, LoginActivity.class);
+        }
+        if (profilePicUpdated & !credsUpdated) {
             Util.openActivity(SettingsActivity.this, ProfileActivity.class);
+            Toast.makeText(SettingsActivity.this, "Profile picture updated!", Toast.LENGTH_SHORT).show();
         }
-
-        else {
-            if (profilePicUpdated) {
-                pb.setVisibility(View.INVISIBLE);
-                Toast.makeText(SettingsActivity.this, "Error in updating the username", Toast.LENGTH_SHORT).show();
-            }
-            else {
-                pb.setVisibility(View.INVISIBLE);
-                Toast.makeText(SettingsActivity.this, "Error in updating the profile picture", Toast.LENGTH_SHORT).show();
-            }
-        }
-
-
-
     }
 
     private void updateProfilePic(String url) {
@@ -201,6 +189,19 @@ public class SettingsActivity extends AppCompatActivity {
             Toast.makeText(this, "Upload not successful! Try again!", Toast.LENGTH_SHORT).show();
         }
         imageView.setImageBitmap(bitmap);
+    }
+
+    /**
+     * method is used for checking valid email id format.
+     *
+     * @param email
+     * @return boolean true for valid false for invalid
+     */
+    public static boolean isEmailValid(String email) {
+        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 
 
