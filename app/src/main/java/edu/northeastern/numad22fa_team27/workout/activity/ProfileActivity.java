@@ -87,8 +87,9 @@ public class ProfileActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.getResult().exists()) {
                     String url = task.getResult().getString("profilePic");
-
+                    String username = task.getResult().getString("username");
                     Picasso.get().load(url).into(profilePic);
+                    usr_email.setText(username);
                 } else {
                     Toast.makeText(ProfileActivity.this, "Couldn't fetch the profile for the user", Toast.LENGTH_SHORT).show();
                 }
