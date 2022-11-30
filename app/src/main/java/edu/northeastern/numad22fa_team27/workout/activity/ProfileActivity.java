@@ -86,10 +86,7 @@ public class ProfileActivity extends AppCompatActivity {
                     String url = task.getResult().getString("profilePic");
                     String username = task.getResult().getString("username");
                     usr_email.setText(username);
-                    if (url.isEmpty()) {
-
-                    }
-                    else {
+                    if (!url.isEmpty()) {
                         Picasso.get()
                                 .load(url)
                                 .resize(100, 100)
