@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -60,6 +61,8 @@ public class SettingsActivity extends AppCompatActivity {
         cancelBtn = findViewById(R.id.cancelButton);
         emailChange = findViewById(R.id.editTextEmail);
         passChange = findViewById(R.id.editTextPass);
+        emailChange.setHint(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+        passChange.setHint("New password");
 
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,6 +83,7 @@ public class SettingsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent photoIntent = new Intent(Intent.ACTION_PICK);
                 photoIntent.setType("image/*");
+
                 startActivityForResult(photoIntent, 1);
                 picSelected = true;
             }
