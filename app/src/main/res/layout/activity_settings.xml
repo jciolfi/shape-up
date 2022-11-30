@@ -95,7 +95,7 @@
             android:drawableStart="@drawable/password"
             android:drawablePadding="5dp"
             android:ems="10"
-            android:inputType="textEmailAddress"
+            android:inputType="textPassword"
             android:minHeight="48dp"
             android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
