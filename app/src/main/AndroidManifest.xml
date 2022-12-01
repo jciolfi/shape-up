@@ -61,6 +61,10 @@
         <activity
             android:name=".spotify.SpotifyActivity"
             android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".workout.activity.WorkoutSearchActivity"
+            android:configChanges="orientation|screenSize" />
+
     </application>
 
 </manifest>
