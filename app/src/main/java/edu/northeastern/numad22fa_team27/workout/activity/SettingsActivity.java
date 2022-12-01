@@ -163,7 +163,7 @@ public class SettingsActivity extends AppCompatActivity {
                         });
             } else {
                 pb.setVisibility(View.INVISIBLE);
-                Toast.makeText(this, "Password length must be more than 6", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Password length must be at least 6", Toast.LENGTH_SHORT).show();
             }
         } else {
 
