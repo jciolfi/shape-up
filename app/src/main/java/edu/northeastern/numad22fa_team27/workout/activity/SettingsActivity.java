@@ -167,11 +167,21 @@ public class SettingsActivity extends AppCompatActivity {
             }
         } else {
 
-            boolean isOnlyEmail = TextUtils.isEmpty(pass) && TextUtils.isEmpty(oldPass.getText().toString()) && !TextUtils.isEmpty(newEmail.getText().toString());
-            boolean allFields = !TextUtils.isEmpty(pass) && !TextUtils.isEmpty(oldPass.getText().toString()) && !TextUtils.isEmpty(newEmail.getText().toString());
+            boolean isOnlyEmail = TextUtils.isEmpty(pass)
+                    && TextUtils.isEmpty(oldPass.getText().toString())
+                    && !TextUtils.isEmpty(newEmail.getText().toString())
+                    && !picSelected;
+            boolean isOnlyProfilePic = TextUtils.isEmpty(pass)
+                    && TextUtils.isEmpty(oldPass.getText().toString())
+                    && TextUtils.isEmpty(newEmail.getText().toString())
+                    && picSelected;
+            boolean allFields = !TextUtils.isEmpty(pass)
+                    && !TextUtils.isEmpty(oldPass.getText().toString())
+                    && !TextUtils.isEmpty(newEmail.getText().toString())
+                    && picSelected;
 
-            if (!isOnlyEmail) {
-                if (!allFields) {
+            if (!allFields) {
+                if (!isOnlyEmail && !isOnlyProfilePic) {
                     if (TextUtils.isEmpty(pass)) {
                         pb.setVisibility(View.INVISIBLE);
                         Toast.makeText(this, "Please enter new pass!", Toast.LENGTH_SHORT).show();
@@ -229,6 +239,10 @@ public class SettingsActivity extends AppCompatActivity {
                         }
                     });
         }
+
+        // TODO
+        // After profile pic saved change the imageview to default pic to avoid saving the
+        // picture while updating other fields
     }
 
     private void saveChanges() {
