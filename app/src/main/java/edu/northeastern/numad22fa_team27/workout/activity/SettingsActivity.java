@@ -165,6 +165,24 @@ public class SettingsActivity extends AppCompatActivity {
                 pb.setVisibility(View.INVISIBLE);
                 Toast.makeText(this, "Password length must be more than 6", Toast.LENGTH_SHORT).show();
             }
+        } else {
+
+            boolean isOnlyEmail = TextUtils.isEmpty(pass) && TextUtils.isEmpty(oldPass.getText().toString()) && !TextUtils.isEmpty(newEmail.getText().toString());
+            boolean allFields = !TextUtils.isEmpty(pass) && !TextUtils.isEmpty(oldPass.getText().toString()) && !TextUtils.isEmpty(newEmail.getText().toString());
+
+            if (!isOnlyEmail) {
+                if (!allFields) {
+                    if (TextUtils.isEmpty(pass)) {
+                        pb.setVisibility(View.INVISIBLE);
+                        Toast.makeText(this, "Please enter new pass!", Toast.LENGTH_SHORT).show();
+                    }
+                    if (TextUtils.isEmpty(oldPass.getText().toString())) {
+                        pb.setVisibility(View.INVISIBLE);
+                        Toast.makeText(this, "Please enter old pass!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+            }
         }
 
     }
