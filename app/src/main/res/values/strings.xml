@@ -60,5 +60,5 @@
     <string name="log_in_btn">Log In</string>
     <string name="sign_out">Sign Out</string>
     <string name="saveBtn">Save</string>
-    <string name="cancelBtn">Cancel</string>
+    <string name="cancelBtn">Back</string>
 </resources>
