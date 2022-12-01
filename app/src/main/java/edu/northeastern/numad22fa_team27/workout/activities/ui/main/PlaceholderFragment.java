@@ -12,8 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import edu.northeastern.numad22fa_team27.workout.activities.R;
-import edu.northeastern.numad22fa_team27.workout.activities.databinding.FragmentWorkoutListBinding;
+import edu.northeastern.numad22fa_team27.databinding.FragmentWorkoutListBinding;
 
 /**
  * A placeholder fragment containing a simple view.
