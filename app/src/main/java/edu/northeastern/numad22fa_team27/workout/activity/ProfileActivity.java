@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -46,6 +47,9 @@ public class ProfileActivity extends AppCompatActivity {
         settingsBtn = findViewById(R.id.mySettings);
         profilePic = findViewById(R.id.profilePic);
 
+        Button groupsButton = findViewById(R.id.myGroups);
+        groupsButton.setOnClickListener(view -> groupsBtnClicked());
+
         loadUser();
         setSignOutBtnClicked();
         settingsBtnClicked();
@@ -63,7 +67,6 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
-
     public void settingsBtnClicked() {
         settingsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,6 +74,39 @@ public class ProfileActivity extends AppCompatActivity {
                 Util.openActivity(ProfileActivity.this, SettingsActivity.class);
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String currentID = user.getUid();
+        DocumentReference reference;
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+
+        reference = firestore.collection("users").document(currentID);
+        reference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.getResult().exists()) {
+                    String url = task.getResult().getString("profilePic");
+                    String username = task.getResult().getString("username");
+                    usr_email.setText(username);
+                    if (!url.isEmpty()) {
+                        Picasso.get()
+                                .load(url)
+                                .resize(100, 100)
+                                .into(profilePic);
+                    }
+                } else {
+                    Toast.makeText(ProfileActivity.this, "Couldn't fetch the profile for the user", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private void groupsBtnClicked() {
+        firestoreService.findUserGroups(new FindGroupsCallback());
     }
 
     @Override
