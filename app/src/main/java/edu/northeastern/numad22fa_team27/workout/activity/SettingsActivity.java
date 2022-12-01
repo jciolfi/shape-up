@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.widget.Button;
@@ -43,12 +44,12 @@ public class SettingsActivity extends AppCompatActivity {
     private ImageView imageView;
     private Button saveBtn;
     private Button cancelBtn;
-    private EditText emailChange, passChange;
+    private EditText newEmail, newPass, oldPass;
     private ProgressBar pb;
     private Uri imageUri;
     private Boolean picSelected = false;
     private Boolean profilePicUpdated = false;
-    private Boolean credsUpdated = false;
+    private Boolean credsUpdated = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,10 +60,12 @@ public class SettingsActivity extends AppCompatActivity {
         saveBtn = findViewById(R.id.saveButton);
         pb = findViewById(R.id.save_progressbar);
         cancelBtn = findViewById(R.id.cancelButton);
-        emailChange = findViewById(R.id.editTextEmail);
-        passChange = findViewById(R.id.editTextPass);
-        emailChange.setHint(FirebaseAuth.getInstance().getCurrentUser().getEmail());
-        passChange.setHint("New password");
+        newEmail = findViewById(R.id.editTextEmail);
+        newPass = findViewById(R.id.editTextNewPass);
+        oldPass = findViewById(R.id.editTextOldPass);
+        newEmail.setHint(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+        newPass.setHint("New password");
+        oldPass.setHint("Old Password");
 
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,6 +94,81 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
+    private void updateUsername(FirebaseUser user, String username, DocumentReference documentReference) {
+        if (!username.isEmpty()) {
+            if(isEmailValid(username)) {
+                if (!username.equals(user.getEmail())) {
+                    user.updateEmail(username).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                pb.setVisibility(View.INVISIBLE);
+                                documentReference.update("username", username);
+                                Toast.makeText(SettingsActivity.this, "Email successfully updated!", Toast.LENGTH_SHORT).show();
+                                newEmail.setText("");
+                                newEmail.setHint(username);
+                            } else {
+                                Toast.makeText(SettingsActivity.this, "Couldn't update the email!", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                } else {
+                    pb.setVisibility(View.INVISIBLE);
+                    Toast.makeText(this, "New username cannot be same as the previous one!", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                pb.setVisibility(View.INVISIBLE);
+                Toast.makeText(SettingsActivity.this, "Please enter a valid email address!", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void updatePassword(String pass, FirebaseUser user) {
+        int min_pass_length = 6;
+        boolean isValidPass = pass.length() >= min_pass_length;
+
+        if (!TextUtils.isEmpty(pass) && !TextUtils.isEmpty(oldPass.getText().toString())) {
+            if (isValidPass) {
+                AuthCredential credential = EmailAuthProvider
+                        .getCredential(user.getEmail(), oldPass.getText().toString());
+                user.reauthenticate(credential)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    if (!pass.equals(oldPass.getText().toString())) {
+                                        user.updatePassword(pass).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    pb.setVisibility(View.INVISIBLE);
+                                                    newPass.setText("");
+                                                    oldPass.setText("");
+                                                    Toast.makeText(SettingsActivity.this, "Password successfully updated!", Toast.LENGTH_SHORT).show();
+                                                } else {
+                                                    pb.setVisibility(View.INVISIBLE);
+                                                    Toast.makeText(SettingsActivity.this, task.getException().getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
+                                    } else {
+                                        pb.setVisibility(View.INVISIBLE);
+                                        Toast.makeText(SettingsActivity.this, "New password cannot be same as the old one! Please Try again!", Toast.LENGTH_SHORT).show();
+                                    }
+                                } else {
+                                    pb.setVisibility(View.INVISIBLE);
+                                    Toast.makeText(SettingsActivity.this, "Old password is not correct!", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+            } else {
+                pb.setVisibility(View.INVISIBLE);
+                Toast.makeText(this, "Password length must be more than 6", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+    }
+
     private void updateCreds() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -99,31 +177,11 @@ public class SettingsActivity extends AppCompatActivity {
 
         if (user != null) {
 
-            String username = emailChange.getText().toString();
+            String username = newEmail.getText().toString();
+            String pass = newPass.getText().toString();
+            updateUsername(user, username, documentReference);
+            updatePassword(pass, user);
 
-            if (!username.isEmpty()) {
-                if(isEmailValid(username)) {
-                    if (!username.equals(user.getEmail())) {
-                        credsUpdated = true;
-                        user.updateEmail(username).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    credsUpdated = true;
-                                    documentReference.update("username", username);
-                                } else {
-                                    Toast.makeText(SettingsActivity.this, "Couldn't update the email!", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-                    } else {
-                        Toast.makeText(this, "New username cannot be same as the previous one!", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    pb.setVisibility(View.INVISIBLE);
-                    Toast.makeText(SettingsActivity.this, "Please enter a valid email address!", Toast.LENGTH_SHORT).show();
-                }
-            }
         }
     }
 
@@ -141,7 +199,9 @@ public class SettingsActivity extends AppCompatActivity {
                                     @Override
                                     public void onComplete(@NonNull Task<Uri> task) {
                                         if (task.isSuccessful()) {
+                                            pb.setVisibility(View.INVISIBLE);
                                             updateProfilePic(task.getResult().toString());
+                                            Toast.makeText(SettingsActivity.this, "Profile picture updated successfully!", Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 });
@@ -150,7 +210,6 @@ public class SettingsActivity extends AppCompatActivity {
                             }
                         }
                     });
-            profilePicUpdated = true;
         }
     }
 
@@ -158,15 +217,6 @@ public class SettingsActivity extends AppCompatActivity {
         pb.setVisibility(View.VISIBLE);
         changeProfilePic();
         updateCreds();
-        if (credsUpdated) {
-            pb.setVisibility(View.INVISIBLE);
-            Toast.makeText(SettingsActivity.this, "Changes Successfully Saved! Please sign in again!", Toast.LENGTH_SHORT).show();
-            Util.openActivity(SettingsActivity.this, LoginActivity.class);
-        }
-        if (profilePicUpdated & !credsUpdated) {
-            Util.openActivity(SettingsActivity.this, ProfileActivity.class);
-            Toast.makeText(SettingsActivity.this, "Profile picture updated!", Toast.LENGTH_SHORT).show();
-        }
     }
 
     private void updateProfilePic(String url) {
