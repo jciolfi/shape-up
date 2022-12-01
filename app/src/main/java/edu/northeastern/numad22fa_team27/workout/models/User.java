@@ -19,7 +19,7 @@ public class User {
     private String encryptedPassword;
 
     // List of the usernames of our friends
-    private List<String> friendUsernames;
+    private List<String> friends;
 
     // List of the IDs for the groups we've joined
     private List<UUID> joinedGroups;
@@ -39,7 +39,7 @@ public class User {
         this.username = username;
         this.encryptedPassword = encryptedPassword;
         this.profilePic = profilePic;
-        this.friendUsernames = new ArrayList<>();
+        this.friends = new ArrayList<>();
         this.joinedGroups = new ArrayList<>();
         this.currentCategoryStreaks = new HashMap<>();
         this.bestCategoryStreaks = new HashMap<>();
@@ -50,14 +50,15 @@ public class User {
      * Complete object constructor
      * @param username Unique string identifying user
      * @param encryptedPassword Hashed password
-     * @param friendUsernames List of the unique usernames of friends
+     * @param friends List of the unique usernames of friends
      * @param joinedGroups List of UUIDs for the groups this user has joined
      * @param currentCategoryStreaks Map of streak category to current streak info
      * @param bestCategoryStreaks Map of streak category to best streak info
      */
-    public User(String username, String encryptedPassword, String profilePic, List<String> friendUsernames, List<UUID> joinedGroups, Map<WorkoutCategory, Pair<Integer, LocalDate>> currentCategoryStreaks, Map<WorkoutCategory, Integer> bestCategoryStreaks) {
+    public User(String username, String encryptedPassword, String profilePic, List<String> friends, List<UUID> joinedGroups, Map<WorkoutCategory, Pair<Integer, LocalDate>> currentCategoryStreaks, Map<WorkoutCategory, Integer> bestCategoryStreaks) {
         this.username = username;
-        this.friendUsernames = friendUsernames;
+        this.friends = friends;
+        this.profilePic = profilePic;
         this.joinedGroups = joinedGroups;
         this.encryptedPassword = encryptedPassword;
         this.currentCategoryStreaks = currentCategoryStreaks;
@@ -106,16 +107,16 @@ public class User {
         }
     }
 
-    public List<String> getFriendUsernames() {
-        return friendUsernames;
+    public String getUsername() {
+        return username;
     }
 
-    public void setFriendUsernames(List<String> friendUsernames) {
-        this.friendUsernames = friendUsernames;
+    public List<String> getFriends() {
+        return friends;
     }
 
-    public Map<WorkoutCategory, Integer> getBestCategoryStreaks() {
-        return bestCategoryStreaks;
+    public void setFriends(List<String> friends) {
+        this.friends = friends;
     }
 
     public List<UUID> getJoinedGroups() {
@@ -126,12 +127,12 @@ public class User {
         this.joinedGroups = joinedGroups;
     }
 
-    public String getProfilePic() {
-        return profilePic;
+    public Map<WorkoutCategory, Pair<Integer, LocalDate>> getCurrentCategoryStreaks() {
+        return currentCategoryStreaks;
     }
 
-    public String getUsername() {
-        return username;
+    public Map<WorkoutCategory, Integer> getBestCategoryStreaks() {
+        return bestCategoryStreaks;
     }
 
     /**
