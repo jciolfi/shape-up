@@ -8,22 +8,22 @@ import java.util.UUID;
  * Object representation of a single workout exercise
  */
 public class Workout {
-    private UUID workoutID;
+    private String workoutID;
     private String workoutName;
     private List<MediaParagraph> workoutDescription;
     private List<WorkoutCategory> categoriesPresent;
     private float difficulty;
 
     public Workout() {
-        this.workoutID = UUID.randomUUID();
+        this.workoutID = UUID.randomUUID().toString();
         this.workoutName = new String();
         this.workoutDescription = new ArrayList<>();
         this.categoriesPresent = new ArrayList<>();
         this.difficulty = -1.0f;
     }
 
-    public Workout(UUID workoutID, String workoutName, List<MediaParagraph> workoutDescription, List<WorkoutCategory> categoriesPresent, float difficulty) {
-        this.workoutID = workoutID;
+    public Workout(String workoutUUID, String workoutName, List<MediaParagraph> workoutDescription, List<WorkoutCategory> categoriesPresent, float difficulty) {
+        this.workoutID = workoutUUID;
         this.workoutName = workoutName;
         this.workoutDescription = workoutDescription;
         this.categoriesPresent = categoriesPresent;
@@ -94,20 +94,22 @@ public class Workout {
         return true;
     }
 
-    @Override
-    public String toString() {
-        return "Workout{" +
-                "workoutName='" + workoutName + '\'' +
-                ", categoriesPresent=" + categoriesPresent +
-                ", difficulty=" + difficulty +
-                '}';
-    }
-
-    public UUID getWorkoutID() {
+    public String getWorkoutID() {
         return workoutID;
     }
 
-    public void setWorkoutID(UUID id) {
-        workoutID = id;
+    public void setWorkoutID(String uuid) {
+        workoutID = uuid;
+    }
+
+    @Override
+    public String toString() {
+        return "Workout{" +
+                "workoutID='" + workoutID + '\'' +
+                ", workoutName='" + workoutName + '\'' +
+                ", workoutDescription=" + workoutDescription +
+                ", categoriesPresent=" + categoriesPresent +
+                ", difficulty=" + difficulty +
+                '}';
     }
 }

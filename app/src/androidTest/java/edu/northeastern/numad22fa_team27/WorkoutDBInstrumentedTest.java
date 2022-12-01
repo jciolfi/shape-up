@@ -6,8 +6,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import androidx.annotation.NonNull;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,13 +20,8 @@ import org.junit.runners.Parameterized;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,7 +34,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import edu.northeastern.numad22fa_team27.workout.converters.WorkoutSnapshotConverter;
 import edu.northeastern.numad22fa_team27.workout.models.MediaParagraph;
 import edu.northeastern.numad22fa_team27.workout.models.Workout;
 import edu.northeastern.numad22fa_team27.workout.models.WorkoutCategory;
@@ -55,10 +47,9 @@ import edu.northeastern.numad22fa_team27.workout.models.WorkoutCategory;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WorkoutDBInstrumentedTest {
     private static final String WORKOUT_TABLE = "workouts";
-    private static DatabaseReference mDatabase;
+    private static FirebaseFirestore mDatabase;
     private static Workout currWorkout;
     private static AttributeGenerator gen;
-    private static String json;
     private CountDownLatch latch = new CountDownLatch(1);
 
     static class AttributeGenerator {
@@ -170,15 +161,15 @@ public class WorkoutDBInstrumentedTest {
 
     @BeforeClass
     public static void setUp() {
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase = FirebaseFirestore.getInstance();
     }
 
     @AfterClass
     public static void tearDown() {
-        mDatabase.child(WORKOUT_TABLE).child(currWorkout.getWorkoutID().toString()).setValue(null);
+        mDatabase.collection(WORKOUT_TABLE).document(currWorkout.getWorkoutID()).set(null);
     }
 
-    public WorkoutDBInstrumentedTest(UUID id, String name, List<MediaParagraph> text, List<WorkoutCategory> categories, float difficulty) {
+    public WorkoutDBInstrumentedTest(String id, String name, List<MediaParagraph> text, List<WorkoutCategory> categories, float difficulty) {
         currWorkout = new Workout(id, name, text, categories, difficulty);
     }
 
@@ -200,7 +191,7 @@ public class WorkoutDBInstrumentedTest {
 
         for (int i = 0; i < 100; i++) {
             for (WorkoutCategory category : WorkoutCategory.values()) {
-                args.add(new Object[]{ UUID.randomUUID(), gen.genName(category), gen.genDescription(category), gen.genCategoryList(category), gen.genDifficulty() });
+                args.add(new Object[]{ UUID.randomUUID().toString(), gen.genName(category), gen.genDescription(category), gen.genCategoryList(category), gen.genDifficulty() });
             }
         }
         return args;
@@ -211,7 +202,7 @@ public class WorkoutDBInstrumentedTest {
         AtomicBoolean success = new AtomicBoolean(false);
 
         // Context of the app under test.
-        mDatabase.child(WORKOUT_TABLE).child(currWorkout.getWorkoutID().toString()).setValue(currWorkout)
+        mDatabase.collection(WORKOUT_TABLE).document(currWorkout.getWorkoutID()).set(currWorkout)
                 .addOnSuccessListener(unused -> {
                     success.set(true);
                     latch.countDown();
@@ -231,13 +222,12 @@ public class WorkoutDBInstrumentedTest {
     @Test
     public void testBWorkoutFromDB() {
         // Context of the app under test.
-        mDatabase.child(WORKOUT_TABLE).child(currWorkout.getWorkoutID().toString())
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        assertTrue(snapshot.exists());
+        AtomicBoolean success = new AtomicBoolean(false);
+        mDatabase.collection(WORKOUT_TABLE).document(currWorkout.getWorkoutID()).get()
+                .addOnSuccessListener(document -> {
+                        assertTrue(document.exists());
 
-                        Workout retrievedWorkout = new WorkoutSnapshotConverter().unpack(snapshot);
+                        Workout retrievedWorkout = document.toObject(Workout.class);
 
                         assertNotNull(retrievedWorkout);
 
@@ -246,10 +236,13 @@ public class WorkoutDBInstrumentedTest {
                         assertEquals(retrievedWorkout.getWorkoutID().hashCode(), currWorkout.getWorkoutID().hashCode());
                         assertArrayEquals(retrievedWorkout.getWorkoutDescription().toArray(), currWorkout.getWorkoutDescription().toArray());
                         assertArrayEquals(retrievedWorkout.getCategoriesPresent().toArray(), currWorkout.getCategoriesPresent().toArray());
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) { }
+                        success.set(true);
+                        latch.countDown();
+                    }
+                ).addOnFailureListener(l -> {
+                        success.set(false);
+                        latch.countDown();
                 });
 
         try {
@@ -257,5 +250,6 @@ public class WorkoutDBInstrumentedTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        assertTrue(success.get());
     }
 }
