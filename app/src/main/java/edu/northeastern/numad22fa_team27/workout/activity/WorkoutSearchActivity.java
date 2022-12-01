@@ -65,8 +65,7 @@ public class WorkoutSearchActivity extends AppCompatActivity {
         public boolean onQueryTextSubmit(String query) {
             WorkoutCategory selectedCategory = WorkoutCategory.toCategory(
                     (String)categoriesDropdown.getSelectedItem());
-            firestoreService.findWorkoutsByCriteria(query, selectedCategory, new FindWorkoutsCallback(workoutItems));
-            Objects.requireNonNull(workoutRV.getAdapter()).notifyDataSetChanged();
+            firestoreService.findWorkoutsByCriteria(query, selectedCategory, new FindWorkoutsCallback(workoutItems, workoutRV));
             return false;
         }
 

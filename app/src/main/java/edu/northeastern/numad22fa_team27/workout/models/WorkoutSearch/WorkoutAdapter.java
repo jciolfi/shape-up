@@ -23,7 +23,7 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutViewHolder> {
     public WorkoutViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new WorkoutViewHolder(LayoutInflater
                 .from(parent.getContext())
-                .inflate(R.layout.item_workout, parent, false));
+                .inflate(R.layout.item_workout, null));
     }
 
     @Override
