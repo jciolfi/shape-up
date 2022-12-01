@@ -6,6 +6,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
+import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -13,8 +14,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import edu.northeastern.numad22fa_team27.R;
+import edu.northeastern.numad22fa_team27.databinding.ActivityWorkoutListBinding;
 import edu.northeastern.numad22fa_team27.workout.activities.ui.main.SectionsPagerAdapter;
-import edu.northeastern.numad22fa_team27.workout.activities.databinding.ActivityWorkoutListBinding;
 
 public class WorkoutList extends AppCompatActivity {
 
@@ -29,10 +31,11 @@ public class WorkoutList extends AppCompatActivity {
 
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
         ViewPager viewPager = binding.viewPager;
-        viewPager.setAdapter(sectionsPagerAdapter);
+        //viewPager.setAdapter((PagerAdapter) sectionsPagerAdapter);
         TabLayout tabs = binding.tabs;
         tabs.setupWithViewPager(viewPager);
         FloatingActionButton fab = binding.fab;
+        //setSupportActionBar(R.id);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
