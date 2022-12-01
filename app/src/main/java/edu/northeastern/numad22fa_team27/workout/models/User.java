@@ -56,10 +56,10 @@ public class User {
      * @param currentCategoryStreaks Map of streak category to current streak info
      * @param bestCategoryStreaks Map of streak category to best streak info
      */
-
-    public User(String username, String encryptedPassword, ImageView profilePic, List<String> friends, List<UUID> joinedGroups, Map<WorkoutCategory, Pair<Integer, LocalDate>> currentCategoryStreaks, Map<WorkoutCategory, Integer> bestCategoryStreaks) {
+    public User(String username, String encryptedPassword, String profilePic, List<String> friends, List<UUID> joinedGroups, Map<WorkoutCategory, Pair<Integer, LocalDate>> currentCategoryStreaks, Map<WorkoutCategory, Integer> bestCategoryStreaks) {
         this.username = username;
         this.friends = friends;
+        this.profilePic = profilePic;
         this.joinedGroups = joinedGroups;
         this.encryptedPassword = encryptedPassword;
         this.currentCategoryStreaks = currentCategoryStreaks;
@@ -120,10 +120,6 @@ public class User {
         this.friends = friends;
     }
 
-    public Map<WorkoutCategory, Integer> getBestCategoryStreaks() {
-        return bestCategoryStreaks;
-    }
-
     public List<UUID> getJoinedGroups() {
         return joinedGroups;
     }
@@ -132,14 +128,16 @@ public class User {
         this.joinedGroups = joinedGroups;
     }
 
-
     public Map<WorkoutCategory, Pair<Integer, LocalDate>> getCurrentCategoryStreaks() {
         return currentCategoryStreaks;
     }
 
-
     public String getProfilePic() {
         return profilePic;
+    }
+
+    public Map<WorkoutCategory, Integer> getBestCategoryStreaks() {
+        return bestCategoryStreaks;
     }
 
     /**
