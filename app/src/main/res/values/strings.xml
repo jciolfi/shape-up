@@ -105,5 +105,6 @@
     <string name="test">test</string>
     <string name="no_results">No results found. Reminder: searching is case sensitive!</string>
     <string name="saveBtn">Save</string>
-    <string name="cancelBtn">Cancel</string>
+    <string name="cancelBtn">Back</string>
+    <string name="friend_pic">friend_pic</string>
 </resources>
