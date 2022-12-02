@@ -167,7 +167,7 @@
         android:name="edu.northeastern.numad22fa_team27.sticker_messenger.FriendsFragment"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/white"
+        android:background="@color/design_default_color_background"
         android:elevation="4dp"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
