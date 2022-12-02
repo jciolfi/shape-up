@@ -19,7 +19,7 @@ public class Holder extends RecyclerView.ViewHolder {
     }
 
     private void views(View view) {
-        artistName = view.findViewById(R.id.artistname);
+        artistName = view.findViewById(R.id.userWorkoutCardCategory);
         trackName = view.findViewById(R.id.trackname);
         artistImage = view.findViewById(R.id.artistimage);
     }
