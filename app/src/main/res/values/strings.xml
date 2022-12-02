@@ -64,7 +64,7 @@
     <string name="sort_by">Sort By</string>
     <string name="search_for_groups">Search for Groups</string>
     <string name="search">Search</string>
-    
+
     <string name="user_workout_card_name">WORKOUT NAME</string>
     <string name="user_workout_card_category">CATEGORY</string>
     <string name="user_workout_card_progress_text">##%</string>
