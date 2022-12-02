@@ -11,6 +11,7 @@ import edu.northeastern.numad22fa_team27.R;
 public class UserFriendHolder  extends RecyclerView.ViewHolder {
     public ImageView friendPicture;
     public TextView friendName;
+    public TextView messagePreview;
 
     public UserFriendHolder(View view) {
         super(view);
@@ -20,5 +21,6 @@ public class UserFriendHolder  extends RecyclerView.ViewHolder {
     private void views(View view) {
         friendPicture = view.findViewById(R.id.profile_image);
         friendName = view.findViewById(R.id.userFriendName);
+        messagePreview  = view.findViewById(R.id.userFriendMessagePreview);
     }
 }

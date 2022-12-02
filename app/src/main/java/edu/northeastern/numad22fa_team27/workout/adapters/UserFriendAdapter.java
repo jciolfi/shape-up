@@ -34,8 +34,11 @@ public class UserFriendAdapter extends RecyclerView.Adapter<UserFriendHolder> {
     }
 
     private void getInfo(UserFriendHolder h, User card) {
-        // TODO: User picture loading
+        // TODO: User pictures need to be stored somewhere in our DB
+        // TODO: User messages need to be stored somewhere in our DB
+
         h.friendName.setText(card.getUsername());
+        h.messagePreview.setText("Message preview here ....");
     }
 
     @Override
