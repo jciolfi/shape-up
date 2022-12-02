@@ -79,4 +79,7 @@
     <string name="leader_board">Leader Board</string>
     <string name="workout">Workout</string>
     <string name="profile">Profile</string>
+    <string name="workoutDiagram">WorkoutDiagram</string>
+    <string name="completed">Completed</string>
+    <string name="title_goes_here">Title goes here</string>
 </resources>

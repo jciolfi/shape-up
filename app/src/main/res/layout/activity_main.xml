@@ -57,7 +57,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:menu="@menu/bottom_toolbar"
         tools:ignore="MissingConstraints"
-        android:backgroundTint="@color/black"/>
+        android:backgroundTint="@color/md_theme_light_onBackground"/>
 
     <Button
         android:id="@+id/btn_proj"
