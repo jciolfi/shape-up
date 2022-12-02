@@ -30,7 +30,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private TextView usr_email;
     private FirebaseAuth user_auth;
-    private Button signOutBtn, settingsBtn;
+    private Button signOutBtn, settingsBtn, friendsBtn;
     private ImageView profilePic;;
 
     @Override
@@ -48,16 +48,20 @@ public class ProfileActivity extends AppCompatActivity {
         Button groupsButton = findViewById(R.id.myGroups);
         groupsButton.setOnClickListener(view -> groupsBtnClicked());
 
+        friendsBtn = findViewById(R.id.myFriends);
+        friendsBtnClicked();
+
+
         loadUser();
         setSignOutBtnClicked();
         settingsBtnClicked();
     }
 
-    public void loadUser() {
+    private void loadUser() {
         usr_email.setText(user_auth.getCurrentUser().getEmail());
     }
 
-    public void setSignOutBtnClicked() {
+    private void setSignOutBtnClicked() {
         signOutBtn.setOnClickListener(view -> {
             user_auth.signOut();
             Toast.makeText(ProfileActivity.this, "Successfully signed out!", Toast.LENGTH_SHORT).show();
@@ -70,6 +74,15 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Util.openActivity(ProfileActivity.this, SettingsActivity.class);
+            }
+        });
+    }
+
+    private void friendsBtnClicked() {
+        friendsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Util.openActivity(ProfileActivity.this, MyFriendsActivity.class);
             }
         });
     }
