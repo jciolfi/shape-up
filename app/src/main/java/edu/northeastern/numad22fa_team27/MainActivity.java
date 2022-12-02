@@ -14,7 +14,9 @@ import com.google.android.material.navigation.NavigationBarView;
 
 import edu.northeastern.numad22fa_team27.spotify.SpotifyActivity;
 import edu.northeastern.numad22fa_team27.sticker_messenger.FirebaseActivity;
-import edu.northeastern.numad22fa_team27.workout.activity.UserFriends;
+
+import edu.northeastern.numad22fa_team27.workout.activity.LoginActivity;
+import edu.northeastern.numad22fa_team27.workout.activities.ui.main.viewpager.WorkoutListActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,32 +31,9 @@ public class MainActivity extends AppCompatActivity {
         Button btnA8 = findViewById(R.id.btn_A8);
         btnA8.setOnClickListener(view -> Util.openActivity(this, FirebaseActivity.class));
         Button btnSU = findViewById(R.id.btn_proj);
-        btnSU.setOnClickListener(view -> Util.openActivity(this, UserFriends.class));
+
+        btnSU.setOnClickListener(view -> Util.openActivity(this, LoginActivity.class));
+        Button btnA9 = findViewById(R.id.btn_A9);
+        btnA9.setOnClickListener(view -> Util.openActivity(this, WorkoutListActivity.class));
     }
-
-    private NavigationBarView.OnItemSelectedListener navListener =
-            new BottomNavigationView.OnItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                    Fragment selectedFragment = null;
-
-                    switch (item.getItemId()) {
-                        case R.id.nav_leaderboard:
-                            Intent intent = new Intent(MainActivity.this, SpotifyActivity.class);
-                            startActivity(intent);
-                            break;
-                        case R.id.nav_profile:
-                            intent = new Intent(MainActivity.this, FirebaseActivity.class);
-                            startActivity(intent);
-                            break;
-                        case R.id.nav_workout:
-//                            intent = new Intent(MainActivity.this, WorkoutList.class);
-//                            startActivity(intent);
-                            break;
-
-
-                    }
-                    return false;
-                }
-            };
 }
