@@ -93,10 +93,12 @@
     <string name="workout">Workout</string>
     <string name="profile">Profile</string>
     <string name="workoutDiagram">WorkoutDiagram</string>
-    <string name="completed">Completed</string>
+    <string name="completed"> - Completed</string>
     <string name="title_goes_here">Title goes here</string>
     <string name="login_banner">login_banner</string>
     <string name="log_in_btn">Log In</string>
     <string name="sign_out">Sign Out</string>
     <string name="workout_list_activity">Workout List Activity</string>
+    <string name="workout_list">Workout List</string>
+    <string name="instructions">Instructions</string>
 </resources>
