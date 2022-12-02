@@ -10,13 +10,12 @@ import java.util.List;
 import java.util.Objects;
 
 import edu.northeastern.numad22fa_team27.workout.models.DAO.WorkoutDAO;
-import edu.northeastern.numad22fa_team27.workout.models.WorkoutSearch.WorkoutItem;
 
 public class FindWorkoutsCallback extends WorkoutCallback {
-    private final List<WorkoutItem> workouts;
+    private final List<WorkoutDAO> workouts;
     private final RecyclerView workoutRV;
 
-    public FindWorkoutsCallback(List<WorkoutItem> workouts, RecyclerView workoutRV) {
+    public FindWorkoutsCallback(List<WorkoutDAO> workouts, RecyclerView workoutRV) {
         this.workouts = workouts;
         this.workoutRV = workoutRV;
     }
@@ -24,9 +23,7 @@ public class FindWorkoutsCallback extends WorkoutCallback {
     @Override
     public void processQuery(@NonNull QuerySnapshot snapshot) {
         workouts.clear();
-        for (WorkoutDAO workout : snapshot.toObjects(WorkoutDAO.class)) {
-            workouts.add(new WorkoutItem(workout.workoutName));
-        }
+        workouts.addAll(snapshot.toObjects(WorkoutDAO.class));
         Objects.requireNonNull(workoutRV.getAdapter()).notifyDataSetChanged();
     }
 }

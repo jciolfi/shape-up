@@ -1,4 +1,4 @@
-package edu.northeastern.numad22fa_team27.workout.models.WorkoutSearch;
+package edu.northeastern.numad22fa_team27.workout.models.workout_search;
 
 import android.view.View;
 import android.widget.TextView;

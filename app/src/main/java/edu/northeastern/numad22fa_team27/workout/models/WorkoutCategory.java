@@ -74,7 +74,7 @@ public enum WorkoutCategory {
     }
 
     /**
-     * Return WorkoutCategory represented by string (Case insensitive)
+     * Return WorkoutCategory represented by string (case insensitive)
      * @param w the string value
      * @return the corresponding WorkoutCategory
      */

@@ -56,7 +56,8 @@
     <string name="login_banner">login_banner</string>
     <string name="log_in_btn">Log In</string>
     <string name="sign_out">Sign Out</string>
-    <string name="workout_search">Workout Search</string>
+    <string name="workout_search">Search for Workouts</string>
     <string name="category">Category</string>
     <string name="workout_category_dropdown">Workout Category Dropdown</string>
+    <string name="friends_search">Search for Friends</string>
 </resources>

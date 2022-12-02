@@ -12,13 +12,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.workout.callbacks.FindWorkoutsCallback;
+import edu.northeastern.numad22fa_team27.workout.models.DAO.WorkoutDAO;
 import edu.northeastern.numad22fa_team27.workout.models.WorkoutCategory;
-import edu.northeastern.numad22fa_team27.workout.models.WorkoutSearch.WorkoutAdapter;
-import edu.northeastern.numad22fa_team27.workout.models.WorkoutSearch.WorkoutItem;
+import edu.northeastern.numad22fa_team27.workout.models.workout_search.WorkoutAdapter;
 import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 
 public class WorkoutSearchActivity extends AppCompatActivity {
@@ -26,7 +25,7 @@ public class WorkoutSearchActivity extends AppCompatActivity {
     private FirestoreService firestoreService;
     private Spinner categoriesDropdown;
     private RecyclerView workoutRV;
-    private final List<WorkoutItem> workoutItems = new ArrayList<>();
+    private final List<WorkoutDAO> workouts = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +56,7 @@ public class WorkoutSearchActivity extends AppCompatActivity {
         workoutRV = findViewById(R.id.rv_workout);
         workoutRV.setHasFixedSize(true);
         workoutRV.setLayoutManager(new LinearLayoutManager(this));
-        workoutRV.setAdapter(new WorkoutAdapter(workoutItems));
+        workoutRV.setAdapter(new WorkoutAdapter(workouts));
     }
 
     private class WorkoutQueryListener implements SearchView.OnQueryTextListener {
@@ -65,7 +64,7 @@ public class WorkoutSearchActivity extends AppCompatActivity {
         public boolean onQueryTextSubmit(String query) {
             WorkoutCategory selectedCategory = WorkoutCategory.toCategory(
                     (String)categoriesDropdown.getSelectedItem());
-            firestoreService.findWorkoutsByCriteria(query, selectedCategory, new FindWorkoutsCallback(workoutItems, workoutRV));
+            firestoreService.findWorkoutsByCriteria(query, selectedCategory, new FindWorkoutsCallback(workouts, workoutRV));
             return false;
         }
 

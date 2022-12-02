@@ -1,6 +1,5 @@
-package edu.northeastern.numad22fa_team27.workout.models.WorkoutSearch;
+package edu.northeastern.numad22fa_team27.workout.models.workout_search;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -10,12 +9,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import edu.northeastern.numad22fa_team27.R;
+import edu.northeastern.numad22fa_team27.workout.models.DAO.WorkoutDAO;
 
 public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutViewHolder> {
-    private final List<WorkoutItem> workouts;
+    private final List<WorkoutDAO> displayedWorkouts;
 
-    public WorkoutAdapter(List<WorkoutItem> workouts) {
-        this.workouts = workouts;
+    public WorkoutAdapter(List<WorkoutDAO> displayedWorkouts) {
+        this.displayedWorkouts = displayedWorkouts;
     }
 
     @NonNull
@@ -28,14 +28,12 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull WorkoutViewHolder holder, int position) {
-        // need to get the results somehow
-        String workoutName = workouts.get(position).getWorkoutName();
+        String workoutName = displayedWorkouts.get(position).workoutName;
         holder.workoutName.setText(workoutName);
-
     }
 
     @Override
     public int getItemCount() {
-        return workouts.size();
+        return displayedWorkouts.size();
     }
 }
