@@ -59,6 +59,11 @@ public class FakeWorkoutGenerator {
         return new Workout(UUID.randomUUID().toString(), genName(principleCategory), genDescription(principleCategory), genCategoryList(principleCategory), genDifficulty());
     }
 
+    public Workout newRandomWorkout() {
+        WorkoutCategory principleCategory = WorkoutCategory.values()[random.nextInt(WorkoutCategory.values().length - 1)];
+        return new Workout(UUID.randomUUID().toString(), genName(principleCategory), genDescription(principleCategory), genCategoryList(principleCategory), genDifficulty());
+    }
+
     private String lipsum(int numWords) {
         String[] lexicon = new String[] {
                 "lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit"

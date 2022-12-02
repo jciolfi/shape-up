@@ -5,7 +5,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.widget.EditText;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
@@ -25,7 +28,8 @@ import edu.northeastern.numad22fa_team27.workout.test_utilities.FakeWorkoutGener
 
 public class UserWorkouts extends AppCompatActivity {
     private final static String TAG = "UserWorkouts";
-    private final List<WorkoutProgress> cards = new ArrayList<>();
+    private final List<WorkoutProgress> originalWorkoutData = new ArrayList<>();
+    private List<WorkoutProgress> displayedWorkoutData = new ArrayList<>();
 
     private void genFakeWorkoutCards() throws IOException {
         String json = Resources.toString(Resources.getResource("workout_links.json"), Charsets.UTF_8);
@@ -33,12 +37,13 @@ public class UserWorkouts extends AppCompatActivity {
         gen.loadAttributes(json);
 
         for (int i = 0; i <= 100; i++) {
-            cards.add(new WorkoutProgress(gen.newRandomWorkout(WorkoutCategory.ACCURACY), i, i));
+            originalWorkoutData.add(new WorkoutProgress(gen.newRandomWorkout(), i, i));
         }
     }
 
     private List<WorkoutProgress> searchWorkouts(String targetString) {
-        return cards.stream().filter(k -> k.getWorkout().getWorkoutName().contains(targetString)).collect(Collectors.toList());
+        String searchString = targetString.toLowerCase();
+        return originalWorkoutData.stream().filter(k -> k.getWorkout().getWorkoutName().toLowerCase().contains(searchString)).collect(Collectors.toList());
     }
 
     @Override
@@ -49,7 +54,7 @@ public class UserWorkouts extends AppCompatActivity {
         RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
         RecyclerView lists = findViewById(R.id.userWorkoutRecView);
         lists.setHasFixedSize(true);
-        lists.setAdapter(new UserWorkoutAdapter(cards));
+        lists.setAdapter(new UserWorkoutAdapter(displayedWorkoutData));
         lists.setLayoutManager(manager);
 
         lists.addItemDecoration(new InterItemSpacer());
@@ -61,8 +66,29 @@ public class UserWorkouts extends AppCompatActivity {
             Log.e(TAG, "Could not load data!");
             return;
         }
+        displayedWorkoutData.addAll(originalWorkoutData);
 
         // Load data
         Objects.requireNonNull(lists.getAdapter()).notifyDataSetChanged();
+
+        EditText userWorkoutSearch = findViewById(R.id.userWorkoutSearch);
+        userWorkoutSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                displayedWorkoutData.clear();
+                displayedWorkoutData.addAll(searchWorkouts(s.toString()));
+                Objects.requireNonNull(lists.getAdapter()).notifyDataSetChanged();
+            }
+        });
     }
 }
