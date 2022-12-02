@@ -53,6 +53,7 @@
     <string name="workout_agility_description">The ability to minimize transition time from one movement pattern to another</string>
     <string name="workout_balance_description">The ability to control the placement of the body’s center of gravity in relation to its support base</string>
     <string name="workout_accuracy_description">The ability to control movement in a given direction or at a given intensity</string>
+    
     <string name="login_banner">login_banner</string>
     <string name="log_in_btn">Log In</string>
     <string name="sign_out">Sign Out</string>
@@ -82,4 +83,8 @@
     <string name="workoutDiagram">WorkoutDiagram</string>
     <string name="completed">Completed</string>
     <string name="title_goes_here">Title goes here</string>
+    <string name="login_banner">login_banner</string>
+    <string name="log_in_btn">Log In</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="workout_list_activity">Workout List Activity</string>
 </resources>

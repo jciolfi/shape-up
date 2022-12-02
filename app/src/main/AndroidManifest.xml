@@ -32,14 +32,14 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".workout.activity.ProfileActivity"
+            android:name=".workout.activities.ui.main.viewpager.WorkoutListActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".workout.activities.ui.main.viewpager.WorkoutListActivity"
+            android:name=".workout.activity.ProfileActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -54,10 +54,11 @@
         </activity>
         <activity
             android:name=".workout.activity.LoginActivity"
-            android:exported="false"/>
+            android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
+        </activity>
         <activity
             android:name=".sticker_messenger.FirebaseActivity"
             android:configChanges="orientation|screenSize"
