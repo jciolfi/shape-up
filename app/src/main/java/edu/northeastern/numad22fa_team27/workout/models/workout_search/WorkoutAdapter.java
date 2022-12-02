@@ -28,8 +28,8 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull WorkoutViewHolder holder, int position) {
-        String workoutName = displayedWorkouts.get(position).workoutName;
-        holder.workoutName.setText(workoutName);
+        WorkoutDAO workout = displayedWorkouts.get(position);
+        holder.workoutName.setText(workout.workoutName + " " + workout.difficulty);
     }
 
     @Override

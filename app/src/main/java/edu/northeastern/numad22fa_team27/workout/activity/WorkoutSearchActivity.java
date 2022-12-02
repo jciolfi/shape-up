@@ -1,7 +1,6 @@
 package edu.northeastern.numad22fa_team27.workout.activity;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -13,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.workout.callbacks.FindWorkoutsCallback;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.WorkoutDAO;
+import edu.northeastern.numad22fa_team27.workout.models.Workout;
 import edu.northeastern.numad22fa_team27.workout.models.WorkoutCategory;
 import edu.northeastern.numad22fa_team27.workout.models.workout_search.WorkoutAdapter;
 import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
@@ -28,11 +29,15 @@ public class WorkoutSearchActivity extends AppCompatActivity {
     private final String TAG = "WorkoutSearchActivity";
     private FirestoreService firestoreService;
     private Spinner categoriesDropdown;
+    private Spinner sortDropdown;
     private RecyclerView workoutRV;
+    private String[] sortOptions;
     // workouts returned from search view
     private final List<WorkoutDAO> workoutCache = new ArrayList<>();
     // workouts filtered on category
     private final List<WorkoutDAO> displayWorkouts = new ArrayList<>();
+    private WorkoutCategory prevFilter;
+    private String prevSort;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +47,7 @@ public class WorkoutSearchActivity extends AppCompatActivity {
         firestoreService = new FirestoreService();
 
         // populate categories dropdown
-        categoriesDropdown = findViewById(R.id.dropdown_workout);
+        categoriesDropdown = findViewById(R.id.dropdown_categories);
         List<String> workoutCategories = WorkoutCategory.listCategories(true);
         workoutCategories.add(0, "None");
         ArrayAdapter<String> categoriesAdapter = new ArrayAdapter<>(this,
@@ -51,7 +56,20 @@ public class WorkoutSearchActivity extends AppCompatActivity {
         categoriesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         categoriesDropdown.setAdapter(categoriesAdapter);
         categoriesDropdown.setSelection(0);
+        prevFilter = null;
         categoriesDropdown.setOnItemSelectedListener(new CategoriesListener());
+
+        // populate sort dropdown
+        sortOptions = new String[]{"Name ↑", "Name ↓", "Difficulty ↑", "Difficulty ↓"};
+        sortDropdown = findViewById(R.id.dropdown_workout_sort);
+        ArrayAdapter<String> sortAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, sortOptions);
+        sortAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sortDropdown.setAdapter(sortAdapter);
+        sortDropdown.setSelection(0);
+        prevSort = sortOptions[0];
+        sortDropdown.setOnItemSelectedListener(new SortListener());
+
 
         // add query listener to search view
         SearchView workoutSearch = findViewById(R.id.sv_workout);
@@ -70,10 +88,15 @@ public class WorkoutSearchActivity extends AppCompatActivity {
             // get selected category
             WorkoutCategory selectedCategory = WorkoutCategory.toCategory(
                     (String)categoriesDropdown.getSelectedItem());
+            prevFilter = selectedCategory;
 
             // update displayWorkouts and workoutCache
             firestoreService.findWorkoutsByCriteria(query, null,
                     new FindWorkoutsCallback(workoutCache, displayWorkouts, selectedCategory, workoutRV));
+
+            // reset sort
+            sortDropdown.setSelection(0);
+            prevSort = sortOptions[0];
 
             return false;
         }
@@ -86,10 +109,16 @@ public class WorkoutSearchActivity extends AppCompatActivity {
 
     private class CategoriesListener implements AdapterView.OnItemSelectedListener {
         @Override
-        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             // get selected category
             WorkoutCategory selectedCategory = WorkoutCategory.toCategory(
                     (String)categoriesDropdown.getSelectedItem());
+
+            // don't do extra work if we don't need to (select same filter again)
+            if (selectedCategory == prevFilter) {
+                return;
+            }
+            prevFilter = selectedCategory;
 
             // filter workouts on selected category
             displayWorkouts.clear();
@@ -106,8 +135,65 @@ public class WorkoutSearchActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onNothingSelected(AdapterView<?> adapterView) {
+        public void onNothingSelected(AdapterView<?> adapterView) { }
+    }
 
+    private class SortListener implements AdapterView.OnItemSelectedListener {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            // don't do extra work if we don't need to (select same sort again)
+            if (prevSort.equals(sortOptions[position])) {
+                return;
+            }
+            prevSort = sortOptions[position];
+            boolean shouldNotify = true;
+
+            // sort by selected option
+            // return <0 if w1 comes before w2, >0 if w2 comes before w1, =0 if tie
+            switch (position) {
+                // Name ↑ (ascending a->z)
+                case 0: {
+                    displayWorkouts.sort(Comparator.comparing(w -> w.workoutName));
+                    break;
+                }
+                // Name ↓ (descending: z-a)
+                case 1: {
+                    displayWorkouts.sort((w1, w2) -> -(w1.workoutName.compareTo(w2.workoutName)));
+                    break;
+                }
+                // Difficulty ↑ (ascending: 1->10)
+                case 2: {
+                    displayWorkouts.sort((w1, w2) -> sortWorkouts(w1, w2, true));
+                    break;
+                }
+                // Difficulty ↓ (descending: 10->1)
+                case 3: {
+                    displayWorkouts.sort((w1, w2) -> sortWorkouts(w1, w2, false));
+                    break;
+                }
+                default: {
+                    shouldNotify = false;
+                    break;
+                }
+            }
+
+            if (shouldNotify) {
+                Objects.requireNonNull(workoutRV.getAdapter()).notifyDataSetChanged();
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> adapterView) { }
+
+        private int sortWorkouts(WorkoutDAO w1, WorkoutDAO w2, boolean ascending) {
+            float diff = w1.difficulty - w2.difficulty;
+            if (diff < 0) {
+                return ascending ? -1 : 1;
+            } else if (diff > 0) {
+                return ascending ? 1 : -1;
+            } else {
+                return 0;
+            }
         }
     }
 }
