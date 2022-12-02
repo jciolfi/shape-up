@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:backgroundTint="@color/md_theme_light_secondaryContainer"
+    app:cardCornerRadius="12dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/idLay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:backgroundTint="@color/md_theme_light_secondaryContainer"
+        android:padding="18dp">
+
+        <TextView
+            android:id="@+id/userWorkoutCardCategory"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:clickable="false"
+            android:text="CATEGORY"
+            android:textAlignment="viewStart"
+            android:textColor="@color/md_theme_light_onSecondaryContainer"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/userWorkoutCardProgress"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/userWorkoutCardName" />
+
+        <TextView
+            android:id="@+id/userWorkoutCardName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:text="WORKOUT NAME"
+            android:textColor="@color/md_theme_light_onSecondaryContainer"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/userWorkoutCardCategory"
+            app:layout_constraintEnd_toStartOf="@+id/userWorkoutCardProgress"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:layout_constraintBottom_toTopOf="@+id/userWorkoutBadges"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/userWorkoutCardProgress"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/award" />
+
+        <ProgressBar
+            android:id="@+id/userWorkoutCardProgress"
+            style="@android:style/Widget.Material.Light.ProgressBar"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginEnd="16dp"
+            android:backgroundTint="@color/md_theme_light_onSecondaryContainer"
+            android:backgroundTintMode="src_atop"
+            android:foregroundTint="@color/md_theme_light_onSecondaryContainer"
+            android:foregroundTintMode="src_atop"
+            android:indeterminate="false"
+            android:indeterminateBehavior="cycle"
+            android:indeterminateOnly="false"
+            android:indeterminateTint="@color/md_theme_light_onSecondaryContainer"
+            android:indeterminateTintMode="src_atop"
+            android:max="100"
+            android:min="0"
+            android:progress="20"
+            android:progressBackgroundTint="@color/md_theme_light_onSecondaryContainer"
+            android:progressBackgroundTintMode="src_atop"
+            android:progressDrawable="@drawable/cicrcular_progress"
+            android:progressTint="@color/md_theme_light_onSecondaryContainer"
+            android:progressTintMode="src_atop"
+            android:secondaryProgressTint="@color/md_theme_light_onSecondaryContainer"
+            android:secondaryProgressTintMode="src_atop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/imageView2"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/userWorkoutCardName"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5" />
+
+        <TextView
+            android:id="@+id/userWorkoutBadges"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="x2"
+            android:textColor="@color/md_theme_light_onSecondaryContainer"
+            android:textSize="34sp"
+            android:textStyle="bold|italic"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.518"
+            app:layout_constraintStart_toEndOf="@+id/userWorkoutCardProgress"
+            app:layout_constraintTop_toBottomOf="@+id/imageView2"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <TextView
+            android:id="@+id/userWorkoutCardProgressText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="20%"
+            android:textColor="@color/md_theme_light_onSecondaryContainer"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="@+id/userWorkoutCardProgress"
+            app:layout_constraintEnd_toEndOf="@+id/userWorkoutCardProgress"
+            app:layout_constraintStart_toStartOf="@+id/userWorkoutCardProgress"
+            app:layout_constraintTop_toTopOf="@+id/userWorkoutCardProgress" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
