@@ -6,6 +6,7 @@ import edu.northeastern.numad22fa_team27.workout.models.MediaParagraph;
 import edu.northeastern.numad22fa_team27.workout.models.WorkoutCategory;
 
 public class WorkoutDAO {
+    public String workoutID;
     public String workoutName;
     public List<MediaParagraph> workoutDescription;
     public List<WorkoutCategory> categoriesPresent;
@@ -16,7 +17,8 @@ public class WorkoutDAO {
     @Override
     public String toString() {
         return "WorkoutDAO{" +
-                "workoutName='" + workoutName + '\'' +
+                "workoutID='" + workoutID + '\'' +
+                ", workoutName='" + workoutName + '\'' +
                 ", workoutDescription=" + workoutDescription +
                 ", categoriesPresent=" + categoriesPresent +
                 ", difficulty=" + difficulty +
