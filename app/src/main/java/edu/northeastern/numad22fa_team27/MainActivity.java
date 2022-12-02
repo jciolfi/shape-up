@@ -7,12 +7,7 @@ import android.widget.Button;
 
 import edu.northeastern.numad22fa_team27.spotify.SpotifyActivity;
 import edu.northeastern.numad22fa_team27.sticker_messenger.FirebaseActivity;
-import edu.northeastern.numad22fa_team27.workout.activity.LoginActivity;
-<<<<<<< HEAD
-import edu.northeastern.numad22fa_team27.workout.activity.SearchActivity;
-=======
 import edu.northeastern.numad22fa_team27.workout.activity.UserWorkouts;
->>>>>>> c99f149 (Base padded user workout screen)
 
 public class MainActivity extends AppCompatActivity {
 

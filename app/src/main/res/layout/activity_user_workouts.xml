@@ -33,6 +33,7 @@
         android:backgroundTintMode="multiply"
         android:ems="10"
         android:hint="Search..."
+        android:imeOptions="actionDone"
         android:inputType="textPersonName"
         android:minHeight="48dp"
         android:textColor="@color/md_theme_light_onBackground"
