@@ -92,5 +92,6 @@
     <string name="instructions">Instructions</string>
 
     <string name="saveBtn">Save</string>
-    <string name="cancelBtn">Cancel</string>
+    <string name="cancelBtn">Back</string>
+    <string name="friend_pic">friend_pic</string>
 </resources>
