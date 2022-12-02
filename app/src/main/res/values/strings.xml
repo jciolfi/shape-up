@@ -56,7 +56,6 @@
     <string name="login_banner">login_banner</string>
     <string name="log_in_btn">Log In</string>
     <string name="sign_out">Sign Out</string>
-
     <string name="workout_search">Search for Workouts</string>
     <string name="category">Category</string>
     <string name="workout_category_dropdown">Workout Category Dropdown</string>
@@ -77,8 +76,13 @@
     <string name="add">Add</string>
     
 
+    <!-- Workout app - cards-->
+    <string name="user_card_friend_name">FRIEND NAME</string>
+    <string name="user_card_message_preview">Message preview ....</string>
     <string name="user_workout_card_name">WORKOUT NAME</string>
     <string name="user_workout_card_category">CATEGORY</string>
     <string name="user_workout_card_progress_text">##%</string>
     <string name="user_workout_card_badge_text">x#</string>
+    <string name="search_hint">Search...</string>
+
 </resources>
