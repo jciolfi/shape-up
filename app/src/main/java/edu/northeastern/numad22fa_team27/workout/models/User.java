@@ -33,6 +33,8 @@ public class User {
      * @param encryptedPassword Hashed password
      */
     public User(String username, String encryptedPassword) {
+        this.username = username;
+        this.encryptedPassword = encryptedPassword;
         this.friends = new ArrayList<>();
         this.joinedGroups = new ArrayList<>();
         this.currentCategoryStreaks = new HashMap<>();

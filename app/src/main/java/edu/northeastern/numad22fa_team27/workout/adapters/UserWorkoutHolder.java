@@ -1,7 +1,6 @@
 package edu.northeastern.numad22fa_team27.workout.adapters;
 
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -23,7 +22,7 @@ public class UserWorkoutHolder extends RecyclerView.ViewHolder {
     }
 
     private void views(View view) {
-        workoutName = view.findViewById(R.id.userWorkoutCardName);
+        workoutName = view.findViewById(R.id.userFriendName);
         categoryName = view.findViewById(R.id.userWorkoutCardCategory);
         workoutProgress = view.findViewById(R.id.userWorkoutCardProgress);
         workoutProgressText = view.findViewById(R.id.userWorkoutCardProgressText);
