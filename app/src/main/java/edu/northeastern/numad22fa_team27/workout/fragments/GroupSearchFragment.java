@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
@@ -33,6 +34,7 @@ public class GroupSearchFragment extends Fragment {
     private String prevSort;
     private RecyclerView groupRV;
     private final List<GroupDAO> displayGroups = new ArrayList<>();
+    private TextView noResults;
 
     public GroupSearchFragment() { }
 
@@ -42,6 +44,7 @@ public class GroupSearchFragment extends Fragment {
         View searchView = inflater.inflate(R.layout.fragment_group_search, container, false);
 
         firestoreService = new FirestoreService();
+        noResults = searchView.findViewById(R.id.txt_no_group_results);
 
         // populate sort dropdown
         sortOptions = new String[]{"Name ↑", "Name ↓", "Popularity ↑", "Popularity ↓"};
@@ -71,7 +74,7 @@ public class GroupSearchFragment extends Fragment {
         @Override
         public boolean onQueryTextSubmit(String query) {
             // query for groups
-            firestoreService.findGroupsByName(query, new FindGroupsCallback(displayGroups, groupRV));
+            firestoreService.findGroupsByName(query, new FindGroupsCallback(displayGroups, groupRV, noResults));
 
             // reset sort
             sortDropdown.setSelection(0);

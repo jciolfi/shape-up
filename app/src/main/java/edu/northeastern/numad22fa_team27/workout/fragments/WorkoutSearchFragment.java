@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
@@ -39,6 +40,7 @@ public class WorkoutSearchFragment extends Fragment {
     private final List<WorkoutDAO> displayWorkouts = new ArrayList<>();
     private WorkoutCategory prevFilter;
     private String prevSort;
+    private TextView noResults;
 
     public WorkoutSearchFragment() { }
 
@@ -48,11 +50,12 @@ public class WorkoutSearchFragment extends Fragment {
         View searchView = inflater.inflate(R.layout.fragment_workout_search, container, false);
 
         firestoreService = new FirestoreService();
+        noResults = searchView.findViewById(R.id.txt_no_workout_results);
 
         // populate categories dropdown
         categoriesDropdown = searchView.findViewById(R.id.dropdown_categories);
         List<String> workoutCategories = WorkoutCategory.listCategories(true);
-        workoutCategories.add(0, "None");
+        workoutCategories.add(0, "Any");
         ArrayAdapter<String> categoriesAdapter = new ArrayAdapter<>(searchView.getContext(),
                 android.R.layout.simple_spinner_item,
                 workoutCategories);
@@ -60,7 +63,7 @@ public class WorkoutSearchFragment extends Fragment {
         categoriesDropdown.setAdapter(categoriesAdapter);
         categoriesDropdown.setSelection(0);
         prevFilter = null;
-        categoriesDropdown.setOnItemSelectedListener(new CategoriesListener());
+        categoriesDropdown.setOnItemSelectedListener(new CategoriesFilterListener());
 
         // populate sort dropdown
         sortOptions = new String[]{"Name ↑", "Name ↓", "Difficulty ↑", "Difficulty ↓"};
@@ -96,7 +99,7 @@ public class WorkoutSearchFragment extends Fragment {
 
             // update displayWorkouts and workoutCache
             firestoreService.findWorkoutsByCriteria(query, null,
-                    new FindWorkoutsCallback(workoutCache, displayWorkouts, selectedCategory, workoutRV));
+                    new FindWorkoutsCallback(workoutCache, displayWorkouts, selectedCategory, workoutRV, noResults));
 
             // reset sort
             sortDropdown.setSelection(0);
@@ -111,7 +114,7 @@ public class WorkoutSearchFragment extends Fragment {
         }
     }
 
-    private class CategoriesListener implements AdapterView.OnItemSelectedListener {
+    private class CategoriesFilterListener implements AdapterView.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             // get selected category
@@ -132,6 +135,13 @@ public class WorkoutSearchFragment extends Fragment {
                 displayWorkouts.addAll(workoutCache.stream()
                         .filter(w -> w.categoriesPresent.contains(selectedCategory))
                         .collect(Collectors.toList()));
+            }
+
+            // display message when no results returned
+            if (displayWorkouts.size() == 0) {
+                noResults.setVisibility(View.VISIBLE);
+            } else {
+                noResults.setVisibility(View.INVISIBLE);
             }
 
             // notify workouts changed

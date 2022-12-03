@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -63,5 +64,19 @@
         android:text="@string/sort_by"
         app:layout_constraintEnd_toStartOf="@+id/dropdown_groups_sort"
         app:layout_constraintTop_toBottomOf="@+id/sv_groups" />
+
+    <TextView
+        android:id="@+id/txt_no_group_results"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/no_results"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dropdown_groups_sort" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
