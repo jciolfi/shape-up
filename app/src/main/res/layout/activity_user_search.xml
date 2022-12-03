@@ -28,13 +28,38 @@
         app:layout_constraintTop_toBottomOf="@+id/title_user_search" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_workout"
+        android:id="@+id/rv_users"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.1"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dropdown_friends_sort" />
+
+    <Spinner
+        android:id="@+id/dropdown_friends_sort"
+        android:layout_width="150dp"
+        android:layout_height="48dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:contentDescription="@string/workout_category_dropdown"
+        android:minHeight="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/sv_users" />
+
+    <TextView
+        android:id="@+id/txt_workout_sort"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/sort_by"
+        app:layout_constraintEnd_toStartOf="@+id/dropdown_friends_sort"
+        app:layout_constraintTop_toBottomOf="@+id/sv_users" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

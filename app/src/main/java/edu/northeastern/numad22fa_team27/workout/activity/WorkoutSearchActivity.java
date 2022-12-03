@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.workout.callbacks.FindWorkoutsCallback;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.WorkoutDAO;
-import edu.northeastern.numad22fa_team27.workout.models.Workout;
 import edu.northeastern.numad22fa_team27.workout.models.WorkoutCategory;
 import edu.northeastern.numad22fa_team27.workout.models.workout_search.WorkoutAdapter;
 import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
@@ -69,7 +68,6 @@ public class WorkoutSearchActivity extends AppCompatActivity {
         sortDropdown.setSelection(0);
         prevSort = sortOptions[0];
         sortDropdown.setOnItemSelectedListener(new SortListener());
-
 
         // add query listener to search view
         SearchView workoutSearch = findViewById(R.id.sv_workout);
