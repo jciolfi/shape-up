@@ -10,13 +10,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:clickable="true"
         android:layout_marginHorizontal="24dp"
-        app:cardElevation="7dp"
+        android:clickable="true"
+        app:cardBackgroundColor="@color/md_theme_light_primary"
         app:cardCornerRadius="15dp"
-        >
+        app:cardElevation="7dp">
+
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
@@ -25,11 +26,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
+                android:lines="2"
+                android:minHeight="48dp"
                 android:text="@string/title_goes_here"
-                android:textSize="16dp"
-                android:textStyle="bold"
-                android:textColor="@color/black"
-                android:lines="2"/>
+                android:textColor="@color/md_theme_light_onPrimary"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
 
             <ImageView
@@ -37,26 +39,32 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
-                android:contentDescription="@string/workoutDiagram"/>
+                android:contentDescription="@string/workoutDiagram" />
 
             <Button
                 android:id="@+id/btn_instructions"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@color/md_theme_light_secondaryContainer"
                 android:text="@string/instructions"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                android:textColor="@color/md_theme_light_onSecondaryContainer"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
             <CheckBox
                 android:id="@+id/ckb_completed"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                app:layout_constraintTop_toBottomOf="@+id/txt_workout_list_title"
-                app:layout_constraintStart_toStartOf="parent"
+                android:layout_gravity="center"
+                android:gravity="center|center_horizontal|center_vertical"
+                android:minHeight="48dp"
+                android:text="@string/completed"
+                android:textAlignment="textStart"
+                android:textColor="@color/md_theme_light_onPrimary"
+                android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:textColor="@color/black"
-                android:textSize="12sp"
-                android:text="@string/completed"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txt_workout_list_title" />
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>

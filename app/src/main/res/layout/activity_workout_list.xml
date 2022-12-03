@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient"
+    android:background="@color/md_theme_light_background"
     tools:context=".workout.activities.ui.main.viewpager.WorkoutListActivity">
 
 
@@ -12,10 +12,13 @@
         android:id="@+id/txt_workout_list_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginVertical="16dp"
+        android:layout_marginBottom="16dp"
         android:text="@string/workout_list"
-        android:textColor="@color/white"
+        android:textAlignment="center"
+        android:textColor="@color/md_theme_light_onBackground"
         android:textSize="32dp"
-        android:layout_marginVertical="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/vpg_workout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -23,12 +26,12 @@
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/vpg_workout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_workout_list_title"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/bottom_toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txt_workout_list_title"
         app:layout_constraintVertical_bias="0.5" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -36,12 +39,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:backgroundTint="@color/md_theme_light_secondary"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/bottom_toolbar"
-        tools:ignore="MissingConstraints"
-        android:backgroundTint="@color/black"/>
+        tools:ignore="MissingConstraints" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
