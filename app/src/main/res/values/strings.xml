@@ -98,4 +98,11 @@
     <string name="workout_list_activity">Workout List Activity</string>
     <string name="workout_list">Workout List</string>
     <string name="instructions">Instructions</string>
+    <string name="workout_name">Workout Name</string>
+    <string name="difficulty">Difficulty:</string>
+    <string name="categories">Categories:</string>
+    <string name="close">close</string>
+    <string name="group_name">Group Name</string>
+    <string name="members">Members:</string>
+    <string name="join">Join</string>
 </resources>
