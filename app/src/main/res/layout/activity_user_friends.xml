@@ -8,7 +8,7 @@
     tools:context=".workout.activity.UserWorkouts">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/userWorkoutRecView"
+        android:id="@+id/userFriendsRecView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
@@ -18,10 +18,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userWorkoutSearch" />
+        app:layout_constraintTop_toBottomOf="@+id/userFriendSearch" />
 
     <EditText
-        android:id="@+id/userWorkoutSearch"
+        android:id="@+id/userFriendSearch"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -40,7 +40,7 @@
         android:textColorHint="@color/md_theme_light_onBackground"
         android:textSize="20sp"
         android:textStyle="italic"
-        app:layout_constraintBottom_toTopOf="@+id/userWorkoutRecView"
+        app:layout_constraintBottom_toTopOf="@+id/userFriendsRecView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

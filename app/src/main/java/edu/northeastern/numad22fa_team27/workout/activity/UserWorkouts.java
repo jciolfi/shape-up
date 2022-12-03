@@ -22,14 +22,13 @@ import java.util.stream.Collectors;
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.workout.adapters.InterItemSpacer;
 import edu.northeastern.numad22fa_team27.workout.adapters.UserWorkoutAdapter;
-import edu.northeastern.numad22fa_team27.workout.models.WorkoutCategory;
 import edu.northeastern.numad22fa_team27.workout.models.WorkoutProgress;
 import edu.northeastern.numad22fa_team27.workout.test_utilities.FakeWorkoutGenerator;
 
 public class UserWorkouts extends AppCompatActivity {
     private final static String TAG = "UserWorkouts";
     private final List<WorkoutProgress> originalWorkoutData = new ArrayList<>();
-    private List<WorkoutProgress> displayedWorkoutData = new ArrayList<>();
+    private final List<WorkoutProgress> displayedWorkoutData = new ArrayList<>();
 
     private void genFakeWorkoutCards() throws IOException {
         String json = Resources.toString(Resources.getResource("workout_links.json"), Charsets.UTF_8);
@@ -57,7 +56,7 @@ public class UserWorkouts extends AppCompatActivity {
         lists.setAdapter(new UserWorkoutAdapter(displayedWorkoutData));
         lists.setLayoutManager(manager);
 
-        lists.addItemDecoration(new InterItemSpacer());
+        lists.addItemDecoration(new InterItemSpacer(12));
 
         // Create dummy data
         try {
