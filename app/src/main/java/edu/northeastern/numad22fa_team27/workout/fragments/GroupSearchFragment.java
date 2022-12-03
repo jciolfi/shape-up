@@ -1,13 +1,15 @@
-package edu.northeastern.numad22fa_team27.workout.activity;
+package edu.northeastern.numad22fa_team27.workout.fragments;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,8 +24,8 @@ import edu.northeastern.numad22fa_team27.workout.models.DAO.GroupDAO;
 import edu.northeastern.numad22fa_team27.workout.models.groups_search.GroupAdapter;
 import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 
-public class GroupSearchActivity extends AppCompatActivity {
-    private final String TAG = "GroupSearchActivity";
+public class GroupSearchFragment extends Fragment {
+    private final String TAG = "GroupSearchFragment";
     private FirestoreService firestoreService;
     private Spinner sortDropdown;
     private String[] sortOptions;
@@ -31,17 +33,21 @@ public class GroupSearchActivity extends AppCompatActivity {
     private RecyclerView groupRV;
     private final List<GroupDAO> displayGroups = new ArrayList<>();
 
+    public GroupSearchFragment() {
+        // Required empty public constructor
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_group_search);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View searchView = inflater.inflate(R.layout.fragment_group_search, container, false);
 
         firestoreService = new FirestoreService();
 
         // populate sort dropdown
         sortOptions = new String[]{"Name ↑", "Name ↓", "Popularity ↑", "Popularity ↓"};
-        sortDropdown = findViewById(R.id.dropdown_groups_sort);
-        ArrayAdapter<String> sortAdapter = new ArrayAdapter<>(this,
+        sortDropdown = searchView.findViewById(R.id.dropdown_groups_sort);
+        ArrayAdapter<String> sortAdapter = new ArrayAdapter<>(searchView.getContext(),
                 android.R.layout.simple_spinner_item, sortOptions);
         sortAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sortDropdown.setAdapter(sortAdapter);
@@ -50,14 +56,16 @@ public class GroupSearchActivity extends AppCompatActivity {
         sortDropdown.setOnItemSelectedListener(new SortListener());
 
         // add query listener to search view
-        SearchView groupSearch = findViewById(R.id.sv_groups);
+        SearchView groupSearch = searchView.findViewById(R.id.sv_groups);
         groupSearch.setOnQueryTextListener(new GroupQueryListener());
 
         // set up recycler view
-        groupRV = findViewById(R.id.rv_groups);
+        groupRV = searchView.findViewById(R.id.rv_groups);
         groupRV.setHasFixedSize(true);
-        groupRV.setLayoutManager(new LinearLayoutManager(this));
+        groupRV.setLayoutManager(new LinearLayoutManager(searchView.getContext()));
         groupRV.setAdapter(new GroupAdapter(displayGroups));
+
+        return searchView;
     }
 
     private class GroupQueryListener implements SearchView.OnQueryTextListener {

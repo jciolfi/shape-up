@@ -62,13 +62,7 @@
             android:name=".spotify.SpotifyActivity"
             android:configChanges="orientation|screenSize" />
         <activity
-            android:name=".workout.activity.WorkoutSearchActivity"
-            android:configChanges="orientation|screenSize" />
-        <activity
-            android:name=".workout.activity.UserSearchActivity"
-            android:configChanges="orientation|screenSize" />
-        <activity
-            android:name=".workout.activity.GroupSearchActivity"
+            android:name=".workout.activity.SearchActivity"
             android:configChanges="orientation|screenSize" />
 
     </application>

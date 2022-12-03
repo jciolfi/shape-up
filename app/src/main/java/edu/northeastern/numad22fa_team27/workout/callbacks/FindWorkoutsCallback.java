@@ -33,10 +33,6 @@ public class FindWorkoutsCallback extends WorkoutCallback {
 
     @Override
     public void processQuery(@NonNull QuerySnapshot snapshot) {
-        for (WorkoutDAO w : snapshot.toObjects(WorkoutDAO.class)) {
-            Log.d("XXX", w.toString());
-        }
-
         // add all query workouts
         queryWorkouts.clear();
         queryWorkouts.addAll(snapshot.toObjects(WorkoutDAO.class));

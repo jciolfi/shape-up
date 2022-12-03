@@ -1,13 +1,15 @@
-package edu.northeastern.numad22fa_team27.workout.activity;
+package edu.northeastern.numad22fa_team27.workout.fragments;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,8 +24,8 @@ import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
 import edu.northeastern.numad22fa_team27.workout.models.user_search.UserAdapter;
 import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 
-public class UserSearchActivity  extends AppCompatActivity {
-    private final String TAG = "UserSearchActivity";
+public class UserSearchFragment extends Fragment {
+    private final String TAG = "UserSearchFragment";
     private FirestoreService firestoreService;
     private Spinner sortDropdown;
     private String[] sortOptions;
@@ -31,17 +33,19 @@ public class UserSearchActivity  extends AppCompatActivity {
     private RecyclerView userRV;
     private final List<UserDAO> displayUsers = new ArrayList<>();
 
+    public UserSearchFragment() { }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_search);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View searchView = inflater.inflate(R.layout.fragment_user_search, container, false);
 
         firestoreService = new FirestoreService();
 
         // populate sort dropdown
         sortOptions = new String[]{"Name ↑", "Name ↓"};
-        sortDropdown = findViewById(R.id.dropdown_friends_sort);
-        ArrayAdapter<String> sortAdapter = new ArrayAdapter<>(this,
+        sortDropdown = searchView.findViewById(R.id.dropdown_friends_sort);
+        ArrayAdapter<String> sortAdapter = new ArrayAdapter<>(searchView.getContext(),
                 android.R.layout.simple_spinner_item, sortOptions);
         sortAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sortDropdown.setAdapter(sortAdapter);
@@ -50,14 +54,16 @@ public class UserSearchActivity  extends AppCompatActivity {
         sortDropdown.setOnItemSelectedListener(new SortListener());
 
         // add query listener to search view
-        SearchView userSearch = findViewById(R.id.sv_users);
+        SearchView userSearch = searchView.findViewById(R.id.sv_users);
         userSearch.setOnQueryTextListener(new UserQueryListener());
 
         // set up user recycler view
-        userRV = findViewById(R.id.rv_users);
+        userRV = searchView.findViewById(R.id.rv_users);
         userRV.setHasFixedSize(true);
-        userRV.setLayoutManager(new LinearLayoutManager(this));
+        userRV.setLayoutManager(new LinearLayoutManager(searchView.getContext()));
         userRV.setAdapter(new UserAdapter(displayUsers));
+
+        return searchView;
     }
 
     private class UserQueryListener implements SearchView.OnQueryTextListener {

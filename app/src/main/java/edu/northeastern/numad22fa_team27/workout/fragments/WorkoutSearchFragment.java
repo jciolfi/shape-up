@@ -1,13 +1,16 @@
-package edu.northeastern.numad22fa_team27.workout.activity;
+package edu.northeastern.numad22fa_team27.workout.fragments;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,7 +27,7 @@ import edu.northeastern.numad22fa_team27.workout.models.WorkoutCategory;
 import edu.northeastern.numad22fa_team27.workout.models.workout_search.WorkoutAdapter;
 import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 
-public class WorkoutSearchActivity extends AppCompatActivity {
+public class WorkoutSearchFragment extends Fragment {
     private final String TAG = "WorkoutSearchActivity";
     private FirestoreService firestoreService;
     private Spinner categoriesDropdown;
@@ -38,18 +41,20 @@ public class WorkoutSearchActivity extends AppCompatActivity {
     private WorkoutCategory prevFilter;
     private String prevSort;
 
+    public WorkoutSearchFragment() { }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_workout_search);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View searchView = inflater.inflate(R.layout.fragment_workout_search, container, false);
 
         firestoreService = new FirestoreService();
 
         // populate categories dropdown
-        categoriesDropdown = findViewById(R.id.dropdown_categories);
+        categoriesDropdown = searchView.findViewById(R.id.dropdown_categories);
         List<String> workoutCategories = WorkoutCategory.listCategories(true);
         workoutCategories.add(0, "None");
-        ArrayAdapter<String> categoriesAdapter = new ArrayAdapter<>(this,
+        ArrayAdapter<String> categoriesAdapter = new ArrayAdapter<>(searchView.getContext(),
                 android.R.layout.simple_spinner_item,
                 workoutCategories);
         categoriesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -60,8 +65,8 @@ public class WorkoutSearchActivity extends AppCompatActivity {
 
         // populate sort dropdown
         sortOptions = new String[]{"Name ↑", "Name ↓", "Difficulty ↑", "Difficulty ↓"};
-        sortDropdown = findViewById(R.id.dropdown_workout_sort);
-        ArrayAdapter<String> sortAdapter = new ArrayAdapter<>(this,
+        sortDropdown = searchView.findViewById(R.id.dropdown_workout_sort);
+        ArrayAdapter<String> sortAdapter = new ArrayAdapter<>(searchView.getContext(),
                 android.R.layout.simple_spinner_item, sortOptions);
         sortAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sortDropdown.setAdapter(sortAdapter);
@@ -70,14 +75,16 @@ public class WorkoutSearchActivity extends AppCompatActivity {
         sortDropdown.setOnItemSelectedListener(new SortListener());
 
         // add query listener to search view
-        SearchView workoutSearch = findViewById(R.id.sv_workout);
+        SearchView workoutSearch = searchView.findViewById(R.id.sv_workout);
         workoutSearch.setOnQueryTextListener(new WorkoutQueryListener());
 
         // set up workout recycler view
-        workoutRV = findViewById(R.id.rv_workout);
+        workoutRV = searchView.findViewById(R.id.rv_workout);
         workoutRV.setHasFixedSize(true);
-        workoutRV.setLayoutManager(new LinearLayoutManager(this));
+        workoutRV.setLayoutManager(new LinearLayoutManager(searchView.getContext()));
         workoutRV.setAdapter(new WorkoutAdapter(displayWorkouts));
+
+        return searchView;
     }
 
     private class WorkoutQueryListener implements SearchView.OnQueryTextListener {
