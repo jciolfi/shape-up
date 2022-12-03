@@ -7,8 +7,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -17,7 +15,6 @@ import edu.northeastern.numad22fa_team27.workout.callbacks.WorkoutCallback;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.GroupDAO;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
 import edu.northeastern.numad22fa_team27.workout.models.Group;
-import edu.northeastern.numad22fa_team27.workout.models.User;
 import edu.northeastern.numad22fa_team27.workout.models.WorkoutCategory;
 
 public class FirestoreService implements IFirestoreService {
@@ -154,15 +151,23 @@ public class FirestoreService implements IFirestoreService {
     }
 
     @Override
-    public void findStreaksLeaderboard(String userID, WorkoutCallback callback) {
-        if (Util.stringIsNullOrEmpty(userID)) {
-            warnBadParam("findStreaksLeaderboard");
+    public void findStreaksLeaderboard(boolean friendsOnly, WorkoutCategory category, WorkoutCallback callback) {
+        if (friendsOnly && !tryFetchUserDetails()) {
             return;
         }
 
-        // TODO: go 10 by 10 getting all friends, can only specify up to 10 items in whereIn clause
-        List<User> friends = new ArrayList<>();
+        // get leaderboard for friends only
+        if (friendsOnly) {
+            // go 10-by-10 fetching results until all friends retrieved
+            int pointer = 0;
 
+        }
+        // get global leaderboard
+        else {
+            // get top 100 highest summed bestCategoryStreak for each category
+            firestoreDB.collection("users")
+                    .orderBy(String.format("bestCategoryStreaks/%s", WorkoutCategory.formatString(category)))
+        }
     }
 
     // ---------- Helpers ----------

@@ -40,8 +40,8 @@ public interface IFirestoreService {
 
     /**
      * Get the leaderboard for the friends of the given user
-     * @param userID the user who's leaderboard will be displayed
+     * @param friendsOnly leaderboard for friends only if true, global otherwise
      * @param callback executed on the entries returned by the query
      */
-    void findStreaksLeaderboard(String userID, WorkoutCallback callback);
+    void findStreaksLeaderboard(boolean friendsOnly, WorkoutCategory category, WorkoutCallback callback);
 }

@@ -14,6 +14,7 @@ import java.util.List;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.WorkoutDAO;
+import edu.northeastern.numad22fa_team27.workout.models.WorkoutCategory;
 
 public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutViewHolder> {
     private final List<WorkoutDAO> displayedWorkouts;
@@ -55,10 +56,7 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutViewHolder> {
             // set categories info
             TextView categories = workoutInfoDialog.findViewById(R.id.txt_categories_info);
             String[] categoriesList = workout.categoriesPresent.stream()
-                    .map(w -> {
-                        String wStr = String.valueOf(w);
-                        return wStr.substring(0, 1).toUpperCase() + wStr.substring(1).toLowerCase();
-                    })
+                    .map(WorkoutCategory::formatString)
                     .toArray(String[]::new);
             String categoryIdentifier = categoriesList.length > 1 ? "Categories" : "Category";
             categories.setText(String.format("%s: %s",

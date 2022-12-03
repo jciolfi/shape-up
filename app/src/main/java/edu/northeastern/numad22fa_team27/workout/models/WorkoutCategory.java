@@ -63,11 +63,7 @@ public enum WorkoutCategory {
 
         // no formatting - will be upper case
         if (withFormat) {
-            return categoryStream.map(w -> {
-                // NOTE: assumes a category is not the empty string, at least length 1
-                String wStr = String.valueOf(w);
-                return wStr.substring(0, 1).toUpperCase() + wStr.substring(1).toLowerCase();
-            }).collect(Collectors.toList());
+            return categoryStream.map(WorkoutCategory::formatString).collect(Collectors.toList());
         }
 
         return categoryStream.map(String::valueOf).collect(Collectors.toList());
@@ -84,5 +80,16 @@ public enum WorkoutCategory {
         } catch (IllegalArgumentException e) {
             return null;
         }
+    }
+
+    /**
+     * Return string value of category, capitalized
+     * @param category the workout category
+     * @return capitalized string of category
+     */
+    public static String formatString(WorkoutCategory category) {
+        // NOTE: assumes a category is not the empty string, at least length 1
+        String wStr = String.valueOf(category);
+        return wStr.substring(0, 1).toUpperCase() + wStr.substring(1).toLowerCase();
     }
 }
