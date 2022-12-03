@@ -17,30 +17,30 @@ import java.util.List;
 import java.util.Objects;
 
 import edu.northeastern.numad22fa_team27.R;
-import edu.northeastern.numad22fa_team27.workout.callbacks.FindUsersCallback;
-import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
-import edu.northeastern.numad22fa_team27.workout.models.user_search.UserAdapter;
+import edu.northeastern.numad22fa_team27.workout.callbacks.FindGroupsCallback;
+import edu.northeastern.numad22fa_team27.workout.models.DAO.GroupDAO;
+import edu.northeastern.numad22fa_team27.workout.models.groups_search.GroupAdapter;
 import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 
-public class UserSearchActivity  extends AppCompatActivity {
-    private final String TAG = "UserSearchActivity";
+public class GroupSearchActivity extends AppCompatActivity {
+    private final String TAG = "GroupSearchActivity";
     private FirestoreService firestoreService;
     private Spinner sortDropdown;
     private String[] sortOptions;
     private String prevSort;
-    private RecyclerView userRV;
-    private final List<UserDAO> displayUsers = new ArrayList<>();
+    private RecyclerView groupRV;
+    private final List<GroupDAO> displayGroups = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_search);
+        setContentView(R.layout.activity_group_search);
 
         firestoreService = new FirestoreService();
 
         // populate sort dropdown
-        sortOptions = new String[]{"Name ↑", "Name ↓"};
-        sortDropdown = findViewById(R.id.dropdown_friends_sort);
+        sortOptions = new String[]{"Name ↑", "Name ↓", "Popularity ↑", "Popularity ↓"};
+        sortDropdown = findViewById(R.id.dropdown_groups_sort);
         ArrayAdapter<String> sortAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, sortOptions);
         sortAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -50,20 +50,21 @@ public class UserSearchActivity  extends AppCompatActivity {
         sortDropdown.setOnItemSelectedListener(new SortListener());
 
         // add query listener to search view
-        SearchView userSearch = findViewById(R.id.sv_users);
-        userSearch.setOnQueryTextListener(new UserQueryListener());
+        SearchView groupSearch = findViewById(R.id.sv_groups);
+        groupSearch.setOnQueryTextListener(new GroupQueryListener());
 
-        // set up user recycler view
-        userRV = findViewById(R.id.rv_users);
-        userRV.setHasFixedSize(true);
-        userRV.setLayoutManager(new LinearLayoutManager(this));
-        userRV.setAdapter(new UserAdapter(displayUsers));
+        // set up recycler view
+        groupRV = findViewById(R.id.rv_groups);
+        groupRV.setHasFixedSize(true);
+        groupRV.setLayoutManager(new LinearLayoutManager(this));
+        groupRV.setAdapter(new GroupAdapter(displayGroups));
     }
 
-    private class UserQueryListener implements SearchView.OnQueryTextListener {
+    private class GroupQueryListener implements SearchView.OnQueryTextListener {
         @Override
         public boolean onQueryTextSubmit(String query) {
-            firestoreService.findUsersByUsername(query, new FindUsersCallback(displayUsers, userRV));
+            // query for groups
+            firestoreService.findGroupsByName(query, new FindGroupsCallback(displayGroups, groupRV));
 
             // reset sort
             sortDropdown.setSelection(0);
@@ -88,17 +89,25 @@ public class UserSearchActivity  extends AppCompatActivity {
             prevSort = sortOptions[position];
             boolean shouldNotify = true;
 
-            // sort by selected option
-            // return <0 if w1 comes before w2, >0 if w2 comes before w1, =0 if tie
             switch (position) {
                 // Name ↑ (ascending a->z)
                 case 0: {
-                    displayUsers.sort(Comparator.comparing(u -> u.username));
+                    displayGroups.sort(Comparator.comparing(g-> g.groupName));
                     break;
                 }
                 // Name ↓ (descending: z-a)
                 case 1: {
-                    displayUsers.sort((u1, u2) -> -(u1.username.compareTo(u2.username)));
+                    displayGroups.sort((g1, g2) -> -(g1.groupName.compareTo(g2.groupName)));
+                    break;
+                }
+                // Popularity ↑ (ascending: few -> many members)
+                case 2: {
+                    displayGroups.sort(Comparator.comparingInt(g -> g.members.size()));
+                    break;
+                }
+                // Popularity ↓ (descending: many -> few members)
+                case 3: {
+                    displayGroups.sort(Comparator.comparingInt(g -> -g.members.size()));
                     break;
                 }
                 default: {
@@ -108,7 +117,7 @@ public class UserSearchActivity  extends AppCompatActivity {
             }
 
             if (shouldNotify) {
-                Objects.requireNonNull(userRV.getAdapter()).notifyDataSetChanged();
+                Objects.requireNonNull(groupRV.getAdapter()).notifyDataSetChanged();
             }
         }
 

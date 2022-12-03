@@ -61,4 +61,5 @@
     <string name="workout_category_dropdown">Workout Category Dropdown</string>
     <string name="friends_search">Search for Friends</string>
     <string name="sort_by">Sort By</string>
+    <string name="search_for_groups">Search for Groups</string>
 </resources>

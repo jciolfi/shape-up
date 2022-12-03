@@ -32,8 +32,6 @@ public class ProfileActivity extends AppCompatActivity {
         usr_email = findViewById(R.id.pusername);
         user_auth = FirebaseAuth.getInstance();
         signOutBtn = findViewById(R.id.signOutBtn);
-        Button groupsButton = findViewById(R.id.myGroups);
-        groupsButton.setOnClickListener(view -> groupsBtnClicked());
 
         loadUser();
         setSignOutBtnClicked();
@@ -49,10 +47,6 @@ public class ProfileActivity extends AppCompatActivity {
             Toast.makeText(ProfileActivity.this, "Successfully signed out!", Toast.LENGTH_SHORT).show();
             Util.openActivity(ProfileActivity.this, LoginActivity.class);
         });
-    }
-
-    private void groupsBtnClicked() {
-        firestoreService.findUserGroups(new FindGroupsCallback());
     }
 
 
