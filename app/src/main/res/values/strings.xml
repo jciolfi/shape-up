@@ -63,4 +63,11 @@
     <string name="sort_by">Sort By</string>
     <string name="search_for_groups">Search for Groups</string>
     <string name="search">Search</string>
+    <string name="workout_name">Workout Name</string>
+    <string name="difficulty">Difficulty:</string>
+    <string name="categories">Categories:</string>
+    <string name="close">close</string>
+    <string name="group_name">Group Name</string>
+    <string name="members">Members:</string>
+    <string name="join">Join</string>
 </resources>

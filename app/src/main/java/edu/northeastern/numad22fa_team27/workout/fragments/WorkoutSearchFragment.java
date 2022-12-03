@@ -82,7 +82,7 @@ public class WorkoutSearchFragment extends Fragment {
         workoutRV = searchView.findViewById(R.id.rv_workout);
         workoutRV.setHasFixedSize(true);
         workoutRV.setLayoutManager(new LinearLayoutManager(searchView.getContext()));
-        workoutRV.setAdapter(new WorkoutAdapter(displayWorkouts));
+        workoutRV.setAdapter(new WorkoutAdapter(displayWorkouts, container, searchView));
 
         return searchView;
     }

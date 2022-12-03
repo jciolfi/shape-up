@@ -42,7 +42,8 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupViewHolder> {
         holder.groupName.setOnClickListener(view -> {
             // build custom popup
             final Dialog groupInfoDialog = new Dialog(searchView.getContext());
-            groupInfoDialog.setContentView(LayoutInflater.from(searchView.getContext()).inflate(R.layout.dialog_group_item, container, false));
+            groupInfoDialog.setContentView(LayoutInflater.from(searchView.getContext())
+                    .inflate(R.layout.dialog_group_item, container, false));
 
             // set title
             TextView groupTitle = groupInfoDialog.findViewById(R.id.title_group_name);
