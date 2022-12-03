@@ -8,7 +8,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -82,7 +81,7 @@ public class WorkoutSearchFragment extends Fragment {
         workoutRV = searchView.findViewById(R.id.rv_workout);
         workoutRV.setHasFixedSize(true);
         workoutRV.setLayoutManager(new LinearLayoutManager(searchView.getContext()));
-        workoutRV.setAdapter(new WorkoutAdapter(displayWorkouts));
+        workoutRV.setAdapter(new WorkoutAdapter(displayWorkouts, container, searchView));
 
         return searchView;
     }

@@ -14,10 +14,15 @@ import edu.northeastern.numad22fa_team27.workout.fragments.UserSearchFragment;
 import edu.northeastern.numad22fa_team27.workout.fragments.WorkoutSearchFragment;
 
 public class SearchActivity extends AppCompatActivity {
+    private static final float selectAlpha = 1.0f;
+    private static final float deselectAlpha = 0.3f;
     private SearchType selectedSearch;
     private GroupSearchFragment groupSearchFragment;
     private UserSearchFragment userSearchFragment;
     private WorkoutSearchFragment workoutSearchFragment;
+    private ImageView workoutImg;
+    private ImageView userImg;
+    private ImageView groupImg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,11 +35,11 @@ public class SearchActivity extends AppCompatActivity {
         workoutSearchFragment = new WorkoutSearchFragment();
 
         // set on click listeners for each search type
-        final ImageView workoutImg = findViewById(R.id.icon_workout);
+        workoutImg = findViewById(R.id.icon_workout);
         workoutImg.setOnClickListener(view -> changeSearch(SearchType.WORKOUT));
-        final ImageView userImg = findViewById(R.id.icon_user);
+        userImg = findViewById(R.id.icon_user);
         userImg.setOnClickListener(view -> changeSearch(SearchType.USER));
-        final ImageView groupImg = findViewById(R.id.icon_group);
+        groupImg = findViewById(R.id.icon_group);
         groupImg.setOnClickListener(view -> changeSearch(SearchType.GROUP));
 
         // default search to workout
@@ -54,7 +59,7 @@ public class SearchActivity extends AppCompatActivity {
 
         // replace view with selected fragment
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_workout_searches, getFragment(newSearch))
+                .replace(R.id.fragment_workout_searches, getFragmentAndHighlight(newSearch))
                 .commit();
 
         // cache current search type
@@ -65,12 +70,21 @@ public class SearchActivity extends AppCompatActivity {
     /**
      * return fragment associated with the type of search
      */
-    private Fragment getFragment(SearchType searchType) {
+    private Fragment getFragmentAndHighlight(SearchType searchType) {
         if (searchType.equals(SearchType.WORKOUT)) {
+            workoutImg.setAlpha(selectAlpha);
+            userImg.setAlpha(deselectAlpha);
+            groupImg.setAlpha(deselectAlpha);
             return workoutSearchFragment;
         } else if (searchType.equals(SearchType.USER)) {
+            workoutImg.setAlpha(deselectAlpha);
+            userImg.setAlpha(selectAlpha);
+            groupImg.setAlpha(deselectAlpha);
             return userSearchFragment;
         } else if (searchType.equals(SearchType.GROUP)) {
+            workoutImg.setAlpha(deselectAlpha);
+            userImg.setAlpha(deselectAlpha);
+            groupImg.setAlpha(selectAlpha);
             return groupSearchFragment;
         }
 

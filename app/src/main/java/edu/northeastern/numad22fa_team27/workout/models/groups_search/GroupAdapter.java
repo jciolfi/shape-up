@@ -1,6 +1,5 @@
 package edu.northeastern.numad22fa_team27.workout.models.groups_search;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,9 +41,9 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupViewHolder> {
         holder.groupName.setText(group.groupName);
         holder.groupName.setOnClickListener(view -> {
             // build custom popup
-            final Dialog groupInfoDialog = new Dialog(container.getContext());
-//            groupInfoDialog.setContentView(R.layout.dialog_group_item);
-            groupInfoDialog.setContentView(LayoutInflater.from(searchView.getContext()).inflate(R.layout.dialog_group_item, container, false));
+            final Dialog groupInfoDialog = new Dialog(searchView.getContext());
+            groupInfoDialog.setContentView(LayoutInflater.from(searchView.getContext())
+                    .inflate(R.layout.dialog_group_item, container, false));
 
             // set title
             TextView groupTitle = groupInfoDialog.findViewById(R.id.title_group_name);
@@ -54,10 +53,19 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupViewHolder> {
             TextView memberInfo = groupInfoDialog.findViewById(R.id.txt_member_info);
             memberInfo.setText(String.format("Members: %s", group.members.size()));
 
-            // set up join button
+            // set up close button
+            Button closeButton = groupInfoDialog.findViewById(R.id.btn_close_group);
+            closeButton.setOnClickListener(view1 -> {
+                groupInfoDialog.dismiss();
+
+                // focus will go to search view and bring up keyboard - disable this
+                final View groupsView = searchView.findViewById(R.id.rv_groups);
+                groupsView.requestFocus();
+            });
+
+            // TODO set up join button
 //            Button joinButton = groupInfoDialog.findViewById(R.id.btn_join_group);
 //            joinButton.setOnClickListener(v -> {
-//                // TODO
 //                // new FirestoreService().joinGroup();
 //            });
             groupInfoDialog.show();

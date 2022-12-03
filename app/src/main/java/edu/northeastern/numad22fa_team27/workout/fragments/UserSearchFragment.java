@@ -13,6 +13,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -61,7 +63,8 @@ public class UserSearchFragment extends Fragment {
         userRV = searchView.findViewById(R.id.rv_users);
         userRV.setHasFixedSize(true);
         userRV.setLayoutManager(new LinearLayoutManager(searchView.getContext()));
-        userRV.setAdapter(new UserAdapter(displayUsers));
+        FirebaseAuth userAuth = FirebaseAuth.getInstance();
+        userRV.setAdapter(new UserAdapter(displayUsers, container, searchView, userAuth.getCurrentUser()));
 
         return searchView;
     }
