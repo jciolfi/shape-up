@@ -16,6 +16,7 @@ public class UserDAO {
     public List<String> joinedGroups;
     public Map<WorkoutCategory, Pair<Integer, LocalDate>> currentCategoryStreaks;
     public Map <WorkoutCategory, Integer> bestCategoryStreak;
+    public String profilePic;
 
     public UserDAO() {}
 
@@ -25,6 +26,7 @@ public class UserDAO {
         this.joinedGroups = u.getJoinedGroups().stream().map(String::valueOf).collect(Collectors.toList());
         this.currentCategoryStreaks = u.getCurrentCategoryStreaks();
         this.bestCategoryStreak = u.getBestCategoryStreaks();
+//        this.profilePic = u.getProfilePic;
     }
 
     @Override
@@ -35,6 +37,7 @@ public class UserDAO {
                 ", joinedGroups=" + joinedGroups +
                 ", currentCategoryStreaks=" + currentCategoryStreaks +
                 ", bestCategoryStreak=" + bestCategoryStreak +
+                ", profilePic='" + profilePic + '\'' +
                 '}';
     }
 }

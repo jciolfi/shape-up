@@ -97,7 +97,7 @@ public class FirestoreService implements IFirestoreService {
     }
 
     @Override
-    public void findUserByUsername(String username, WorkoutCallback callback) {
+    public void findUsersByUsername(String username, WorkoutCallback callback) {
         if (Util.stringIsNullOrEmpty(username)) {
             warnBadParam("findUserByUsername");
             return;
@@ -124,6 +124,7 @@ public class FirestoreService implements IFirestoreService {
                     UserDAO user = documentSnapshot.toObject(UserDAO.class);
                     if (user == null) {
                         logFailure("findUserGroups", String.format("%s doesn't exist", userID));
+                        return;
                     }
 
                     // get groups
