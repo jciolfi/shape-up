@@ -1,5 +1,6 @@
 package edu.northeastern.numad22fa_team27.workout.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,9 +34,7 @@ public class GroupSearchFragment extends Fragment {
     private RecyclerView groupRV;
     private final List<GroupDAO> displayGroups = new ArrayList<>();
 
-    public GroupSearchFragment() {
-        // Required empty public constructor
-    }
+    public GroupSearchFragment() { }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
