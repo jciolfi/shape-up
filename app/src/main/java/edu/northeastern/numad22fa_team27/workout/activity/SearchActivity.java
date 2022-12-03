@@ -1,6 +1,7 @@
 package edu.northeastern.numad22fa_team27.workout.activity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,8 +38,7 @@ public class SearchActivity extends AppCompatActivity {
         groupImg.setOnClickListener(view -> changeSearch(SearchType.GROUP));
 
         // default search to workout
-        selectedSearch = SearchType.WORKOUT;
-        changeSearch(selectedSearch);
+        changeSearch(SearchType.WORKOUT);
     }
 
     /**
@@ -47,7 +47,8 @@ public class SearchActivity extends AppCompatActivity {
      */
     private void changeSearch(SearchType newSearch) {
         // don't reload if same search clicked
-        if (newSearch.equals(selectedSearch)) {
+        if (newSearch == selectedSearch) {
+            Log.d("XXX", newSearch + " ||| " + selectedSearch);
             return;
         }
 

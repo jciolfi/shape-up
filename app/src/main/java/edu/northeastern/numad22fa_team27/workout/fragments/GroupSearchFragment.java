@@ -63,7 +63,7 @@ public class GroupSearchFragment extends Fragment {
         groupRV = searchView.findViewById(R.id.rv_groups);
         groupRV.setHasFixedSize(true);
         groupRV.setLayoutManager(new LinearLayoutManager(searchView.getContext()));
-        groupRV.setAdapter(new GroupAdapter(displayGroups));
+        groupRV.setAdapter(new GroupAdapter(displayGroups, container, searchView));
 
         return searchView;
     }
