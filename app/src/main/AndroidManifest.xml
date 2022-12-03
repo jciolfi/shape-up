@@ -16,7 +16,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Platform.MaterialComponents"
-        tools:targetApi="31">
+        tools:targetApi="33">
         <activity
             android:name=".workout.activity.UserFriends"
             android:exported="false">
@@ -84,6 +84,9 @@
             android:configChanges="orientation|screenSize" />
         <activity
             android:name=".workout.activity.SearchActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".workout.activity.LeaderboardActivity"
             android:screenOrientation="portrait" />
 
     </application>
