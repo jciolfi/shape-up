@@ -19,54 +19,52 @@
 
     <Button
         android:id="@+id/btn_A7"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:text="@string/btn_A7"
+        app:layout_constraintEnd_toStartOf="@+id/btn_A8"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_team_name" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_proj" />
 
     <Button
         android:id="@+id/btn_A8"
-        android:layout_width="wrap_content"
+        style="@android:style/Widget.Material.Button"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:text="@string/btn_A8"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btn_A7"
-        app:layout_constraintTop_toBottomOf="@+id/txt_team_name" />
-
-    <Button
-        android:id="@+id/btn_A9"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/btn_A8"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_A7" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_proj" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:backgroundTint="@color/md_theme_light_onBackground"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/bottom_toolbar"
-        tools:ignore="MissingConstraints"
-        android:backgroundTint="@color/md_theme_light_onBackground"/>
+        tools:ignore="MissingConstraints" />
 
     <Button
         android:id="@+id/btn_proj"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="1dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
         android:text="@string/btn_proj"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_A7" />
+        app:layout_constraintTop_toBottomOf="@+id/txt_team_name" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

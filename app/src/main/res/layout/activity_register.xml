@@ -111,7 +111,7 @@
             android:layout_height="wrap_content"
             android:indeterminate="true"
             android:visibility="invisible"
-            android:indeterminateTint="@color/purple_700"
+            android:indeterminateTint="@color/md_theme_light_onBackground"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.53"

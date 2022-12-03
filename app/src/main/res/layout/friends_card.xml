@@ -35,7 +35,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/username"
-            android:textColor="@color/black"
+            android:textColor="@color/md_theme_light_onBackground"
             android:textSize="20sp"
             android:layout_toRightOf="@+id/friend_card_iv"
             android:layout_marginTop="25dp"
