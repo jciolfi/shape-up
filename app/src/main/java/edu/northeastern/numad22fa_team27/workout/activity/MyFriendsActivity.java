@@ -1,24 +1,41 @@
 package edu.northeastern.numad22fa_team27.workout.activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.workout.models.FriendsAdapter;
 import edu.northeastern.numad22fa_team27.workout.models.FriendsCard;
+import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 
 public class MyFriendsActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
+    private FirebaseFirestore db;
+    private FirebaseAuth mAuth;
+    private FirebaseUser user;
 
     private List<FriendsCard> list;
     FriendsAdapter adapter;
@@ -28,6 +45,10 @@ public class MyFriendsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_friends);
 
+        db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+
         initData();
         initRecyclerView();
 
@@ -35,10 +56,29 @@ public class MyFriendsActivity extends AppCompatActivity {
 
     private void initData() {
         list = new ArrayList<>();
-
-        list.add(new FriendsCard(R.drawable.defaultpic, "farzad"));
-        list.add(new FriendsCard(R.drawable.defaultpic, "nasim"));
-        list.add(new FriendsCard(R.drawable.defaultpic, "hasan"));
+        db.collection("users")
+                .document(user.getUid())
+                        .get()
+                                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        List<String> friendsUIDList = (List<String>) documentSnapshot.getData().get("friends");
+                                        for (String id : friendsUIDList) {
+                                            db.collection("users")
+                                                    .document(id)
+                                                    .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                                        @Override
+                                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                            String username = documentSnapshot.getString("username");
+                                                            String url = documentSnapshot.getString("profilePic");
+                                                            Log.d("ReadingFS", "onSuccess: " + documentSnapshot.getString("username"));
+                                                            list.add(new FriendsCard(R.drawable.defaultpic, username));
+                                                            adapter.notifyDataSetChanged();
+                                                        }
+                                                    });
+                                        }
+                                    }
+                                });
     }
 
     @SuppressLint("NotifyDataSetChanged")
