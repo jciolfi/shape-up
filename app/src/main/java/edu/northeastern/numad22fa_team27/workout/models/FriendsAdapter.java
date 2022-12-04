@@ -1,5 +1,6 @@
 package edu.northeastern.numad22fa_team27.workout.models;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -20,7 +23,9 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsHolder> {
 
     private List<FriendsCard> list;
 
-    public FriendsAdapter(List<FriendsCard> list) {this.list = list;}
+    public FriendsAdapter(List<FriendsCard> list) {
+        this.list = list;
+    }
 
     @NonNull
     @Override
@@ -31,10 +36,13 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull FriendsHolder holder, int position) {
-        int resource = list.get(position).getImageView();
         String email = list.get(position).getUsername();
+        String url = list.get(position).getImageView();
 
-        holder.setData(resource, email);
+        holder.username.setText(email);
+        Picasso.get()
+                .load(url)
+                .into(holder.friendProfilePic);
 
     }
 
