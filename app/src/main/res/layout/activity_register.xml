@@ -51,7 +51,8 @@
             android:textColorHint="#757575"
             app:layout_constraintEnd_toEndOf="@+id/view_register"
             app:layout_constraintStart_toStartOf="@+id/view_register"
-            app:layout_constraintTop_toTopOf="@+id/view_register" />
+            app:layout_constraintTop_toTopOf="@+id/view_register"
+            tools:ignore="TextContrastCheck,TextContrastCheck" />
 
         <EditText
             android:id="@+id/register_password"
@@ -100,9 +101,13 @@
             android:id="@+id/already_have_account"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
             android:text="@string/have_an_account_txt"
-            app:layout_constraintStart_toStartOf="@+id/view_register"
+            android:textColor="#FAFAFA"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view_register" />
 
         <ProgressBar

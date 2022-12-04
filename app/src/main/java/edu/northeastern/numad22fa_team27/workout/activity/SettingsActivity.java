@@ -44,12 +44,11 @@ public class SettingsActivity extends AppCompatActivity {
     private ImageView imageView;
     private Button saveBtn;
     private Button cancelBtn;
+    private Button logoutBtn;
     private EditText newEmail, newPass, oldPass;
     private ProgressBar pb;
     private Uri imageUri;
     private Boolean picSelected = false;
-    private Boolean profilePicUpdated = false;
-    private Boolean credsUpdated = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +59,7 @@ public class SettingsActivity extends AppCompatActivity {
         saveBtn = findViewById(R.id.saveButton);
         pb = findViewById(R.id.save_progressbar);
         cancelBtn = findViewById(R.id.cancelButton);
+        logoutBtn = findViewById(R.id.sign_out);
         newEmail = findViewById(R.id.editTextEmail);
         newPass = findViewById(R.id.editTextNewPass);
         oldPass = findViewById(R.id.editTextOldPass);
@@ -67,29 +67,22 @@ public class SettingsActivity extends AppCompatActivity {
         newPass.setHint("New password");
         oldPass.setHint("Old Password");
 
-        saveBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveChanges();
-            }
-        });
+        saveBtn.setOnClickListener(v -> saveChanges());
+        cancelBtn.setOnClickListener(v -> Util.openActivity(SettingsActivity.this, ProfileActivity.class));
 
-        cancelBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Util.openActivity(SettingsActivity.this, ProfileActivity.class);
-            }
-        });
 
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        logoutBtn.setOnClickListener(v -> {
+                FirebaseAuth.getInstance().signOut();
+                Toast.makeText(SettingsActivity.this, "Successfully signed out!", Toast.LENGTH_SHORT).show();
+                Util.openActivity(SettingsActivity.this, LoginActivity.class);
+            });
+
+        imageView.setOnClickListener(v -> {
                 Intent photoIntent = new Intent(Intent.ACTION_PICK);
                 photoIntent.setType("image/*");
 
                 startActivityForResult(photoIntent, 1);
                 picSelected = true;
-            }
         });
 
     }
@@ -98,18 +91,15 @@ public class SettingsActivity extends AppCompatActivity {
         if (!username.isEmpty()) {
             if(isEmailValid(username)) {
                 if (!username.equals(user.getEmail())) {
-                    user.updateEmail(username).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                pb.setVisibility(View.INVISIBLE);
-                                documentReference.update("username", username);
-                                Toast.makeText(SettingsActivity.this, "Email successfully updated!", Toast.LENGTH_SHORT).show();
-                                newEmail.setText("");
-                                newEmail.setHint(username);
-                            } else {
-                                Toast.makeText(SettingsActivity.this, "Couldn't update the email!", Toast.LENGTH_SHORT).show();
-                            }
+                    user.updateEmail(username).addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            pb.setVisibility(View.INVISIBLE);
+                            documentReference.update("username", username);
+                            Toast.makeText(SettingsActivity.this, "Email successfully updated!", Toast.LENGTH_SHORT).show();
+                            newEmail.setText("");
+                            newEmail.setHint(username);
+                        } else {
+                            Toast.makeText(SettingsActivity.this, "Couldn't update the email!", Toast.LENGTH_SHORT).show();
                         }
                     });
                 } else {
@@ -132,33 +122,30 @@ public class SettingsActivity extends AppCompatActivity {
                 AuthCredential credential = EmailAuthProvider
                         .getCredential(user.getEmail(), oldPass.getText().toString());
                 user.reauthenticate(credential)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    if (!pass.equals(oldPass.getText().toString())) {
-                                        user.updatePassword(pass).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                if (task.isSuccessful()) {
-                                                    pb.setVisibility(View.INVISIBLE);
-                                                    newPass.setText("");
-                                                    oldPass.setText("");
-                                                    Toast.makeText(SettingsActivity.this, "Password successfully updated!", Toast.LENGTH_SHORT).show();
-                                                } else {
-                                                    pb.setVisibility(View.INVISIBLE);
-                                                    Toast.makeText(SettingsActivity.this, task.getException().getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                                                }
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                if (!pass.equals(oldPass.getText().toString())) {
+                                    user.updatePassword(pass).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                pb.setVisibility(View.INVISIBLE);
+                                                newPass.setText("");
+                                                oldPass.setText("");
+                                                Toast.makeText(SettingsActivity.this, "Password successfully updated!", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                pb.setVisibility(View.INVISIBLE);
+                                                Toast.makeText(SettingsActivity.this, task.getException().getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                                             }
-                                        });
-                                    } else {
-                                        pb.setVisibility(View.INVISIBLE);
-                                        Toast.makeText(SettingsActivity.this, "New password cannot be same as the old one! Please Try again!", Toast.LENGTH_SHORT).show();
-                                    }
+                                        }
+                                    });
                                 } else {
                                     pb.setVisibility(View.INVISIBLE);
-                                    Toast.makeText(SettingsActivity.this, "Old password is not correct!", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(SettingsActivity.this, "New password cannot be same as the old one! Please Try again!", Toast.LENGTH_SHORT).show();
                                 }
+                            } else {
+                                pb.setVisibility(View.INVISIBLE);
+                                Toast.makeText(SettingsActivity.this, "Old password is not correct!", Toast.LENGTH_SHORT).show();
                             }
                         });
             } else {
@@ -204,7 +191,6 @@ public class SettingsActivity extends AppCompatActivity {
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         if (user != null) {
-
             String username = newEmail.getText().toString();
             String pass = newPass.getText().toString();
             updateUsername(user, username, documentReference);
@@ -216,28 +202,25 @@ public class SettingsActivity extends AppCompatActivity {
     private void changeProfilePic() {
         if (picSelected) {
             FirebaseStorage.getInstance()
-                    .getReference("images/" + FirebaseAuth.getInstance().getCurrentUser().getEmail())
-                    .putFile(imageUri)
-                    .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                            pb.setVisibility(View.INVISIBLE);
-                            if(task.isSuccessful()) {
-                                task.getResult().getStorage().getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Uri> task) {
-                                        if (task.isSuccessful()) {
-                                            pb.setVisibility(View.INVISIBLE);
-                                            updateProfilePic(task.getResult().toString());
-                                            Toast.makeText(SettingsActivity.this, "Profile picture updated successfully!", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                });
-                            } else {
-                                Toast.makeText(SettingsActivity.this, task.getException().getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                .getReference("images/" + FirebaseAuth.getInstance().getCurrentUser().getEmail())
+                .putFile(imageUri)
+                .addOnCompleteListener(task -> {
+                    pb.setVisibility(View.INVISIBLE);
+                    if(task.isSuccessful()) {
+                        task.getResult().getStorage().getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Uri> task) {
+                                if (task.isSuccessful()) {
+                                    pb.setVisibility(View.INVISIBLE);
+                                    updateProfilePic(task.getResult().toString());
+                                    Toast.makeText(SettingsActivity.this, "Profile picture updated successfully!", Toast.LENGTH_SHORT).show();
+                                }
                             }
-                        }
-                    });
+                        });
+                    } else {
+                        Toast.makeText(SettingsActivity.this, task.getException().getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
         }
 
         // TODO

@@ -76,54 +76,48 @@ public class RegisterActivity extends AppCompatActivity {
     private void registerButtonClicked() {
         usr_pass.setTransformationMethod(PasswordTransformationMethod.getInstance());
         usr_pass_confirm.setTransformationMethod(PasswordTransformationMethod.getInstance());
-        sign_up_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Get the entered email, pass, and pass confirmation
-                String email = usr_email.getText().toString();
-                String pass = usr_pass.getText().toString();
-                String pass_confirm = usr_pass_confirm.getText().toString();
+        sign_up_btn.setOnClickListener(v -> {
+            // Get the entered email, pass, and pass confirmation
+            String email = usr_email.getText().toString();
+            String pass = usr_pass.getText().toString();
+            String pass_confirm = usr_pass_confirm.getText().toString();
 
-                // Checks the empty Fields
-                boolean isNotEmptyField = !TextUtils.isEmpty(email)
-                                          && !TextUtils.isEmpty(pass)
-                                          && !TextUtils.isEmpty(pass_confirm);
-                if (isEmailValid(email)) {
-                    // If the fields are not empty
-                    if (isNotEmptyField) {
-                        // if the pass and pass_confirm matches
-                        if (pass.equals(pass_confirm)) {
-                            pb.setVisibility(View.VISIBLE);
-                            user_auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.isSuccessful()) {
-                                        User user = new User(email, pass, "");
-                                        FirebaseFirestore db = FirebaseFirestore.getInstance();
-                                        db.collection("users")
-                                                .document(user_auth.getCurrentUser().getUid())
-                                                .set(user);
-                                        pb.setVisibility(View.INVISIBLE);
-                                        showMainPage();
-                                    } else {
-                                        // If registration not successful that means there is a user with this credentials in our DB
-                                        Toast.makeText(RegisterActivity.this, "User already exists! Please log in.", Toast.LENGTH_SHORT).show();
-                                        Util.openActivity(RegisterActivity.this, LoginActivity.class);
-                                    }
-                                }
-                            });
-                        } else {
-                            pb.setVisibility(View.INVISIBLE);
-                            Toast.makeText(RegisterActivity.this, "Passwords doesn't match! Please Try again.", Toast.LENGTH_SHORT).show();
-                        }
+            // Checks the empty Fields
+            boolean isNotEmptyField = !TextUtils.isEmpty(email)
+                                      && !TextUtils.isEmpty(pass)
+                                      && !TextUtils.isEmpty(pass_confirm);
+            if (isEmailValid(email)) {
+                // If the fields are not empty
+                if (isNotEmptyField) {
+                    // if the pass and pass_confirm matches
+                    if (pass.equals(pass_confirm)) {
+                        pb.setVisibility(View.VISIBLE);
+                        user_auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                User user = new User(email, pass, "");
+                                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                db.collection("users")
+                                        .document(user_auth.getCurrentUser().getUid())
+                                        .set(user);
+                                pb.setVisibility(View.INVISIBLE);
+                                showMainPage();
+                            } else {
+                                // If registration not successful that means there is a user with this credentials in our DB
+                                Toast.makeText(RegisterActivity.this, "User already exists! Please log in.", Toast.LENGTH_SHORT).show();
+                                Util.openActivity(RegisterActivity.this, LoginActivity.class);
+                            }
+                        });
                     } else {
-                        Toast.makeText(RegisterActivity.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+                        pb.setVisibility(View.INVISIBLE);
+                        Toast.makeText(RegisterActivity.this, "Passwords doesn't match! Please Try again.", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(RegisterActivity.this, "Please enter a valid email address!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
                 }
-
+            } else {
+                Toast.makeText(RegisterActivity.this, "Please enter a valid email address!", Toast.LENGTH_SHORT).show();
             }
+
         });
     }
 

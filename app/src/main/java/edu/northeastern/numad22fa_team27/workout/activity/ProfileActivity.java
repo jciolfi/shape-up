@@ -21,16 +21,14 @@ import com.squareup.picasso.Picasso;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.Util;
-import edu.northeastern.numad22fa_team27.workout.callbacks.FindGroupsCallback;
 import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 
 public class ProfileActivity extends AppCompatActivity {
     private FirestoreService firestoreService;
 
-
     private TextView usr_email;
     private FirebaseAuth user_auth;
-    private Button signOutBtn, settingsBtn, friendsBtn;
+    private Button signOutBtn, settingsBtn, friendsBtn, completedWorkoutsBtn;
     private ImageView profilePic;
 
     @Override
@@ -43,49 +41,46 @@ public class ProfileActivity extends AppCompatActivity {
         usr_email = findViewById(R.id.pusername);
         user_auth = FirebaseAuth.getInstance();
         signOutBtn = findViewById(R.id.signOutBtn);
-        settingsBtn = findViewById(R.id.mySettings);
         profilePic = findViewById(R.id.profilePic);
 
-        Button groupsButton = findViewById(R.id.myGroups);
-        groupsButton.setOnClickListener(view -> groupsBtnClicked());
+        friendsBtn = findViewById(R.id.tmpMyFriends);
+        settingsBtn = findViewById(R.id.tmpSettings);
+        completedWorkoutsBtn = findViewById(R.id.tmpCompletedWorkouts);
 
-        friendsBtn = findViewById(R.id.myFriends);
-        friendsBtnClicked();
-
-
-        loadUser();
-        setSignOutBtnClicked();
-        settingsBtnClicked();
-    }
-
-    private void loadUser() {
-        usr_email.setText(user_auth.getCurrentUser().getEmail());
-    }
-
-    private void setSignOutBtnClicked() {
-        signOutBtn.setOnClickListener(view -> {
-            user_auth.signOut();
-            Toast.makeText(ProfileActivity.this, "Successfully signed out!", Toast.LENGTH_SHORT).show();
-            Util.openActivity(ProfileActivity.this, LoginActivity.class);
-        });
-    }
-
-    public void settingsBtnClicked() {
-        settingsBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Util.openActivity(ProfileActivity.this, SettingsActivity.class);
-            }
-        });
-    }
-
-    private void friendsBtnClicked() {
         friendsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Util.openActivity(ProfileActivity.this, MyFriendsActivity.class);
             }
         });
+
+        signOutBtn.setOnClickListener(view -> {
+            user_auth.signOut();
+            Toast.makeText(ProfileActivity.this, "Successfully signed out!", Toast.LENGTH_SHORT).show();
+            Util.openActivity(ProfileActivity.this, LoginActivity.class);
+        });
+
+        settingsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Util.openActivity(ProfileActivity.this, SettingsActivity.class);
+            }
+        });
+
+        completedWorkoutsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Util.openActivity(ProfileActivity.this, UserWorkouts.class);
+            }
+        });
+
+
+        loadUser();
+        //settingsBtnClicked();
+    }
+
+    private void loadUser() {
+        usr_email.setText(user_auth.getCurrentUser().getEmail());
     }
 
     private void groupsBtnClicked() {

@@ -83,43 +83,37 @@ public class LoginActivity extends AppCompatActivity {
                 String pass = usr_pass.getText().toString();
                 // Check if the user already exists
                 if (isEmailValid(email)) {
-                    user_auth.fetchSignInMethodsForEmail(email).addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<SignInMethodQueryResult> task) {
-                            // Boolean to check if it is a new user or an old one
-                            boolean isNewUser = task.getResult().getSignInMethods().isEmpty();
-                            // Check if all fields are filled
-                            boolean isNotEmptyField = !TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass);
-                            boolean isEmailValid = android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+                    user_auth.fetchSignInMethodsForEmail(email).addOnCompleteListener(task -> {
+                        // Boolean to check if it is a new user or an old one
+                        boolean isNewUser = task.getResult().getSignInMethods().isEmpty();
+                        // Check if all fields are filled
+                        boolean isNotEmptyField = !TextUtils.isEmpty(email) && !TextUtils.isEmpty(pass);
+                        boolean isEmailValid = android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
 
-                            if (isNotEmptyField) {
-                                // If it is a new user show a proper message
-                                if (isNewUser) {
-                                    Toast.makeText(LoginActivity.this, "User does not exist! Please Sign up!", Toast.LENGTH_SHORT).show();
-                                    Util.openActivity(LoginActivity.this, RegisterActivity.class);
-                                }
-                                else {
-                                    pb.setVisibility(View.VISIBLE);
-                                    // If user exists sign in the user
-                                    user_auth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<AuthResult> task) {
-                                            // If login was successful go to app's main page
-                                            if (task.isSuccessful()) {
-                                                pb.setVisibility(View.INVISIBLE);
-                                                showMainPage();
-                                            } else {
-                                                pb.setVisibility(View.INVISIBLE);
-                                                // Otherwise show a message that the password is wrong and
-                                                // make the password box empty
-                                                Toast.makeText(LoginActivity.this, "Password is wrong!", Toast.LENGTH_SHORT).show();
-                                                usr_pass.setText("");
-                                            }
-                                        }
-                                    });}
-                            } else {
-                                Toast.makeText(LoginActivity.this, "Please fill all fields!", Toast.LENGTH_SHORT).show();
+                        if (isNotEmptyField) {
+                            // If it is a new user show a proper message
+                            if (isNewUser) {
+                                Toast.makeText(LoginActivity.this, "User does not exist! Please Sign up!", Toast.LENGTH_SHORT).show();
+                                Util.openActivity(LoginActivity.this, RegisterActivity.class);
                             }
+                            else {
+                                pb.setVisibility(View.VISIBLE);
+                                // If user exists sign in the user
+                                user_auth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(task1 -> {
+                                    // If login was successful go to app's main page
+                                    if (task1.isSuccessful()) {
+                                        pb.setVisibility(View.INVISIBLE);
+                                        showMainPage();
+                                    } else {
+                                        pb.setVisibility(View.INVISIBLE);
+                                        // Otherwise show a message that the password is wrong and
+                                        // make the password box empty
+                                        Toast.makeText(LoginActivity.this, "Password is wrong!", Toast.LENGTH_SHORT).show();
+                                        usr_pass.setText("");
+                                    }
+                                });}
+                        } else {
+                            Toast.makeText(LoginActivity.this, "Please fill all fields!", Toast.LENGTH_SHORT).show();
                         }
                     });
                 } else {

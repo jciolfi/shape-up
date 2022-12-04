@@ -6,21 +6,36 @@
     android:layout_height="match_parent"
     android:fillViewport="true"
     xmlns:android="http://schemas.android.com/apk/res/android">
+
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/gradient"
+        android:background="@color/md_theme_light_background"
         android:gravity="center"
+        android:orientation="vertical"
         tools:context=".workout.activity.ProfileActivity">
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:backgroundTint="@color/md_theme_light_onBackground"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:menu="@menu/bottom_toolbar"
+            tools:ignore="MissingConstraints" />
 
         <TextView
             android:id="@+id/pusername"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="16dp"
             android:text="@string/profUsername"
             android:textColor="#E1BEE7"
+            app:layout_constraintBottom_toTopOf="@+id/tmpCompletedWorkouts"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
@@ -48,110 +63,53 @@
 
         <Button
             android:id="@+id/signOutBtn"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
             android:text="@string/sign_out"
             android:textColor="#070707"
             android:textStyle="bold"
             android:theme="@android:style/Widget.Material.Button"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_toolbar"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/mySettings" />
+            app:layout_constraintTop_toBottomOf="@+id/tmpSettings" />
 
         <Button
-            android:id="@+id/myWorkouts"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="200dp"
+            android:id="@+id/tmpCompletedWorkouts"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:background="?attr/selectableItemBackground"
-            android:gravity="left|center_vertical"
-            android:paddingStart="25dp"
-            android:text="@string/my_workouts"
-            android:textColor="@color/material_dynamic_primary0"
-            android:textStyle="bold"
-            android:theme="@android:style/Widget.Material.Button"
-            app:icon="@drawable/workout"
-            app:iconTint="#070707"
+            android:layout_marginTop="16dp"
+            android:drawableEnd="@android:drawable/ic_media_play"
+            android:text="My Completed Workouts"
+            app:layout_constraintBottom_toTopOf="@+id/tmpMyFriends"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/pusername" />
 
         <Button
-            android:id="@+id/myFriends"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="200dp"
+            android:id="@+id/tmpMyFriends"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:background="?attr/selectableItemBackground"
-            android:gravity="left|center_vertical"
-            android:paddingLeft="25dp"
-            android:text="@string/my_friends"
-            android:textColor="#CFD8DC"
-            android:textStyle="bold"
-            android:theme="@android:style/Widget.Material.Button"
-            app:icon="@drawable/friends"
-            app:iconTint="#070707"
+            android:layout_marginTop="16dp"
+            android:text="My Friends"
+            app:layout_constraintBottom_toTopOf="@+id/tmpSettings"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/myWorkouts" />
+            app:layout_constraintTop_toBottomOf="@+id/tmpCompletedWorkouts" />
 
         <Button
-            android:id="@+id/myGroups"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="200dp"
+            android:id="@+id/tmpSettings"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:background="?attr/selectableItemBackground"
-            android:gravity="left|center_vertical"
-            android:paddingLeft="25dp"
-            android:text="@string/my_groups"
-            android:textColor="@color/material_dynamic_primary0"
-            android:textStyle="bold"
-            android:theme="@android:style/Widget.Material.Button"
-            app:icon="@drawable/groups"
-            app:iconTint="#070707"
+            android:layout_marginTop="16dp"
+            android:text="Settings"
+            app:layout_constraintBottom_toTopOf="@+id/signOutBtn"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/myFriends" />
-
-        <Button
-            android:id="@+id/myMessages"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:background="?attr/selectableItemBackground"
-            android:gravity="left|center_vertical"
-            android:paddingLeft="25dp"
-            android:text="@string/my_messages"
-            android:textColor="@color/material_dynamic_primary0"
-            android:textStyle="bold"
-            android:theme="@android:style/Widget.Material.Button"
-            app:icon="@drawable/messages"
-            app:iconTint="#070707"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/myGroups" />
-
-        <Button
-            android:id="@+id/mySettings"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:gravity="left|center_vertical"
-            android:paddingLeft="25dp"
-            android:background="?attr/selectableItemBackground"
-            android:text="@string/settings"
-            android:textColor="@color/material_dynamic_primary0"
-            android:textStyle="bold"
-            app:icon="@drawable/settings"
-            app:iconTint="#070707"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/myMessages" />
+            app:layout_constraintTop_toBottomOf="@+id/tmpMyFriends" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

@@ -48,6 +48,7 @@ public class MyFriendsActivity extends AppCompatActivity {
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         adapter = new FriendsAdapter(list);
+
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }

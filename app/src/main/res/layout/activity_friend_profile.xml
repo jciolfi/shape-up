@@ -6,13 +6,27 @@
     android:layout_height="match_parent"
     android:fillViewport="true"
     xmlns:android="http://schemas.android.com/apk/res/android">
+
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/gradient"
+        android:background="@color/md_theme_light_background"
         android:gravity="center"
+        android:orientation="vertical"
         tools:context=".workout.activity.ProfileActivity">
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:backgroundTint="@color/md_theme_light_onBackground"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:menu="@menu/bottom_toolbar"
+            tools:ignore="MissingConstraints" />
 
         <TextView
             android:id="@+id/friendUsername"
@@ -20,7 +34,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:text="@string/profUsername"
-            android:textColor="#E1BEE7"
+            android:textColor="@color/md_theme_light_onBackground"
+            android:textSize="20sp"
+            android:textStyle="bold|italic"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
@@ -48,37 +64,27 @@
 
         <Button
             android:id="@+id/friendWorkouts"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:background="?attr/selectableItemBackground"
-            android:gravity="left|center_vertical"
-            android:paddingLeft="25dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:backgroundTint="@color/md_theme_light_primary"
             android:text="@string/friend_workouts"
-            android:textColor="@color/md_theme_light_onBackground"
-            android:textStyle="bold"
-            app:icon="@drawable/workout"
-            app:iconTint="#070707"
+            android:textColor="@color/md_theme_light_onPrimary"
+            app:layout_constraintBottom_toTopOf="@+id/friendFriends"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.502"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/friendRemoveBtn" />
+            app:layout_constraintTop_toBottomOf="@+id/friendUsername" />
 
         <Button
             android:id="@+id/friendFriends"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:gravity="left|center_vertical"
-            android:paddingLeft="25dp"
-            android:background="?attr/selectableItemBackground"
+            android:layout_marginBottom="8dp"
+            android:backgroundTint="@color/md_theme_light_primary"
             android:text="@string/my_friend_friends"
-            android:textColor="@color/md_theme_light_onBackground"
-            android:textStyle="bold"
-            app:icon="@drawable/friends"
-            app:iconTint="#070707"
+            android:textColor="@color/md_theme_light_onPrimary"
+            app:layout_constraintBottom_toTopOf="@+id/friendRemoveBtn"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/friendWorkouts" />
@@ -87,11 +93,14 @@
             android:id="@+id/friendRemoveBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
+            android:backgroundTint="@color/md_theme_light_primary"
             android:text="@string/remove_friend"
+            android:textColor="@color/md_theme_light_onPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/friendUsername" />
+            app:layout_constraintTop_toBottomOf="@+id/friendFriends" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
