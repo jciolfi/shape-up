@@ -112,4 +112,6 @@
     <string name="saveBtn">Save</string>
     <string name="cancelBtn">Back</string>
     <string name="friend_pic">friend_pic</string>
+    <string name="_1">1.</string>
+    <string name="streak">Streak:</string>
 </resources>

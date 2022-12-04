@@ -24,9 +24,9 @@ import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
 public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardViewHolder> {
     private final static String TAG = "LeaderboardAdapter";
     private final List<UserDAO> users;
-    private final String category;
+    private final String[] category;
 
-    public LeaderboardAdapter(List<UserDAO> users, String category) {
+    public LeaderboardAdapter(List<UserDAO> users, String[] category) {
         this.users = users;
         this.category = category;
     }
@@ -36,13 +36,16 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardViewHold
     public LeaderboardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new LeaderboardViewHolder(LayoutInflater
                 .from(parent.getContext())
-                .inflate(R.layout.item_user, null));
+                .inflate(R.layout.item_leaderboard_user, null));
     }
 
     @Override
     public void onBindViewHolder(@NonNull LeaderboardViewHolder holder, int position) {
         UserDAO user = users.get(position);
-        holder.userEntry.setText(String.format("%s. %s: %s", position+1, user.username, user.bestCategoryStreaks.get(category)));
+        holder.userPlace.setText(String.format("%s.", position+1));
+        holder.userEntry.setText(user.username);
+        holder.userStreak.setText(String.format("Streak: %s",
+                user.bestCategoryStreaks.get(category[0].toUpperCase())));
         holder.userEntry.setOnClickListener(view -> {
             // build custom popup
             final Dialog userInfoDialog = new Dialog(view.getContext());
@@ -68,13 +71,7 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardViewHold
 
             // set up close button
             Button closeButton = userInfoDialog.findViewById(R.id.btn_close_user);
-            closeButton.setOnClickListener(view1 -> {
-                userInfoDialog.dismiss();
-
-                // focus will go to search view and bring up keyboard - disable this
-                final View groupsView = view.findViewById(R.id.rv_users);
-                groupsView.requestFocus();
-            });
+            closeButton.setOnClickListener(view1 -> userInfoDialog.dismiss());
 
             // TODO set add/remove friend button functionality
             // if friends -> set button to remove friend
