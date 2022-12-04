@@ -23,9 +23,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="26dp"
-        android:textStyle="bold"
+        android:layout_marginTop="28dp"
+        android:fontFamily="@font/fjalla_one"
         android:text="@string/_1"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -34,7 +35,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="26dp"
+        android:layout_marginTop="28dp"
+        android:fontFamily="@font/fjalla_one"
         android:text="@string/streak"
         app:layout_constraintStart_toEndOf="@+id/user_item"
         app:layout_constraintTop_toTopOf="parent" />
