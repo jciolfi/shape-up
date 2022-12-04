@@ -1,10 +1,7 @@
 package edu.northeastern.numad22fa_team27.workout.callbacks;
 
-import android.util.Log;
-
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
