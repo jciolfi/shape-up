@@ -14,8 +14,8 @@ public class UserDAO {
     public String username;
     public List<String> friends;
     public List<String> joinedGroups;
-    public Map<WorkoutCategory, Pair<Integer, LocalDate>> currentCategoryStreaks;
-    public Map <WorkoutCategory, Integer> bestCategoryStreak;
+    public Map<String, Pair<Integer, LocalDate>> currentCategoryStreaks;
+    public Map <String, Integer> bestCategoryStreaks;
     public String profilePic;
 
     public UserDAO() {}
@@ -24,8 +24,8 @@ public class UserDAO {
         this.username = u.getUsername();
         this.friends = u.getFriends();
         this.joinedGroups = u.getJoinedGroups().stream().map(String::valueOf).collect(Collectors.toList());
-        this.currentCategoryStreaks = u.getCurrentCategoryStreaks();
-        this.bestCategoryStreak = u.getBestCategoryStreaks();
+//        this.currentCategoryStreaks = u.getCurrentCategoryStreaks();
+//        this.bestCategoryStreaks = u.getBestCategoryStreaks();
 //        this.profilePic = u.getProfilePic;
     }
 
@@ -36,7 +36,7 @@ public class UserDAO {
                 ", friends=" + friends +
                 ", joinedGroups=" + joinedGroups +
                 ", currentCategoryStreaks=" + currentCategoryStreaks +
-                ", bestCategoryStreak=" + bestCategoryStreak +
+                ", bestCategoryStreaks=" + bestCategoryStreaks +
                 ", profilePic='" + profilePic + '\'' +
                 '}';
     }
