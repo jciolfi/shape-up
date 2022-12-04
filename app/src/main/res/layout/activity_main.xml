@@ -38,6 +38,28 @@
         app:layout_constraintTop_toBottomOf="@+id/txt_team_name" />
 
     <Button
+        android:id="@+id/btn_A9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/btn_A8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_A7" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:menu="@menu/bottom_toolbar"
+        tools:ignore="MissingConstraints"
+        android:backgroundTint="@color/md_theme_light_onBackground"/>
+
+    <Button
         android:id="@+id/btn_proj"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -16,25 +16,25 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:clickable="true"
-            android:textColor="@color/black"
+            android:textColor="@color/material_dynamic_primary0"
             android:textSize="20sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@id/artistname"
+            app:layout_constraintBottom_toTopOf="@id/userWorkoutCardCategory"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/picture_spacer"
+            app:layout_constraintStart_toEndOf="@id/workout_name"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/artistname"
+            android:id="@+id/userWorkoutCardCategory"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:clickable="false"
-            android:textColor="@color/black"
+            android:textColor="@color/material_dynamic_primary0"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@id/picture_spacer"
+            app:layout_constraintStart_toEndOf="@id/workout_name"
             app:layout_constraintTop_toBottomOf="@id/trackname" />
 
         <ImageView
@@ -50,7 +50,7 @@
             tools:srcCompat="@tools:sample/avatars" />
 
         <Space
-            android:id="@+id/picture_spacer"
+            android:id="@+id/workout_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"

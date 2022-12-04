@@ -40,7 +40,7 @@ public class SearchFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View searchView = inflater.inflate(R.layout.fragment_search, container, false);
+        View searchView = inflater.inflate(R.layout.fragment_spotify_search, container, false);
 
         // Set up genre dropdown
         // TODO - don't hardcode this

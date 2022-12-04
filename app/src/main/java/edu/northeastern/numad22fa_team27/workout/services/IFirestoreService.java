@@ -1,7 +1,5 @@
 package edu.northeastern.numad22fa_team27.workout.services;
 
-import java.util.UUID;
-
 import edu.northeastern.numad22fa_team27.workout.callbacks.WorkoutCallback;
 import edu.northeastern.numad22fa_team27.workout.models.WorkoutCategory;
 
@@ -25,7 +23,7 @@ public interface IFirestoreService {
      * @param username entered username to query on
      * @param callback executed on the entries returned by the query
      */
-    void findUserByUsername(String username, WorkoutCallback callback);
+    void findUsersByUsername(String username, WorkoutCallback callback);
 
     /**
      * Find groups the current user is a part of

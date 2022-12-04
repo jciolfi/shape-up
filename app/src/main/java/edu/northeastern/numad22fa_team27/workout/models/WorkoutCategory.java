@@ -6,6 +6,11 @@ package edu.northeastern.numad22fa_team27.workout.models;
 
 import android.content.res.Resources;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import edu.northeastern.numad22fa_team27.R;
 
 public enum WorkoutCategory {
@@ -46,5 +51,38 @@ public enum WorkoutCategory {
                 break;
         }
         return "???";
+    }
+
+    /**
+     * List all of the categories in a string array, formatted
+     * @param withFormat should capitalize names
+     * @return string list with all values
+     */
+    public static List<String> listCategories(boolean withFormat) {
+        Stream<WorkoutCategory> categoryStream = Arrays.stream(WorkoutCategory.values());
+
+        // no formatting - will be upper case
+        if (withFormat) {
+            return categoryStream.map(w -> {
+                // NOTE: assumes a category is not the empty string, at least length 1
+                String wStr = String.valueOf(w);
+                return wStr.substring(0, 1).toUpperCase() + wStr.substring(1).toLowerCase();
+            }).collect(Collectors.toList());
+        }
+
+        return categoryStream.map(String::valueOf).collect(Collectors.toList());
+    }
+
+    /**
+     * Return WorkoutCategory represented by string (case insensitive)
+     * @param w the string value
+     * @return the corresponding WorkoutCategory
+     */
+    public static WorkoutCategory toCategory(String w) {
+        try {
+            return WorkoutCategory.valueOf(w.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 }
