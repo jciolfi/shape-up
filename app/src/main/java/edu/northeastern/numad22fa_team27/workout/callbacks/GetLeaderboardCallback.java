@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -24,10 +25,6 @@ public class GetLeaderboardCallback extends WorkoutCallback {
 
     @Override
     public void processQuery(@NonNull QuerySnapshot snapshot) {
-        for (UserDAO u : snapshot.toObjects(UserDAO.class)) {
-            Log.d("XXX", u.toString());
-        }
-
         users.clear();
         users.addAll(snapshot.toObjects(UserDAO.class));
 

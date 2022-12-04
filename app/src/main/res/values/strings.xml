@@ -104,4 +104,6 @@
     <string name="friends_leaderboard">Friends Leaderboard</string>
     <string name="global_leaderboard">Global Leaderboard</string>
     <string name="order_by">Order By</string>
+    <string name="_1">1.</string>
+    <string name="streak">Streak:</string>
 </resources>

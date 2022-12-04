@@ -1,6 +1,7 @@
 package edu.northeastern.numad22fa_team27.workout.activity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -24,7 +25,7 @@ import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 public class LeaderboardActivity extends AppCompatActivity {
     private final static String TAG = "LeaderboardActivity";
     private FirestoreService firestoreService;
-    private String prevCategory;
+    private final String[] prevCategory = new String[]{""};
     private List<String> categories;
     private RecyclerView leaderboardRV;
     private final List<UserDAO> users = new ArrayList<>();
@@ -44,14 +45,14 @@ public class LeaderboardActivity extends AppCompatActivity {
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         categoryDropdown.setAdapter(categoryAdapter);
         categoryDropdown.setSelection(0);
-        prevCategory = categories.get(0);
+        prevCategory[0] = categories.get(0);
         categoryDropdown.setOnItemSelectedListener(new CategoryListener());
 
         // set up recycler view
         leaderboardRV = findViewById(R.id.rv_leaderboard);
         leaderboardRV.setHasFixedSize(true);
         leaderboardRV.setLayoutManager(new LinearLayoutManager(this));
-        leaderboardRV.setAdapter(new LeaderboardAdapter(users, prevCategory.toUpperCase()));
+        leaderboardRV.setAdapter(new LeaderboardAdapter(users, prevCategory));
     }
 
     private class CategoryListener implements AdapterView.OnItemSelectedListener {
@@ -59,14 +60,16 @@ public class LeaderboardActivity extends AppCompatActivity {
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
             // don't do extra work if we don't need to (select same sort again)
-            if (prevCategory.equals(categories.get(position))) {
+            if (prevCategory[0].equals(categories.get(position))) {
                 return;
             }
 
+            // update leaderboard
             firestoreService.findStreaksLeaderboard(
                     WorkoutCategory.toCategory(categories.get(position)), new GetLeaderboardCallback(users, leaderboardRV));
 
-            prevCategory = categories.get(position);
+            // update previous selected category to search on
+            prevCategory[0] = categories.get(position);
 
             Objects.requireNonNull(leaderboardRV.getAdapter()).notifyDataSetChanged();
         }

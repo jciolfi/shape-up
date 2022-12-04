@@ -6,6 +6,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -112,7 +113,6 @@ public class FirestoreService implements IFirestoreService {
     @Override
     public void findUserGroups(WorkoutCallback callback) {
         String userID = Objects.requireNonNull(userAuth.getCurrentUser()).getUid();
-        Log.d(TAG, userID);
 
         firestoreDB.collection("users")
                 .document(userID)
@@ -153,8 +153,7 @@ public class FirestoreService implements IFirestoreService {
     @Override
     public void findStreaksLeaderboard(WorkoutCategory category, WorkoutCallback callback) {
         firestoreDB.collection("users")
-//                .orderBy(FieldPath.of(String.format("bestCategoryStreaks.%s", category)), Query.Direction.DESCENDING)
-                .orderBy("bestCategoryStreaks")
+                .orderBy(String.format("bestCategoryStreaks.%s", category), Query.Direction.DESCENDING)
                 .limit(100L)
                 .get()
                 .addOnSuccessListener(callback::processQuery)
