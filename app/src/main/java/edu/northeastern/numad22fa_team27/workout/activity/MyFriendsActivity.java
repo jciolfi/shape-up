@@ -9,6 +9,7 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +20,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,7 +74,7 @@ public class MyFriendsActivity extends AppCompatActivity {
                                                             String username = documentSnapshot.getString("username");
                                                             String url = documentSnapshot.getString("profilePic");
                                                             Log.d("ReadingFS", "onSuccess: " + documentSnapshot.getString("username"));
-                                                            list.add(new FriendsCard(R.drawable.defaultpic, username));
+                                                            list.add(new FriendsCard(url, username));
                                                             adapter.notifyDataSetChanged();
                                                         }
                                                     });
