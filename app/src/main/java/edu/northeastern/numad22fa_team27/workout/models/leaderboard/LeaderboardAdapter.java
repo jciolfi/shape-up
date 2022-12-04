@@ -1,11 +1,9 @@
 package edu.northeastern.numad22fa_team27.workout.models.leaderboard;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -44,7 +42,7 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardViewHold
         UserDAO user = users.get(position);
         holder.userPlace.setText(String.format("%s.", position+1));
         holder.userEntry.setText(user.username);
-        holder.userStreak.setText(String.format("Streak: %s",
+        holder.userStreak.setText(String.format("Streak: %s days",
                 user.bestCategoryStreaks.get(category[0].toUpperCase())));
         holder.userEntry.setOnClickListener(view -> {
             // build custom popup
@@ -57,7 +55,7 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardViewHold
             usernameTitle.setText(user.username);
 
             // set profile picture
-            ImageView profilePic = userInfoDialog.findViewById(R.id.img_user_avatar);
+            ImageView profilePic = userInfoDialog.findViewById(R.id.dialog_profile_pic);
             GetProfilePic getProfilePic = new GetProfilePic(user, profilePic);
             new Thread(getProfilePic).start();
 

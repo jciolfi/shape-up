@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         btnA8.setOnClickListener(view -> Util.openActivity(this, FirebaseActivity.class));
 
         Button btnSU = findViewById(R.id.btn_proj);
-        btnSU.setOnClickListener(view -> Util.openActivity(this, LeaderboardActivity.class));
+        btnSU.setOnClickListener(view -> Util.openActivity(this, SearchActivity.class));
 
         Button btnA9 = findViewById(R.id.btn_A9);
         btnA9.setOnClickListener(view -> Util.openActivity(this, WorkoutListActivity.class));

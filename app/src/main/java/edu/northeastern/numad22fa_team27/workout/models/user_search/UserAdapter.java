@@ -48,6 +48,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
         UserDAO user = users.get(position);
         holder.username.setText(user.username);
+        GetProfilePic getProfilePic = new GetProfilePic(user, holder.profilePic);
+        new Thread(getProfilePic).start();
+
         holder.username.setOnClickListener(view -> {
             // build custom popup
             final Dialog userInfoDialog = new Dialog(searchView.getContext());
@@ -59,9 +62,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
             usernameTitle.setText(user.username);
 
             // set profile picture
-            ImageView profilePic = userInfoDialog.findViewById(R.id.img_user_avatar);
-            GetProfilePic getProfilePic = new GetProfilePic(user, profilePic);
-            new Thread(getProfilePic).start();
+            ImageView dialogProfilePic = userInfoDialog.findViewById(R.id.dialog_profile_pic);
+            dialogProfilePic.setImageDrawable(holder.profilePic.getDrawable());
 
             // set friends count
             TextView friendCount = userInfoDialog.findViewById(R.id.txt_friend_count);
