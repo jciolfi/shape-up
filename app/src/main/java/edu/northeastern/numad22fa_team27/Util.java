@@ -20,4 +20,14 @@ public class Util {
     public static boolean stringIsNullOrEmpty(String s) {
         return s == null || s.trim().isEmpty();
     }
+
+    public static String limitLength(String s, int length) {
+        if (length < 1) {
+            return "";
+        } else if (s.length() <= length) {
+            return s;
+        }
+
+        return s.substring(0,length) + "…";
+    }
 }
