@@ -30,6 +30,7 @@ import edu.northeastern.numad22fa_team27.spotify.SpotifyActivity;
 import edu.northeastern.numad22fa_team27.sticker_messenger.FirebaseActivity;
 import edu.northeastern.numad22fa_team27.workout.activities.ui.main.viewpager.WorkoutListActivity;
 import edu.northeastern.numad22fa_team27.workout.callbacks.FindGroupsCallback;
+import edu.northeastern.numad22fa_team27.workout.models.workout_search.NavigationBar;
 import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -66,7 +67,8 @@ public class ProfileActivity extends AppCompatActivity {
         settingsBtnClicked();
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_toolbar);
-        bottomNav.setOnItemSelectedListener(navListener);
+        bottomNav.setSelectedItemId(R.id.nav_profile);
+        bottomNav.setOnItemSelectedListener(NavigationBar.setNavListener(this));
     }
 
     private void loadUser() {
@@ -131,30 +133,4 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
     }
-
-    private NavigationBarView.OnItemSelectedListener navListener =
-            new BottomNavigationView.OnItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                    Fragment selectedFragment = null;
-
-                    switch (item.getItemId()) {
-                        case R.id.nav_leaderboard:
-                            Intent intent = new Intent(ProfileActivity.this, WorkoutListActivity.class);
-                            startActivity(intent);
-                            break;
-                        case R.id.nav_profile:
-                            intent = new Intent(ProfileActivity.this, ProfileActivity.class);
-                            startActivity(intent);
-                            break;
-                        case R.id.nav_workout:
-                            intent = new Intent(ProfileActivity.this, WorkoutListActivity.class);
-                            startActivity(intent);
-                            break;
-
-
-                    }
-                    return false;
-                }
-            };
 }
