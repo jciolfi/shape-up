@@ -98,7 +98,7 @@
             android:configChanges="orientation|screenSize" />
         <activity
             android:name=".workout.activity.SearchActivity"
-            android:configChanges="orientation|screenSize" />
+            android:screenOrientation="portrait" />
 
     </application>
 

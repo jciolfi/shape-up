@@ -7,11 +7,14 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -32,6 +35,7 @@ public class UserSearchFragment extends Fragment {
     private String prevSort;
     private RecyclerView userRV;
     private final List<UserDAO> displayUsers = new ArrayList<>();
+    private TextView noResults;
 
     public UserSearchFragment() { }
 
@@ -41,10 +45,11 @@ public class UserSearchFragment extends Fragment {
         View searchView = inflater.inflate(R.layout.fragment_user_search, container, false);
 
         firestoreService = new FirestoreService();
+        noResults = searchView.findViewById(R.id.txt_no_user_results);
 
         // populate sort dropdown
         sortOptions = new String[]{"Name ↑", "Name ↓"};
-        sortDropdown = searchView.findViewById(R.id.dropdown_friends_sort);
+        sortDropdown = searchView.findViewById(R.id.dropdown_user_sort);
         ArrayAdapter<String> sortAdapter = new ArrayAdapter<>(searchView.getContext(),
                 android.R.layout.simple_spinner_item, sortOptions);
         sortAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -61,7 +66,8 @@ public class UserSearchFragment extends Fragment {
         userRV = searchView.findViewById(R.id.rv_users);
         userRV.setHasFixedSize(true);
         userRV.setLayoutManager(new LinearLayoutManager(searchView.getContext()));
-        userRV.setAdapter(new UserAdapter(displayUsers));
+        FirebaseAuth userAuth = FirebaseAuth.getInstance();
+        userRV.setAdapter(new UserAdapter(displayUsers, container, searchView, userAuth.getCurrentUser()));
 
         return searchView;
     }
@@ -69,7 +75,7 @@ public class UserSearchFragment extends Fragment {
     private class UserQueryListener implements SearchView.OnQueryTextListener {
         @Override
         public boolean onQueryTextSubmit(String query) {
-            firestoreService.findUsersByUsername(query, new FindUsersCallback(displayUsers, userRV));
+            firestoreService.findUsersByUsername(query, new FindUsersCallback(displayUsers, userRV, noResults));
 
             // reset sort
             sortDropdown.setSelection(0);

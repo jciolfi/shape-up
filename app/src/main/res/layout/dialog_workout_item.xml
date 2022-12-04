@@ -1,56 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
-        android:id="@+id/title_group_name"
+        android:id="@+id/title_workout_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginStart="80dp"
         android:layout_marginEnd="80dp"
-        android:text="@string/group_name"
+        android:text="@string/workout_name"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/txt_member_info"
+        android:id="@+id/txt_difficulty_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        app:layout_constraintHorizontal_bias="0.0"
-        android:text="@string/members"
+        android:text="@string/difficulty"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_group_name" />
+        app:layout_constraintTop_toBottomOf="@+id/title_workout_name" />
+
+    <TextView
+        android:id="@+id/txt_categories_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/categories"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txt_difficulty_info" />
 
     <Button
-        android:id="@+id/btn_join_group"
+        android:id="@+id/btn_placeholder"
         android:layout_width="70dp"
         android:layout_height="48dp"
         android:layout_marginTop="8dp"
-        android:text="@string/join"
+        android:text="..."
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/btn_close_group"
-        app:layout_constraintTop_toBottomOf="@+id/txt_member_info" />
+        app:layout_constraintStart_toEndOf="@id/btn_close_workout"
+        app:layout_constraintTop_toBottomOf="@+id/txt_categories_info" />
 
     <Button
-        android:id="@+id/btn_close_group"
+        android:id="@+id/btn_close_workout"
         android:layout_width="85dp"
         android:layout_height="48dp"
         android:layout_marginTop="8dp"
         android:text="@string/close"
-        app:layout_constraintEnd_toStartOf="@+id/btn_join_group"
+        app:layout_constraintEnd_toStartOf="@+id/btn_placeholder"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_member_info" />
+        app:layout_constraintTop_toBottomOf="@+id/txt_categories_info" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
