@@ -5,16 +5,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class FriendsCard {
-    private int imageView;
+    private int profilePic;
     private String username;
 
     public FriendsCard(int imageView, String username) {
-         this.imageView = imageView;
+         this.profilePic = imageView;
          this.username = username;
     }
 
+    public FriendsCard() {}
+
     public int getImageView() {
-        return imageView;
+        return profilePic;
     }
 
     public String getUsername() {
