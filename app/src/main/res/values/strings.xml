@@ -62,4 +62,48 @@
     <string name="saveBtn">Save</string>
     <string name="cancelBtn">Back</string>
     <string name="friend_pic">friend_pic</string>
+
+    <string name="workout_search">Search for Workouts</string>
+    <string name="category">Category</string>
+    <string name="workout_category_dropdown">Workout Category Dropdown</string>
+    <string name="friends_search">Search for Friends</string>
+    <string name="sort_by">Sort By</string>
+    <string name="search_for_groups">Search for Groups</string>
+    <string name="search">Search</string>
+
+    <!-- Workout app - cards-->
+    <string name="user_card_friend_name">FRIEND NAME</string>
+    <string name="user_card_message_preview">Message preview ....</string>
+    <string name="user_workout_card_name">WORKOUT NAME</string>
+    <string name="user_workout_card_category">CATEGORY</string>
+    <string name="user_workout_card_progress_text">##%</string>
+    <string name="user_workout_card_badge_text">x#</string>
+    <string name="search_hint">Search...</string>
+
+    <string name="title_activity_workout_list">WorkoutList</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
+    <string name="leader_board">Leader Board</string>
+    <string name="workout">Workout</string>
+    <string name="profile">Profile</string>
+    <string name="workoutDiagram">WorkoutDiagram</string>
+    <string name="completed"> - Completed</string>
+    <string name="title_goes_here">Title goes here</string>
+    <string name="workout_list_activity">Workout List Activity</string>
+    <string name="workout_list">Workout List</string>
+    <string name="instructions">Instructions</string>
+
+    <string name="workout_name">Workout Name</string>
+    <string name="difficulty">Difficulty:</string>
+    <string name="categories">Categories:</string>
+    <string name="close">close</string>
+    <string name="group_name">Group Name</string>
+    <string name="members">Members:</string>
+    <string name="join">Join</string>
+    <string name="friends">Friends:</string>
+    <string name="groups_joined">Groups Joined:</string>
+    <string name="profile_picture">Profile Picture</string>
+    <string name="add">Add</string>
+    <string name="test">test</string>
+    <string name="no_results">No results found. Reminder: searching is case sensitive!</string>
 </resources>
