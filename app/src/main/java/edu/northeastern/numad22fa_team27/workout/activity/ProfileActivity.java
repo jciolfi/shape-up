@@ -26,6 +26,7 @@ import com.squareup.picasso.Picasso;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.Util;
+import edu.northeastern.numad22fa_team27.workout.models.workout_search.NavigationBar;
 import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -41,8 +42,12 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        firestoreService = new FirestoreService();
+        // Set up nav bar
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_toolbar);
+        bottomNav.setSelectedItemId(R.id.nav_profile);
+        bottomNav.setOnItemSelectedListener(NavigationBar.setNavListener(this));
 
+        firestoreService = new FirestoreService();
         usr_email = findViewById(R.id.pusername);
         user_auth = FirebaseAuth.getInstance();
         signOutBtn = findViewById(R.id.signOutBtn);
@@ -65,23 +70,11 @@ public class ProfileActivity extends AppCompatActivity {
             Util.openActivity(ProfileActivity.this, LoginActivity.class);
         });
 
-        settingsBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Util.openActivity(ProfileActivity.this, SettingsActivity.class);
-            }
-        });
+        settingsBtn.setOnClickListener(v -> Util.openActivity(ProfileActivity.this, SettingsActivity.class));
 
-        completedWorkoutsBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Util.openActivity(ProfileActivity.this, UserWorkouts.class);
-            }
-        });
-
+        completedWorkoutsBtn.setOnClickListener(v -> Util.openActivity(ProfileActivity.this, UserWorkouts.class));
 
         loadUser();
-        //settingsBtnClicked();
     }
 
     private void loadUser() {
@@ -120,30 +113,4 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
     }
-
-    private NavigationBarView.OnItemSelectedListener navListener =
-            new BottomNavigationView.OnItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                    Fragment selectedFragment = null;
-
-                    switch (item.getItemId()) {
-                        case R.id.nav_leaderboard:
-                            Intent intent = new Intent(ProfileActivity.this, WorkoutListActivity.class);
-                            startActivity(intent);
-                            break;
-                        case R.id.nav_profile:
-                            intent = new Intent(ProfileActivity.this, ProfileActivity.class);
-                            startActivity(intent);
-                            break;
-                        case R.id.nav_workout:
-                            intent = new Intent(ProfileActivity.this, WorkoutListActivity.class);
-                            startActivity(intent);
-                            break;
-
-
-                    }
-                    return false;
-                }
-            };
 }
