@@ -8,6 +8,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.content.Intent;
 import android.graphics.drawable.Icon;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -21,6 +22,7 @@ import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.spotify.SpotifyActivity;
 import edu.northeastern.numad22fa_team27.spotify.spotifyviews.Cards;
 import edu.northeastern.numad22fa_team27.sticker_messenger.FirebaseActivity;
+import edu.northeastern.numad22fa_team27.workout.activity.ProfileActivity;
 
 public class WorkoutListActivity extends AppCompatActivity {
 
@@ -40,7 +42,9 @@ public class WorkoutListActivity extends AppCompatActivity {
         workoutViewPager.setAdapter(new PagerWorkoutAdapter(workouts));
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_toolbar);
+        bottomNav.setSelectedItemId(R.id.nav_workout);
         bottomNav.setOnItemSelectedListener(navListener);
+
     }
 
     private NavigationBarView.OnItemSelectedListener navListener =
@@ -55,7 +59,7 @@ public class WorkoutListActivity extends AppCompatActivity {
                             startActivity(intent);
                             break;
                         case R.id.nav_profile:
-                            intent = new Intent(WorkoutListActivity.this, FirebaseActivity.class);
+                            intent = new Intent(WorkoutListActivity.this, ProfileActivity.class);
                             startActivity(intent);
                             break;
                         case R.id.nav_workout:
