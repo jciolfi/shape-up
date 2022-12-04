@@ -54,7 +54,7 @@ public class WorkoutSearchFragment extends Fragment {
 
         // populate categories dropdown
         categoriesDropdown = searchView.findViewById(R.id.dropdown_categories);
-        List<String> workoutCategories = WorkoutCategory.listCategories(true);
+        List<String> workoutCategories = WorkoutCategory.listCategories(true, true);
         workoutCategories.add(0, "Any");
         ArrayAdapter<String> categoriesAdapter = new ArrayAdapter<>(searchView.getContext(),
                 android.R.layout.simple_spinner_item,

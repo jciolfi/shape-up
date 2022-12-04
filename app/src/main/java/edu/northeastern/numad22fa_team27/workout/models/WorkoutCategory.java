@@ -7,6 +7,7 @@ package edu.northeastern.numad22fa_team27.workout.models;
 import android.content.res.Resources;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -56,17 +57,25 @@ public enum WorkoutCategory {
     /**
      * List all of the categories in a string array, formatted
      * @param withFormat should capitalize names
+     * @param sorted sorted alphabetically
      * @return string list with all values
      */
-    public static List<String> listCategories(boolean withFormat) {
+    public static List<String> listCategories(boolean withFormat, boolean sorted) {
+        Stream<String> result;
         Stream<WorkoutCategory> categoryStream = Arrays.stream(WorkoutCategory.values());
 
-        // no formatting - will be upper case
+        // check formatting
         if (withFormat) {
-            return categoryStream.map(WorkoutCategory::formatString).collect(Collectors.toList());
+            result = categoryStream.map(WorkoutCategory::formatString);
+        } else {
+            result = categoryStream.map(String::valueOf);
         }
 
-        return categoryStream.map(String::valueOf).collect(Collectors.toList());
+        // check sorted
+        if (sorted) {
+            return result.sorted(Comparator.comparing(s -> s)).collect(Collectors.toList());
+        }
+        return result.collect(Collectors.toList());
     }
 
     /**

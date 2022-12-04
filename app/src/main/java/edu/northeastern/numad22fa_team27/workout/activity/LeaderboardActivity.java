@@ -39,14 +39,14 @@ public class LeaderboardActivity extends AppCompatActivity {
 
         // set up categories dropdown
         Spinner categoryDropdown = findViewById(R.id.dropdown_leaderboard_category);
-        categories = WorkoutCategory.listCategories(true);
+        categories = WorkoutCategory.listCategories(true, true);
         ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, categories);
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         categoryDropdown.setAdapter(categoryAdapter);
         categoryDropdown.setSelection(0);
-        prevCategory[0] = categories.get(0);
-        categoryDropdown.setOnItemSelectedListener(new CategoryListener());
+        CategoryListener categoryListener = new CategoryListener();
+        categoryDropdown.setOnItemSelectedListener(categoryListener);
 
         // set up recycler view
         leaderboardRV = findViewById(R.id.rv_leaderboard);
