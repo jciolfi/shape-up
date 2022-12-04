@@ -39,6 +39,27 @@
                 android:value="" />
         </activity>
         <activity
+            android:name=".workout.activity.UserFriends"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".workout.activity.UserWorkouts"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".workout.activities.ui.main.viewpager.WorkoutListActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".workout.activity.ProfileActivity"
             android:exported="false">
             <meta-data
