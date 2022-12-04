@@ -61,11 +61,13 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardViewHold
 
             // set friends count
             TextView friendCount = userInfoDialog.findViewById(R.id.txt_friend_count);
-            friendCount.setText(String.format("Friends: %s", user.friends.size()));
+            friendCount.setText(String.format("Friends: %s",
+                    user.friends == null ? 0 : user.friends.size()));
 
             // set groups joined count
             TextView groupCount = userInfoDialog.findViewById(R.id.txt_group_count);
-            groupCount.setText(String.format("Groups Joined: %s", user.joinedGroups.size()));
+            groupCount.setText(String.format("Groups Joined: %s",
+                    user.joinedGroups == null ? 0 : user.joinedGroups.size()));
 
             // set up close button
             Button closeButton = userInfoDialog.findViewById(R.id.btn_close_user);
