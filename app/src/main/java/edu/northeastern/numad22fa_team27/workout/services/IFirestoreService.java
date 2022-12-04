@@ -39,9 +39,8 @@ public interface IFirestoreService {
     void findGroupsByName(String groupName, WorkoutCallback callback);
 
     /**
-     * Get the leaderboard for the friends of the given user
-     * @param friendsOnly leaderboard for friends only if true, global otherwise
+     * Get the global leaderboard by category sorted by best streak, limited to 100
      * @param callback executed on the entries returned by the query
      */
-    void findStreaksLeaderboard(boolean friendsOnly, WorkoutCategory category, WorkoutCallback callback);
+    void findStreaksLeaderboard(WorkoutCategory category, WorkoutCallback callback);
 }

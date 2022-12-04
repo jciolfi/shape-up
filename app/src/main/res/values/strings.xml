@@ -103,4 +103,5 @@
     <string name="leaderboard">Leaderboard</string>
     <string name="friends_leaderboard">Friends Leaderboard</string>
     <string name="global_leaderboard">Global Leaderboard</string>
+    <string name="order_by">Order By</string>
 </resources>

@@ -151,23 +151,14 @@ public class FirestoreService implements IFirestoreService {
     }
 
     @Override
-    public void findStreaksLeaderboard(boolean friendsOnly, WorkoutCategory category, WorkoutCallback callback) {
-        if (friendsOnly && !tryFetchUserDetails()) {
-            return;
-        }
-
-        // get leaderboard for friends only
-        if (friendsOnly) {
-            // go 10-by-10 fetching results until all friends retrieved
-            int pointer = 0;
-
-        }
-        // get global leaderboard
-        else {
-            // get top 100 highest summed bestCategoryStreak for each category
-            firestoreDB.collection("users")
-                    .orderBy(String.format("bestCategoryStreaks/%s", WorkoutCategory.formatString(category)))
-        }
+    public void findStreaksLeaderboard(WorkoutCategory category, WorkoutCallback callback) {
+        firestoreDB.collection("users")
+//                .orderBy(FieldPath.of(String.format("bestCategoryStreaks.%s", category)), Query.Direction.DESCENDING)
+                .orderBy("bestCategoryStreaks")
+                .limit(100L)
+                .get()
+                .addOnSuccessListener(callback::processQuery)
+                .addOnFailureListener(e -> logFailure("findStreaksLeaderboard", e.getMessage()));
     }
 
     // ---------- Helpers ----------

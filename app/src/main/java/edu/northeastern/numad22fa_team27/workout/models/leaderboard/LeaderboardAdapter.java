@@ -1,6 +1,7 @@
-package edu.northeastern.numad22fa_team27.workout.models.user_search;
+package edu.northeastern.numad22fa_team27.workout.models.leaderboard;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,8 +14,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseUser;
-
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
@@ -22,37 +21,33 @@ import java.util.List;
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
 
-public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
-    private final String TAG = "UserAdapter";
+public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardViewHolder> {
+    private final static String TAG = "LeaderboardAdapter";
     private final List<UserDAO> users;
-    private final ViewGroup container;
-    private final View searchView;
-    private final FirebaseUser currentUser;
+    private final String category;
 
-    public UserAdapter(List<UserDAO> users, ViewGroup container, View searchView, FirebaseUser currentUser) {
+    public LeaderboardAdapter(List<UserDAO> users, String category) {
         this.users = users;
-        this.container = container;
-        this.searchView = searchView;
-        this.currentUser = currentUser;
+        this.category = category;
     }
 
     @NonNull
     @Override
-    public UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new UserViewHolder(LayoutInflater
+    public LeaderboardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new LeaderboardViewHolder(LayoutInflater
                 .from(parent.getContext())
                 .inflate(R.layout.item_user, null));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull LeaderboardViewHolder holder, int position) {
         UserDAO user = users.get(position);
-        holder.username.setText(user.username);
-        holder.username.setOnClickListener(view -> {
+        holder.userEntry.setText(String.format("%s. %s: %s", position+1, user.username, user.bestCategoryStreaks.get(category)));
+        holder.userEntry.setOnClickListener(view -> {
             // build custom popup
-            final Dialog userInfoDialog = new Dialog(searchView.getContext());
-            userInfoDialog.setContentView(LayoutInflater.from(searchView.getContext())
-                    .inflate(R.layout.dialog_user_item, container, false));
+            final Dialog userInfoDialog = new Dialog(view.getContext());
+            userInfoDialog.setContentView(LayoutInflater.from(view.getContext())
+                    .inflate(R.layout.dialog_user_item, (ViewGroup)view.getParent(), false));
 
             // set title
             TextView usernameTitle = userInfoDialog.findViewById(R.id.title_username);
@@ -77,7 +72,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
                 userInfoDialog.dismiss();
 
                 // focus will go to search view and bring up keyboard - disable this
-                final View groupsView = searchView.findViewById(R.id.rv_users);
+                final View groupsView = view.findViewById(R.id.rv_users);
                 groupsView.requestFocus();
             });
 
@@ -96,8 +91,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
         return users.size();
     }
 
-
-    private class GetProfilePic implements Runnable {
+    private static class GetProfilePic implements Runnable {
         private final UserDAO user;
         private final ImageView profilePic;
 
