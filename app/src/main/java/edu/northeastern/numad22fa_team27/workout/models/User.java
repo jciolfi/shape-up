@@ -1,5 +1,7 @@
 package edu.northeastern.numad22fa_team27.workout.models;
 
+import android.widget.ImageView;
+
 import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
 
@@ -13,6 +15,7 @@ import java.util.UUID;
 
 public class User {
     private String username;
+    private String profilePic;
     private String encryptedPassword;
 
     // List of the usernames of our friends
@@ -32,9 +35,11 @@ public class User {
      * @param username Unique string identifying user
      * @param encryptedPassword Hashed password
      */
-    public User(String username, String encryptedPassword) {
+
+    public User(String username, String encryptedPassword, String profilePic) {
         this.username = username;
         this.encryptedPassword = encryptedPassword;
+        this.profilePic = profilePic;
         this.friends = new ArrayList<>();
         this.joinedGroups = new ArrayList<>();
         this.currentCategoryStreaks = new HashMap<>();
@@ -51,9 +56,10 @@ public class User {
      * @param currentCategoryStreaks Map of streak category to current streak info
      * @param bestCategoryStreaks Map of streak category to best streak info
      */
-    public User(String username, String encryptedPassword, List<String> friends, List<UUID> joinedGroups, Map<WorkoutCategory, Pair<Integer, LocalDate>> currentCategoryStreaks, Map<WorkoutCategory, Integer> bestCategoryStreaks) {
+    public User(String username, String encryptedPassword, String profilePic, List<String> friends, List<UUID> joinedGroups, Map<WorkoutCategory, Pair<Integer, LocalDate>> currentCategoryStreaks, Map<WorkoutCategory, Integer> bestCategoryStreaks) {
         this.username = username;
         this.friends = friends;
+        this.profilePic = profilePic;
         this.joinedGroups = joinedGroups;
         this.encryptedPassword = encryptedPassword;
         this.currentCategoryStreaks = currentCategoryStreaks;
@@ -124,6 +130,10 @@ public class User {
 
     public Map<WorkoutCategory, Pair<Integer, LocalDate>> getCurrentCategoryStreaks() {
         return currentCategoryStreaks;
+    }
+
+    public String getProfilePic() {
+        return profilePic;
     }
 
     public Map<WorkoutCategory, Integer> getBestCategoryStreaks() {

@@ -28,7 +28,7 @@ public class UserTest {
     @Test
     public void testRecordWorkout() {
         LocalDate today = LocalDate.now();
-        User user = new User("User", "abc");
+        User user = new User("User", "abc", "Image");
 
         // D - 4 : Balance x1
         user.recordWorkout(workouts.get(0), today.minusDays(4));

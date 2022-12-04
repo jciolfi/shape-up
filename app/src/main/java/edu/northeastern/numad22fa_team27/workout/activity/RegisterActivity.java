@@ -3,8 +3,6 @@ package edu.northeastern.numad22fa_team27.workout.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -24,19 +22,19 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.Util;
+import edu.northeastern.numad22fa_team27.workout.models.User;
 
 public class RegisterActivity extends AppCompatActivity {
 
     private TextView usr_email, usr_pass, usr_pass_confirm;
     private Button sign_up_btn;
-    // TODO
-    // Add progressbar
     private ProgressBar pb;
     private FirebaseAuth user_auth;
 
@@ -49,6 +47,7 @@ public class RegisterActivity extends AppCompatActivity {
         usr_pass = findViewById(R.id.register_password);
         usr_pass_confirm = findViewById(R.id.repeat_register_Password);
         sign_up_btn = findViewById(R.id.btn_signup);
+        pb = findViewById(R.id.progressbar_register);
         user_auth = FirebaseAuth.getInstance();
 
 
@@ -77,46 +76,48 @@ public class RegisterActivity extends AppCompatActivity {
     private void registerButtonClicked() {
         usr_pass.setTransformationMethod(PasswordTransformationMethod.getInstance());
         usr_pass_confirm.setTransformationMethod(PasswordTransformationMethod.getInstance());
-        sign_up_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Get the entered email, pass, and pass confirmation
-                String email = usr_email.getText().toString();
-                String pass = usr_pass.getText().toString();
-                String pass_confirm = usr_pass_confirm.getText().toString();
+        sign_up_btn.setOnClickListener(v -> {
+            // Get the entered email, pass, and pass confirmation
+            String email = usr_email.getText().toString();
+            String pass = usr_pass.getText().toString();
+            String pass_confirm = usr_pass_confirm.getText().toString();
 
-                // Checks the empty Fields
-                boolean isNotEmptyField = !TextUtils.isEmpty(email)
-                                          && !TextUtils.isEmpty(pass)
-                                          && !TextUtils.isEmpty(pass_confirm);
-                if (isEmailValid(email)) {
-                    // If the fields are not empty
-                    if (isNotEmptyField) {
-                        // if the pass and pass_confirm matches
-                        if (pass.equals(pass_confirm)) {
-                            user_auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.isSuccessful()) {
-                                        showMainPage();
-                                    } else {
-                                        // If registration not successful that means there is a user with this credentials in our DB
-                                        Toast.makeText(RegisterActivity.this, "User already exists! Please log in.", Toast.LENGTH_SHORT).show();
-                                        Util.openActivity(RegisterActivity.this, LoginActivity.class);
-                                    }
-                                }
-                            });
-                        } else {
-                            Toast.makeText(RegisterActivity.this, "Passwords doesn't match! Please Try again.", Toast.LENGTH_SHORT).show();
-                        }
+            // Checks the empty Fields
+            boolean isNotEmptyField = !TextUtils.isEmpty(email)
+                                      && !TextUtils.isEmpty(pass)
+                                      && !TextUtils.isEmpty(pass_confirm);
+            if (isEmailValid(email)) {
+                // If the fields are not empty
+                if (isNotEmptyField) {
+                    // if the pass and pass_confirm matches
+                    if (pass.equals(pass_confirm)) {
+                        pb.setVisibility(View.VISIBLE);
+                        user_auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                User user = new User(email, pass, "");
+                                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                db.collection("users")
+                                        .document(user_auth.getCurrentUser().getUid())
+                                        .set(user);
+                                pb.setVisibility(View.INVISIBLE);
+                                showMainPage();
+                            } else {
+                                // If registration not successful that means there is a user with this credentials in our DB
+                                Toast.makeText(RegisterActivity.this, "User already exists! Please log in.", Toast.LENGTH_SHORT).show();
+                                Util.openActivity(RegisterActivity.this, LoginActivity.class);
+                            }
+                        });
                     } else {
-                        Toast.makeText(RegisterActivity.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+                        pb.setVisibility(View.INVISIBLE);
+                        Toast.makeText(RegisterActivity.this, "Passwords doesn't match! Please Try again.", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(RegisterActivity.this, "Please enter a valid email address!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
                 }
-
+            } else {
+                Toast.makeText(RegisterActivity.this, "Please enter a valid email address!", Toast.LENGTH_SHORT).show();
             }
+
         });
     }
 
