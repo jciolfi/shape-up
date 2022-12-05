@@ -1,10 +1,9 @@
-package edu.northeastern.numad22fa_team27.workout.models.user_search;
+package edu.northeastern.numad22fa_team27.workout.models.leaderboard;
 
 import android.app.Dialog;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -13,8 +12,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseUser;
-
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
@@ -22,48 +19,45 @@ import java.util.List;
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
 
-public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
-    private final String TAG = "UserAdapter";
+public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardViewHolder> {
+    private final static String TAG = "LeaderboardAdapter";
     private final List<UserDAO> users;
-    private final ViewGroup container;
-    private final View searchView;
-    private final FirebaseUser currentUser;
+    private final String[] category;
 
-    public UserAdapter(List<UserDAO> users, ViewGroup container, View searchView, FirebaseUser currentUser) {
+    public LeaderboardAdapter(List<UserDAO> users, String[] category) {
         this.users = users;
-        this.container = container;
-        this.searchView = searchView;
-        this.currentUser = currentUser;
+        this.category = category;
     }
 
     @NonNull
     @Override
-    public UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new UserViewHolder(LayoutInflater
+    public LeaderboardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new LeaderboardViewHolder(LayoutInflater
                 .from(parent.getContext())
-                .inflate(R.layout.item_user, null));
+                .inflate(R.layout.item_leaderboard_user, null));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull LeaderboardViewHolder holder, int position) {
         UserDAO user = users.get(position);
-        holder.username.setText(user.username);
-        GetProfilePic getProfilePic = new GetProfilePic(user, holder.profilePic);
-        new Thread(getProfilePic).start();
-
-        holder.username.setOnClickListener(view -> {
+        holder.userPlace.setText(String.format("%s.", position+1));
+        holder.userEntry.setText(user.username);
+        holder.userStreak.setText(String.format("Streak: %s days",
+                user.bestCategoryStreaks.get(category[0].toUpperCase())));
+        holder.userEntry.setOnClickListener(view -> {
             // build custom popup
-            final Dialog userInfoDialog = new Dialog(searchView.getContext());
-            userInfoDialog.setContentView(LayoutInflater.from(searchView.getContext())
-                    .inflate(R.layout.dialog_user_item, container, false));
+            final Dialog userInfoDialog = new Dialog(view.getContext());
+            userInfoDialog.setContentView(LayoutInflater.from(view.getContext())
+                    .inflate(R.layout.dialog_user_item, (ViewGroup)view.getParent(), false));
 
             // set title
             TextView usernameTitle = userInfoDialog.findViewById(R.id.title_username);
             usernameTitle.setText(user.username);
 
             // set profile picture
-            ImageView dialogProfilePic = userInfoDialog.findViewById(R.id.dialog_profile_pic);
-            dialogProfilePic.setImageDrawable(holder.profilePic.getDrawable());
+            ImageView profilePic = userInfoDialog.findViewById(R.id.dialog_profile_pic);
+            GetProfilePic getProfilePic = new GetProfilePic(user, profilePic);
+            new Thread(getProfilePic).start();
 
             // set friends count
             TextView friendCount = userInfoDialog.findViewById(R.id.txt_friend_count);
@@ -77,13 +71,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
 
             // set up close button
             Button closeButton = userInfoDialog.findViewById(R.id.btn_close_user);
-            closeButton.setOnClickListener(view1 -> {
-                userInfoDialog.dismiss();
-
-                // focus will go to search view and bring up keyboard - disable this
-                final View groupsView = searchView.findViewById(R.id.rv_users);
-                groupsView.requestFocus();
-            });
+            closeButton.setOnClickListener(view1 -> userInfoDialog.dismiss());
 
             // TODO set add/remove friend button functionality
             // if friends -> set button to remove friend
@@ -100,8 +88,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
         return users.size();
     }
 
-
-    private class GetProfilePic implements Runnable {
+    private static class GetProfilePic implements Runnable {
         private final UserDAO user;
         private final ImageView profilePic;
 

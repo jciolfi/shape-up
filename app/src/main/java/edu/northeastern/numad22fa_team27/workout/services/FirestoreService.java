@@ -6,9 +6,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -17,7 +16,6 @@ import edu.northeastern.numad22fa_team27.workout.callbacks.WorkoutCallback;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.GroupDAO;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
 import edu.northeastern.numad22fa_team27.workout.models.Group;
-import edu.northeastern.numad22fa_team27.workout.models.User;
 import edu.northeastern.numad22fa_team27.workout.models.WorkoutCategory;
 
 public class FirestoreService implements IFirestoreService {
@@ -115,7 +113,6 @@ public class FirestoreService implements IFirestoreService {
     @Override
     public void findUserGroups(WorkoutCallback callback) {
         String userID = Objects.requireNonNull(userAuth.getCurrentUser()).getUid();
-        Log.d(TAG, userID);
 
         firestoreDB.collection("users")
                 .document(userID)
@@ -154,15 +151,13 @@ public class FirestoreService implements IFirestoreService {
     }
 
     @Override
-    public void findStreaksLeaderboard(String userID, WorkoutCallback callback) {
-        if (Util.stringIsNullOrEmpty(userID)) {
-            warnBadParam("findStreaksLeaderboard");
-            return;
-        }
-
-        // TODO: go 10 by 10 getting all friends, can only specify up to 10 items in whereIn clause
-        List<User> friends = new ArrayList<>();
-
+    public void findStreaksLeaderboard(WorkoutCategory category, WorkoutCallback callback) {
+        firestoreDB.collection("users")
+                .orderBy(String.format("bestCategoryStreaks.%s", category), Query.Direction.DESCENDING)
+                .limit(100L)
+                .get()
+                .addOnSuccessListener(callback::processQuery)
+                .addOnFailureListener(e -> logFailure("findStreaksLeaderboard", e.getMessage()));
     }
 
     // ---------- Helpers ----------
