@@ -1,7 +1,5 @@
 package edu.northeastern.numad22fa_team27.workout.models;
 
-import android.widget.ImageView;
-
 import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
 
@@ -12,8 +10,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
+import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
 
 public class User {
+    private UUID userID;
     private String username;
     private String profilePic;
     private String encryptedPassword;
@@ -64,6 +66,35 @@ public class User {
         this.encryptedPassword = encryptedPassword;
         this.currentCategoryStreaks = currentCategoryStreaks;
         this.bestCategoryStreaks = bestCategoryStreaks;
+    }
+
+    public User(UserDAO user, String userID) {
+        try {
+            this.userID = UUID.fromString(userID);
+        } catch (Exception ignored) {}
+
+        this.username = user.username == null ? "" : user.username;
+        this.friends = user.friends == null ? new ArrayList<>() : user.friends;
+
+        this.joinedGroups = user.joinedGroups == null
+                ? new ArrayList<>()
+                : user.joinedGroups.stream().map(UUID::fromString).collect(Collectors.toList());
+
+        this.currentCategoryStreaks = new HashMap<>();
+        if (user.currentCategoryStreaks != null) {
+            for (String category : user.currentCategoryStreaks.keySet()) {
+                this.currentCategoryStreaks.put(WorkoutCategory.toCategory(category), user.currentCategoryStreaks.get(category));
+            }
+        }
+
+        this.bestCategoryStreaks = new HashMap<>();
+        if (user.bestCategoryStreaks != null) {
+            for (String category : user.bestCategoryStreaks.keySet()) {
+                this.bestCategoryStreaks.put(WorkoutCategory.toCategory(category), user.bestCategoryStreaks.get(category));
+            }
+        }
+
+        this.profilePic = user.profilePic == null ? "" : user.profilePic;
     }
 
     /**
@@ -160,5 +191,9 @@ public class User {
             return 0;
         }
         return this.bestCategoryStreaks.get(w);
+    }
+
+    public Object getUserID(boolean asString) {
+        return asString ? String.valueOf(userID) : userID;
     }
 }

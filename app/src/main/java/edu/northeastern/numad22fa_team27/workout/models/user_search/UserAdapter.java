@@ -21,19 +21,20 @@ import java.util.List;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
+import edu.northeastern.numad22fa_team27.workout.models.User;
 
 public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
     private final String TAG = "UserAdapter";
-    private final List<UserDAO> users;
+    private final List<User> users;
     private final ViewGroup container;
     private final View searchView;
-    private final FirebaseUser currentUser;
+    private final String currentUserID;
 
-    public UserAdapter(List<UserDAO> users, ViewGroup container, View searchView, FirebaseUser currentUser) {
+    public UserAdapter(List<User> users, ViewGroup container, View searchView, String currentUserID) {
         this.users = users;
         this.container = container;
         this.searchView = searchView;
-        this.currentUser = currentUser;
+        this.currentUserID = currentUserID;
     }
 
     @NonNull
@@ -46,8 +47,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
-        UserDAO user = users.get(position);
-        holder.username.setText(user.username);
+        User user = users.get(position);
+        holder.username.setText(user.getUsername());
         GetProfilePic getProfilePic = new GetProfilePic(user, holder.profilePic);
         new Thread(getProfilePic).start();
 
@@ -59,7 +60,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
 
             // set title
             TextView usernameTitle = userInfoDialog.findViewById(R.id.title_username);
-            usernameTitle.setText(user.username);
+            usernameTitle.setText(user.getUsername());
 
             // set profile picture
             ImageView dialogProfilePic = userInfoDialog.findViewById(R.id.dialog_profile_pic);
@@ -68,12 +69,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
             // set friends count
             TextView friendCount = userInfoDialog.findViewById(R.id.txt_friend_count);
             friendCount.setText(String.format("Friends: %s",
-                    user.friends == null ? 0 : user.friends.size()));
+                    user.getFriends() == null ? 0 : user.getFriends().size()));
 
             // set groups joined count
             TextView groupCount = userInfoDialog.findViewById(R.id.txt_group_count);
             groupCount.setText(String.format("Groups Joined: %s",
-                    user.joinedGroups == null ? 0 : user.joinedGroups.size()));
+                    user.getJoinedGroups() == null ? 0 : user.getJoinedGroups().size()));
 
             // set up close button
             Button closeButton = userInfoDialog.findViewById(R.id.btn_close_user);
@@ -85,11 +86,31 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
                 groupsView.requestFocus();
             });
 
-            // TODO set add/remove friend button functionality
-            // if friends -> set button to remove friend
-            // if not friends -> keep button as add friend
-            // if self -> hide button
-//            Button actionButton = searchView.findViewById(R.id.btn_friend_action);
+            Button actionButton = userInfoDialog.findViewById(R.id.btn_friend_action);
+            // if self -> hide positive button
+            if (user.getUserID(true).equals(currentUserID)
+                    || user.getFriends() == null || user.getFriends().isEmpty()) {
+                actionButton.setVisibility(View.INVISIBLE);
+            } else {
+                actionButton.setVisibility(View.VISIBLE);
+                if (user.getFriends().contains(currentUserID)) {
+                    // already friends -> change button to remove friend
+                    actionButton.setText("Remove");
+                    actionButton.setOnClickListener(removeView -> {
+                        // TODO - tryRemoveFriend
+
+                        closeButton.callOnClick();
+                    });
+                } else {
+                    // not friends -> change button to add friend
+                    actionButton.setText("Add");
+                    actionButton.setOnClickListener(addView -> {
+                        // TODO - sendFriendRequest
+
+                        closeButton.callOnClick();
+                    });
+                }
+            }
 
             userInfoDialog.show();
         });
@@ -102,10 +123,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
 
 
     private class GetProfilePic implements Runnable {
-        private final UserDAO user;
+        private final User user;
         private final ImageView profilePic;
 
-        protected GetProfilePic(UserDAO user, ImageView profilePic) {
+        protected GetProfilePic(User user, ImageView profilePic) {
             this.user = user;
             this.profilePic = profilePic;
         }
@@ -113,8 +134,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
         @Override
         public void run() {
             try {
-                InputStream is = (InputStream) new URL(user.profilePic).getContent();
-                Drawable avatar = Drawable.createFromStream(is, user.username);
+                InputStream is = (InputStream) new URL(user.getProfilePic()).getContent();
+                Drawable avatar = Drawable.createFromStream(is, user.getUsername());
                 profilePic.post(() -> profilePic.setImageDrawable(avatar));
             } catch (Exception e) {
                 Log.w(TAG, e.toString());
