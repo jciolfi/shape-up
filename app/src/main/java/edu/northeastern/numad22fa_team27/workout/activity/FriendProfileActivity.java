@@ -68,18 +68,18 @@ public class FriendProfileActivity extends AppCompatActivity {
     }
 
     private void removeFriend() {
+        String username = getIntent().getStringExtra("USERNAME");
+
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String username = getIntent().getStringExtra("USERNAME");
-        db.collection("users")
-                .document(user.getUid())
-                .get()
+        CollectionReference colRef = db.collection("users");
+        DocumentReference docRef = colRef.document(user.getUid());
+
+        docRef.get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         List<String> friendsUIDList = (List<String>) documentSnapshot.getData().get("friends");
-                        FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
-                        CollectionReference colRef = rootRef.collection("users");
                         Query nameQuery = colRef.whereEqualTo("username", username);
                         nameQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
@@ -88,10 +88,7 @@ public class FriendProfileActivity extends AppCompatActivity {
                                     for (QueryDocumentSnapshot document : task.getResult()) {
                                         String friendId = document.getId();
                                         Log.d("user", friendId);
-                                        DocumentReference docRef = db.collection("users")
-                                                .document(user.getUid());
                                         docRef.update("friends", FieldValue.arrayRemove(friendId));
-
                                     }
                                 }
                             }
@@ -101,33 +98,4 @@ public class FriendProfileActivity extends AppCompatActivity {
                 });
 
     }
-
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//        String currentID = user.getUid();
-//        DocumentReference reference;
-//        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-//
-//        reference = ;
-//        reference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                if(task.getResult().exists()) {
-//                    String url = task.getResult().getString("profilePic");
-//                    String username = task.getResult().getString("username");
-//                    usr_email.setText(username);
-//                    if (!url.isEmpty()) {
-//                        Picasso.get()
-//                                .load(url)
-//                                .resize(100, 100)
-//                                .into(profilePic);
-//                    }
-//                } else {
-//                    Toast.makeText(ProfileActivity.this, "Couldn't fetch the profile for the user", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
-//    }
 }
