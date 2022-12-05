@@ -7,18 +7,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.util.List;
 
 import edu.northeastern.numad22fa_team27.R;
-import edu.northeastern.numad22fa_team27.spotify.spotifyviews.Cards;
-import edu.northeastern.numad22fa_team27.spotify.spotifyviews.Holder;
-import edu.northeastern.numad22fa_team27.workout.models.Workout;
 
-public class PagerWorkoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class PagerWorkoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener {
 
     private List<WorkoutCard> workouts;
+    private int currentIndex;
 
     public PagerWorkoutAdapter(List<WorkoutCard> workouts) {
         this.workouts = workouts;
@@ -29,16 +30,32 @@ public class PagerWorkoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_workout,
                 viewGroup, false);
-        return new ViewPagerHolder(view);
+//        view.setOnClickListener(v -> {
+//            if (v.getId() == R.id.btn_instructions){
+//                workouts.get(currentIndex).getDescription();
+//            } else if (v.getId() == R.id.ckb_completed) {
+//                workouts.get(currentIndex).setIsComplete();
+//            }
+//        });
+        ViewPagerHolder vph = new ViewPagerHolder(view);
+        //vph
+        return vph;
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int i) {
         WorkoutCard workout = workouts.get(i);
-        getInfo((ViewPagerHolder) holder, workout);
+        setInfo((ViewPagerHolder) holder, workout);
+        holder.itemView.setOnClickListener(view -> {
+            currentIndex = Integer.valueOf(i);
+        });
     }
 
-    private void getInfo(ViewPagerHolder h, WorkoutCard workoutCard) {
+    public String getCurrentInstructions(int index) {
+        return workouts.get(index).getDescription();
+    }
+
+    private void setInfo(ViewPagerHolder h, WorkoutCard workoutCard) {
         h.title.setText(workoutCard.getTitle());
         h.workoutImg.setImageResource(workoutCard.getImgInt());// .setImageIcon(workoutCard.getWorkoutImage());
     }
@@ -46,6 +63,15 @@ public class PagerWorkoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public int getItemCount() {
         return workouts.size();
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (view.getId() == R.id.btn_instructions){
+            workouts.get(currentIndex).getDescription();
+        } else if (view.getId() == R.id.ckb_completed) {
+            workouts.get(currentIndex).setIsComplete();
+        }
     }
 
     private class ViewPagerHolder extends RecyclerView.ViewHolder{
