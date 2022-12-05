@@ -8,6 +8,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.content.Intent;
 import android.graphics.drawable.Icon;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -21,6 +22,8 @@ import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.spotify.SpotifyActivity;
 import edu.northeastern.numad22fa_team27.spotify.spotifyviews.Cards;
 import edu.northeastern.numad22fa_team27.sticker_messenger.FirebaseActivity;
+import edu.northeastern.numad22fa_team27.workout.activity.ProfileActivity;
+import edu.northeastern.numad22fa_team27.workout.models.workout_search.NavigationBar;
 
 public class WorkoutListActivity extends AppCompatActivity {
 
@@ -40,34 +43,8 @@ public class WorkoutListActivity extends AppCompatActivity {
         workoutViewPager.setAdapter(new PagerWorkoutAdapter(workouts));
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_toolbar);
-        bottomNav.setOnItemSelectedListener(navListener);
+        bottomNav.setSelectedItemId(R.id.nav_workout);
+        bottomNav.setOnItemSelectedListener(NavigationBar.setNavListener(this));
+
     }
-
-    private NavigationBarView.OnItemSelectedListener navListener =
-            new BottomNavigationView.OnItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                    Fragment selectedFragment = null;
-
-                    switch (item.getItemId()) {
-                        case R.id.nav_leaderboard:
-                            Intent intent = new Intent(WorkoutListActivity.this, SpotifyActivity.class);
-                            startActivity(intent);
-                            break;
-                        case R.id.nav_profile:
-                            intent = new Intent(WorkoutListActivity.this, FirebaseActivity.class);
-                            startActivity(intent);
-                            break;
-                        case R.id.nav_workout:
-                            intent = new Intent(WorkoutListActivity.this, WorkoutListActivity.class);
-                            startActivity(intent);
-                            break;
-
-
-                    }
-                    return false;
-                }
-            };
-
-
 }
