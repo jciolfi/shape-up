@@ -49,7 +49,8 @@
                 android:text="@string/instructions"
                 android:textColor="@color/md_theme_light_onSecondaryContainer"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                android:onClick="onClick"/>
 
             <CheckBox
                 android:id="@+id/ckb_completed"
