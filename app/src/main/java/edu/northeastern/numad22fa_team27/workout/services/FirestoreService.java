@@ -160,6 +160,59 @@ public class FirestoreService implements IFirestoreService {
                 .addOnFailureListener(e -> logFailure("findStreaksLeaderboard", e.getMessage()));
     }
 
+    @Override
+    public boolean tryJoinGroup(String groupID) {
+        if (Util.stringIsNullOrEmpty(groupID) || !tryFetchUserDetails()) {
+            warnBadParam("joinGroup");
+            return false;
+        } else if (currentUser.joinedGroups.size() >= 10) {
+            // not in same line as above to avoid race condition with getting currentUser
+            return false;
+        }
+
+        String userID = userAuth.getCurrentUser().getUid();
+        AtomicBoolean success = new AtomicBoolean(true);
+
+        firestoreDB.collection("groups")
+                .document(groupID)
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    GroupDAO groupDAO = snapshot.toObject(GroupDAO.class);
+                    if (groupDAO == null) {
+                        success.set(false);
+                    } else {
+                        // add user to group
+                        Group group = new Group(groupDAO, snapshot.getId());
+
+                        if (group.getMembers().contains(userID)) {
+                            success.set(false);
+                        } else {
+                            groupDAO.members.add(userID);
+                            firestoreDB.collection("groups")
+                                    .document(groupID)
+                                    .set(groupDAO)
+                                    .addOnFailureListener(e -> {
+                                        success.set(false);
+                                        logFailure("tryJoinGroup", e.getMessage());
+                                    })
+                                    .addOnSuccessListener(unused -> {
+                                        // add group to user
+                                        currentUser.joinedGroups.add(groupID);
+                                        firestoreDB.collection("users")
+                                                .document(userID)
+                                                .set(currentUser)
+                                                .addOnFailureListener(e -> {
+                                                    success.set(false);
+                                                    logFailure("tryJoinGroup", e.getMessage());
+                                                });
+                                    });
+                        }
+                    }
+                });
+
+        return success.get();
+    }
+
     // ---------- Helpers ----------
     private boolean tryFetchUserDetails() {
         FirebaseUser user = userAuth.getCurrentUser();

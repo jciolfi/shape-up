@@ -14,14 +14,16 @@ import java.util.List;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.GroupDAO;
+import edu.northeastern.numad22fa_team27.workout.models.Group;
 import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 
 public class GroupAdapter extends RecyclerView.Adapter<GroupViewHolder> {
-    private final List<GroupDAO> displayGroups;
+    private final List<Group> displayGroups;
     private final ViewGroup container;
     private final View searchView;
+    private final FirestoreService firestoreService = new FirestoreService();
 
-    public GroupAdapter(List<GroupDAO> displayGroups, ViewGroup container, View searchView) {
+    public GroupAdapter(List<Group> displayGroups, ViewGroup container, View searchView) {
         this.displayGroups = displayGroups;
         this.container = container;
         this.searchView = searchView;
@@ -37,8 +39,8 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull GroupViewHolder holder, int position) {
-        GroupDAO group = displayGroups.get(position);
-        holder.groupName.setText(group.groupName);
+        Group group = displayGroups.get(position);
+        holder.groupName.setText(group.getGroupName());
         holder.groupName.setOnClickListener(view -> {
             // build custom popup
             final Dialog groupInfoDialog = new Dialog(searchView.getContext());
@@ -47,11 +49,11 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupViewHolder> {
 
             // set title
             TextView groupTitle = groupInfoDialog.findViewById(R.id.title_group_name);
-            groupTitle.setText(group.groupName);
+            groupTitle.setText(group.getGroupName());
 
             // set member info
             TextView memberInfo = groupInfoDialog.findViewById(R.id.txt_member_info);
-            memberInfo.setText(String.format("Members: %s", group.members.size()));
+            memberInfo.setText(String.format("Members: %s", group.getMembers().size()));
 
             // set up close button
             Button closeButton = groupInfoDialog.findViewById(R.id.btn_close_group);
@@ -64,10 +66,17 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupViewHolder> {
             });
 
             // TODO set up join button
-//            Button joinButton = groupInfoDialog.findViewById(R.id.btn_join_group);
-//            joinButton.setOnClickListener(v -> {
-//                // new FirestoreService().joinGroup();
-//            });
+            Button joinButton = groupInfoDialog.findViewById(R.id.btn_join_group);
+            joinButton.setOnClickListener(v -> {
+                 boolean success = firestoreService.tryJoinGroup(String.valueOf(group.getGroupID()));
+                 if (success) {
+
+                 } else {
+
+                 }
+
+                 closeButton.callOnClick();
+            });
             groupInfoDialog.show();
         });
     }
