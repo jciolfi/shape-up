@@ -5,9 +5,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -89,6 +89,9 @@ public class MyFriendsActivity extends AppCompatActivity implements IRecyclerVie
 
     @Override
     public void onItemClick(int position) {
-        Toast.makeText(this, "Burdiam", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(MyFriendsActivity.this, FriendProfileActivity.class);
+        intent.putExtra("USERNAME", list.get(position).getUsername());
+        intent.putExtra("PROFILEPIC", list.get(position).getImageView());
+        startActivity(intent);
     }
 }
