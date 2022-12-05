@@ -4,19 +4,21 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 public class FriendsCard {
-    private int profilePic;
+    private String url;
     private String username;
 
-    public FriendsCard(int imageView, String username) {
-         this.profilePic = imageView;
+    public FriendsCard(String url, String username) {
+         this.url = url;
          this.username = username;
     }
 
     public FriendsCard() {}
 
-    public int getImageView() {
-        return profilePic;
+    public String getImageView() {
+        return url;
     }
 
     public String getUsername() {
