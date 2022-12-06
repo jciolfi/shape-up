@@ -27,10 +27,10 @@
     <string name="sticker_fragment_friend_spinner">Friends List</string>
     <string name="sticker_fragment_sticker_spinner">Stickers List</string>
     <string name="sticker_notification_channel_description">Notifications for the Sticker activity</string>
-    <string name="welcome">Welcome To ShapeUp</string>
+    <string name="welcome">ShapeUp.</string>
     <string name="username">Email</string>
     <string name="password">Password</string>
-    <string name="create_account_message">Don\'t have an account? Create one here</string>
+    <string name="create_account_message">Don\'t have an account?</string>
     <string name="sign_up_btn">Sign Up</string>
     <string name="repeat_password">Repeat Password</string>
     <string name="have_an_account_txt">Already have an account? Sign in here</string>

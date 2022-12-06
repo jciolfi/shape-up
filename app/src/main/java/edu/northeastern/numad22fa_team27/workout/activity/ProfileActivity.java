@@ -1,45 +1,64 @@
 package edu.northeastern.numad22fa_team27.workout.activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
+import static edu.northeastern.numad22fa_team27.Util.requestNoActivityBar;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
-import android.view.MenuItem;
-import android.view.View;
+import android.util.Log;
+import android.view.Gravity;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.Util;
+import edu.northeastern.numad22fa_team27.workout.adapters.WorkoutClickListener;
+import edu.northeastern.numad22fa_team27.workout.adapters.WorkoutRecAdapter;
+import edu.northeastern.numad22fa_team27.workout.adapters.WorkoutRecCard;
+import edu.northeastern.numad22fa_team27.workout.models.Workout;
 import edu.northeastern.numad22fa_team27.workout.models.workout_search.NavigationBar;
 import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
+import edu.northeastern.numad22fa_team27.workout.services.RecommendationService;
 
 public class ProfileActivity extends AppCompatActivity {
     private FirestoreService firestoreService;
 
-    private TextView usr_email;
     private FirebaseAuth user_auth;
-    private Button signOutBtn, settingsBtn, friendsBtn, completedWorkoutsBtn;
+    private Button settingsBtn, friendsBtn, completedWorkoutsBtn;
     private ImageView profilePic;
+    private RecyclerView recWorkouts, friendWorkouts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestNoActivityBar(this);
         setContentView(R.layout.activity_profile);
 
         // Set up nav bar
@@ -47,42 +66,67 @@ public class ProfileActivity extends AppCompatActivity {
         bottomNav.setSelectedItemId(R.id.nav_profile);
         bottomNav.setOnItemSelectedListener(NavigationBar.setNavListener(this));
 
-        firestoreService = new FirestoreService();
-        usr_email = findViewById(R.id.pusername);
+        // Find all our UI elements
         user_auth = FirebaseAuth.getInstance();
-        signOutBtn = findViewById(R.id.signOutBtn);
         profilePic = findViewById(R.id.profilePic);
+        completedWorkoutsBtn = findViewById(R.id.chip_workouts);
+        friendsBtn = findViewById(R.id.chip_friends);
+        settingsBtn = findViewById(R.id.chip_settings);
+        recWorkouts = findViewById(R.id.rec_workouts);
+        friendWorkouts = findViewById(R.id.friend_workouts);
 
-        friendsBtn = findViewById(R.id.tmpMyFriends);
-        settingsBtn = findViewById(R.id.tmpSettings);
-        completedWorkoutsBtn = findViewById(R.id.tmpCompletedWorkouts);
-
-        friendsBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Util.openActivity(ProfileActivity.this, MyFriendsActivity.class);
-            }
-        });
-
-        signOutBtn.setOnClickListener(view -> {
-            user_auth.signOut();
-            Toast.makeText(ProfileActivity.this, "Successfully signed out!", Toast.LENGTH_SHORT).show();
-            Util.openActivity(ProfileActivity.this, LoginActivity.class);
-        });
-
+        // Set any callbacks
+        friendsBtn.setOnClickListener(v -> Util.openActivity(ProfileActivity.this, MyFriendsActivity.class));
         settingsBtn.setOnClickListener(v -> Util.openActivity(ProfileActivity.this, SettingsActivity.class));
-
         completedWorkoutsBtn.setOnClickListener(v -> Util.openActivity(ProfileActivity.this, UserWorkouts.class));
 
-        loadUser();
+        // Storage for workout recommendations in recyclerview
+        List<Workout> recWorkoutCards = new ArrayList<>();
+        List<Workout> friendWorkoutCards = new ArrayList<>();
+
+        // Set any adapters
+        setupRecView(recWorkouts, recWorkoutCards, false);
+        setupRecView(friendWorkouts, friendWorkoutCards, true);
+
+        // TODO: Better recommendations
+        RecommendationService rs = new RecommendationService(null);
+        rs.RecommendWorkouts(recWorkouts, recWorkoutCards);
+        rs.RecommendFriendApprovedWorkouts(friendWorkouts, friendWorkoutCards);
+
+
+        firestoreService = new FirestoreService();
     }
 
-    private void loadUser() {
-        usr_email.setText(user_auth.getCurrentUser().getEmail());
-    }
+    private void setupRecView(RecyclerView rv, List<Workout> dataset, boolean isVertical) {
+        // Part of the pain and suffering required by Google to have an onClick method for a
+        // Recyclerview without using deprecated methods
+        ActivityResultLauncher<Intent> activityLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        Bundle extras = data.getExtras();
+                        String workoutId = extras.getString("WorkoutId");
+                        Boolean completedWorkout = extras.getBoolean("Success");
+                        if (completedWorkout) {
+                            Toast.makeText(this, String.format("Congrats on completing workout %s", workoutId), Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(this, "Okay, maybe next time.", Toast.LENGTH_LONG).show();
+                        }
 
-    private void groupsBtnClicked() {
-        //firestoreService.findUserGroups(new FindGroupsCallback());
+                        // TODO: Update user
+                    }
+                });
+
+        WorkoutClickListener clickListener = new WorkoutClickListener(dataset, activityLauncher);
+
+        int orientation = isVertical ? LinearLayoutManager.VERTICAL : LinearLayoutManager.HORIZONTAL;
+        @SuppressLint("WrongConstant") RecyclerView.LayoutManager manager = new LinearLayoutManager(this, orientation, false);
+        rv.setHasFixedSize(true);
+        rv.setAdapter(new WorkoutRecAdapter(dataset, clickListener, isVertical));
+        rv.setLayoutManager(manager);
+
+        Objects.requireNonNull(rv.getAdapter()).notifyDataSetChanged();
     }
 
     @Override
@@ -94,22 +138,17 @@ public class ProfileActivity extends AppCompatActivity {
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
 
         reference = firestore.collection("users").document(currentID);
-        reference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.getResult().exists()) {
-                    String url = task.getResult().getString("profilePic");
-                    String username = task.getResult().getString("username");
-                    usr_email.setText(username);
-                    if (!url.isEmpty()) {
-                        Picasso.get()
-                                .load(url)
-                                .resize(100, 100)
-                                .into(profilePic);
-                    }
-                } else {
-                    Toast.makeText(ProfileActivity.this, "Couldn't fetch the profile for the user", Toast.LENGTH_SHORT).show();
+        reference.get().addOnCompleteListener(task -> {
+            if(task.getResult().exists()) {
+                String url = task.getResult().getString("profilePic");
+                if (!url.isEmpty()) {
+                    Picasso.get()
+                            .load(url)
+                            .resize(100, 100)
+                            .into(profilePic);
                 }
+            } else {
+                Toast.makeText(ProfileActivity.this, "Couldn't fetch the profile for the user", Toast.LENGTH_SHORT).show();
             }
         });
     }

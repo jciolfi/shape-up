@@ -12,7 +12,6 @@ import com.google.android.material.navigation.NavigationBarView;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.spotify.SpotifyActivity;
-import edu.northeastern.numad22fa_team27.workout.activities.ui.main.viewpager.WorkoutListActivity;
 import edu.northeastern.numad22fa_team27.workout.activity.ProfileActivity;
 
 public class NavigationBar {
@@ -27,10 +26,6 @@ public class NavigationBar {
                             break;
                         case R.id.nav_profile:
                             intent = new Intent(context, ProfileActivity.class);
-                            context.startActivity(intent);
-                            break;
-                        case R.id.nav_workout:
-                            intent = new Intent(context, WorkoutListActivity.class);
                             context.startActivity(intent);
                             break;
                     }

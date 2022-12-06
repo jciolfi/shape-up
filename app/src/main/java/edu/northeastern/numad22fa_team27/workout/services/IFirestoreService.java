@@ -16,7 +16,7 @@ public interface IFirestoreService {
      * @param workoutCategory the category for the workout
      * @param callback executed on the entries returned by the query
      */
-    void findWorkoutsByCriteria(String workoutName, WorkoutCategory workoutCategory, WorkoutCallback callback);
+    void findWorkoutsByCriteria(String workoutName, WorkoutCategory workoutCategory, double maxDifficulty, double minDifficulty, WorkoutCallback callback, int resultLimit);
 
     /**
      * Find users with a given username, matches on case-sensitive prefix

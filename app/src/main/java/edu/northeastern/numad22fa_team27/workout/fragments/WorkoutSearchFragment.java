@@ -98,8 +98,8 @@ public class WorkoutSearchFragment extends Fragment {
             prevFilter = selectedCategory;
 
             // update displayWorkouts and workoutCache
-            firestoreService.findWorkoutsByCriteria(query, null,
-                    new FindWorkoutsCallback(workoutCache, displayWorkouts, selectedCategory, workoutRV, noResults));
+            firestoreService.findWorkoutsByCriteria(query, null, -1, -1,
+                    new FindWorkoutsCallback(workoutCache, displayWorkouts, selectedCategory, workoutRV, noResults), -1);
 
             // reset sort
             sortDropdown.setSelection(0);
