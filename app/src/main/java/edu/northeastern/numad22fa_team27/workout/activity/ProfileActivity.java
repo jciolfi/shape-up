@@ -2,13 +2,21 @@ package edu.northeastern.numad22fa_team27.workout.activity;
 
 import static edu.northeastern.numad22fa_team27.Util.requestNoActivityBar;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -31,6 +39,7 @@ import java.util.stream.Collectors;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.Util;
+import edu.northeastern.numad22fa_team27.workout.adapters.WorkoutClickListener;
 import edu.northeastern.numad22fa_team27.workout.adapters.WorkoutRecAdapter;
 import edu.northeastern.numad22fa_team27.workout.adapters.WorkoutRecCard;
 import edu.northeastern.numad22fa_team27.workout.models.Workout;
@@ -84,14 +93,37 @@ public class ProfileActivity extends AppCompatActivity {
         rs.RecommendWorkouts(recWorkouts, recWorkoutCards);
         rs.RecommendFriendApprovedWorkouts(friendWorkouts, friendWorkoutCards);
 
+
         firestoreService = new FirestoreService();
     }
 
     private void setupRecView(RecyclerView rv, List<Workout> dataset, boolean isVertical) {
+        // Part of the pain and suffering required by Google to have an onClick method for a
+        // Recyclerview without using deprecated methods
+        ActivityResultLauncher<Intent> activityLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        Bundle extras = data.getExtras();
+                        String workoutId = extras.getString("WorkoutId");
+                        Boolean completedWorkout = extras.getBoolean("Success");
+                        if (completedWorkout) {
+                            Toast.makeText(this, String.format("Congrats on completing workout %s", workoutId), Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(this, "Okay, maybe next time.", Toast.LENGTH_LONG).show();
+                        }
+
+                        // TODO: Update user
+                    }
+                });
+
+        WorkoutClickListener clickListener = new WorkoutClickListener(dataset, activityLauncher);
+
         int orientation = isVertical ? LinearLayoutManager.VERTICAL : LinearLayoutManager.HORIZONTAL;
         @SuppressLint("WrongConstant") RecyclerView.LayoutManager manager = new LinearLayoutManager(this, orientation, false);
         rv.setHasFixedSize(true);
-        rv.setAdapter(new WorkoutRecAdapter(dataset, isVertical));
+        rv.setAdapter(new WorkoutRecAdapter(dataset, clickListener, isVertical));
         rv.setLayoutManager(manager);
 
         Objects.requireNonNull(rv.getAdapter()).notifyDataSetChanged();

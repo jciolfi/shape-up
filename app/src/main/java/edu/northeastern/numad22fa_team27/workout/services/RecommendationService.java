@@ -70,7 +70,7 @@ public class RecommendationService {
         // TODO: Algorithm that reports workouts many friends have done that we haven't.
 
         // Pretend we found the average
-        Double friendAvgDifficulty = 3.0;
+        Double friendAvgDifficulty = 4.0;
         Double friendMaxDifficulty = Math.max(friendAvgDifficulty + 1, 5);
         Double friendMinDifficulty = Math.max(friendAvgDifficulty - 1, 0);
         firestoreDB.collection("workouts")
