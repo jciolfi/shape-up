@@ -146,6 +146,7 @@
 
         <Button
             android:id="@+id/sign_out"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/md_theme_light_background"

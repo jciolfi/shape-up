@@ -1,7 +1,12 @@
 package edu.northeastern.numad22fa_team27;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.view.Window;
+import android.view.WindowManager;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * Class with common helper functions.
@@ -15,6 +20,13 @@ public class Util {
     public static void openActivity(Activity origin, Class<?> target) {
         Intent intent = new Intent(origin, target);
         origin.startActivity(intent);
+    }
+
+    public static void requestNoActivityBar(AppCompatActivity origin) {
+        origin.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        origin.getSupportActionBar().hide();
+        origin.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
     public static boolean stringIsNullOrEmpty(String s) {
