@@ -1,38 +1,30 @@
 package edu.northeastern.numad22fa_team27.workout.activity;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import edu.northeastern.numad22fa_team27.R;
+import edu.northeastern.numad22fa_team27.Util;
+import edu.northeastern.numad22fa_team27.workout.interfaces.IRecyclerViewCardsClickable;
 import edu.northeastern.numad22fa_team27.workout.models.FriendsAdapter;
 import edu.northeastern.numad22fa_team27.workout.models.FriendsCard;
-import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 
-public class MyFriendsActivity extends AppCompatActivity {
+public class MyFriendsActivity extends AppCompatActivity implements IRecyclerViewCardsClickable {
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
     private FirebaseFirestore db;
@@ -89,9 +81,17 @@ public class MyFriendsActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new FriendsAdapter(list);
+        adapter = new FriendsAdapter(list, this);
 
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        Intent intent = new Intent(MyFriendsActivity.this, FriendProfileActivity.class);
+        intent.putExtra("USERNAME", list.get(position).getUsername());
+        intent.putExtra("PROFILEPIC", list.get(position).getImageView());
+        startActivity(intent);
     }
 }
