@@ -60,7 +60,7 @@
             app:layout_constraintStart_toStartOf="@+id/editTextNewPass"
             app:layout_constraintTop_toBottomOf="@+id/editTextNewPass" />
 
-        <Button
+        <!--<Button
             android:id="@+id/saveButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -70,6 +70,28 @@
             app:layout_constraintEnd_toEndOf="@+id/editTextNewPass"
             app:layout_constraintStart_toEndOf="@+id/cancelButton"
             app:layout_constraintTop_toBottomOf="@+id/editTextNewPass" />
+
+<<<<<<< HEAD
+=======
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="36dp"
+            android:layout_marginTop="156dp"
+            android:text="@string/saveBtn"
+            app:layout_constraintStart_toEndOf="@+id/cancelButton"
+            app:layout_constraintTop_toBottomOf="@+id/cardViewSetting" />-->
+
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="36dp"
+            android:layout_marginTop="156dp"
+            android:text="@string/saveBtn"
+            app:layout_constraintStart_toEndOf="@+id/cancelButton"
+            app:layout_constraintTop_toBottomOf="@+id/cardViewSetting" />
 
         <ProgressBar
             android:id="@+id/save_progressbar"
