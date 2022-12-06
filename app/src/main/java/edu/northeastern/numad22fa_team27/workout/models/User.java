@@ -32,6 +32,8 @@ public class User {
     // Maps workout type -> # days in best streak
     private Map<WorkoutCategory, Integer> bestCategoryStreaks;
 
+    public User() { }
+
     /**
      * New user constructor
      * @param username Unique string identifying user
@@ -68,33 +70,8 @@ public class User {
         this.bestCategoryStreaks = bestCategoryStreaks;
     }
 
-    public User(UserDAO user, String userID) {
-        try {
-            this.userID = UUID.fromString(userID);
-        } catch (Exception ignored) {}
-
-        this.username = user.username == null ? "" : user.username;
-        this.friends = user.friends == null ? new ArrayList<>() : user.friends;
-
-        this.joinedGroups = user.joinedGroups == null
-                ? new ArrayList<>()
-                : user.joinedGroups.stream().map(UUID::fromString).collect(Collectors.toList());
-
-        this.currentCategoryStreaks = new HashMap<>();
-        if (user.currentCategoryStreaks != null) {
-            for (String category : user.currentCategoryStreaks.keySet()) {
-                this.currentCategoryStreaks.put(WorkoutCategory.toCategory(category), user.currentCategoryStreaks.get(category));
-            }
-        }
-
-        this.bestCategoryStreaks = new HashMap<>();
-        if (user.bestCategoryStreaks != null) {
-            for (String category : user.bestCategoryStreaks.keySet()) {
-                this.bestCategoryStreaks.put(WorkoutCategory.toCategory(category), user.bestCategoryStreaks.get(category));
-            }
-        }
-
-        this.profilePic = user.profilePic == null ? "" : user.profilePic;
+    public User(UserDAO userDAO, String userID) {
+        setUserFromDAO(userDAO, userID);
     }
 
     /**
@@ -195,5 +172,34 @@ public class User {
 
     public Object getUserID(boolean asString) {
         return asString ? String.valueOf(userID) : userID;
+    }
+
+    public void setUserFromDAO(UserDAO userDAO, String userID) {
+        try {
+            this.userID = UUID.fromString(userID);
+        } catch (Exception ignored) {}
+
+        this.username = userDAO.username == null ? "" : userDAO.username;
+        this.friends = userDAO.friends == null ? new ArrayList<>() : userDAO.friends;
+
+        this.joinedGroups = userDAO.joinedGroups == null
+                ? new ArrayList<>()
+                : userDAO.joinedGroups.stream().map(UUID::fromString).collect(Collectors.toList());
+
+        this.currentCategoryStreaks = new HashMap<>();
+        if (userDAO.currentCategoryStreaks != null) {
+            for (String category : userDAO.currentCategoryStreaks.keySet()) {
+                this.currentCategoryStreaks.put(WorkoutCategory.toCategory(category), userDAO.currentCategoryStreaks.get(category));
+            }
+        }
+
+        this.bestCategoryStreaks = new HashMap<>();
+        if (userDAO.bestCategoryStreaks != null) {
+            for (String category : userDAO.bestCategoryStreaks.keySet()) {
+                this.bestCategoryStreaks.put(WorkoutCategory.toCategory(category), userDAO.bestCategoryStreaks.get(category));
+            }
+        }
+
+        this.profilePic = userDAO.profilePic == null ? "" : userDAO.profilePic;
     }
 }

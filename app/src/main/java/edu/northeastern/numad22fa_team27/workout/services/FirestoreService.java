@@ -191,10 +191,6 @@ public class FirestoreService implements IFirestoreService {
                             firestoreDB.collection("groups")
                                     .document(groupID)
                                     .set(groupDAO)
-                                    .addOnFailureListener(e -> {
-                                        success.set(false);
-                                        logFailure("tryJoinGroup", e.getMessage());
-                                    })
                                     .addOnSuccessListener(unused -> {
                                         // add group to user
                                         currentUser.joinedGroups.add(groupID);
@@ -205,12 +201,82 @@ public class FirestoreService implements IFirestoreService {
                                                     success.set(false);
                                                     logFailure("tryJoinGroup", e.getMessage());
                                                 });
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        success.set(false);
+                                        logFailure("tryJoinGroup", e.getMessage());
                                     });
                         }
                     }
+                })
+                .addOnFailureListener(e -> {
+                    success.set(false);
+                    logFailure("tryJoinGroup", e.getMessage());
                 });
 
         return success.get();
+    }
+
+    @Override
+    public boolean tryLeaveGroup(String groupID) {
+        if (Util.stringIsNullOrEmpty(groupID) || !tryFetchUserDetails()) {
+            warnBadParam("joinGroup");
+            return false;
+        }
+
+        String userID = userAuth.getCurrentUser().getUid();
+        AtomicBoolean success = new AtomicBoolean(true);
+
+        firestoreDB.collection("groups")
+                .document(groupID)
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    GroupDAO groupDAO = snapshot.toObject(GroupDAO.class);
+                    if (groupDAO == null) {
+                        success.set(false);
+                    } else {
+                        // remove user from group
+                        groupDAO.members.remove(userID);
+                        firestoreDB.collection("groups")
+                                .document(groupID)
+                                .set(groupDAO)
+                                .addOnSuccessListener(unused -> {
+                                    // remove group from user
+                                    currentUser.joinedGroups.remove(groupID);
+                                    firestoreDB.collection("users")
+                                            .document(userID)
+                                            .set(currentUser)
+                                            .addOnFailureListener(e -> {
+                                                success.set(false);
+                                                logFailure("tryJoinGroup", e.getMessage());
+                                            });
+                                })
+                                .addOnFailureListener(e -> {
+                                    success.set(false);
+                                    logFailure("tryJoinGroup", e.getMessage());
+                                });
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    success.set(false);
+                    logFailure("tryJoinGroup", e.getMessage());
+                });
+
+        return success.get();
+    }
+
+    @Override
+    public void getUserByID(String userID, WorkoutCallback callback) {
+        if (Util.stringIsNullOrEmpty(userID)) {
+            warnBadParam("getUserByID");
+            return;
+        }
+
+        firestoreDB.collection("users")
+                .document(userID)
+                .get()
+                .addOnSuccessListener(callback::processDocument)
+                .addOnFailureListener(e -> logFailure("tryJoinGroup", e.getMessage()));
     }
 
     // ---------- Helpers ----------
