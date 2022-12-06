@@ -11,6 +11,8 @@ public class WorkoutDAO {
     public List<MediaParagraph> workoutDescription;
     public List<WorkoutCategory> categoriesPresent;
     public float difficulty;
+    public String coverURL;
+    public String blurb;
 
     public WorkoutDAO() {}
 
@@ -22,6 +24,8 @@ public class WorkoutDAO {
                 ", workoutDescription=" + workoutDescription +
                 ", categoriesPresent=" + categoriesPresent +
                 ", difficulty=" + difficulty +
+                ", coverURL='" + coverURL + '\'' +
+                ", blurb='" + blurb + '\'' +
                 '}';
     }
 }

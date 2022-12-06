@@ -19,10 +19,10 @@ public class UserTest {
         MediaParagraph mp1 = new MediaParagraph("Text", "Link");
         MediaParagraph mp2 = new MediaParagraph("Text", "Link");
 
-        workouts.add(new Workout(UUID.randomUUID().toString(), "w1", List.of(mp1), List.of(WorkoutCategory.BALANCE), 5.0F));
-        workouts.add(new Workout(UUID.randomUUID().toString(), "w2", List.of(mp1, mp2), List.of(WorkoutCategory.BALANCE, WorkoutCategory.ACCURACY), 4.5F));
-        workouts.add(new Workout(UUID.randomUUID().toString(), "w3", List.of(mp2), List.of(WorkoutCategory.STRENGTH), 2.0F));
-        workouts.add(new Workout(UUID.randomUUID().toString(), "w4", List.of(mp2, mp1), List.of(WorkoutCategory.POWER, WorkoutCategory.SPEED, WorkoutCategory.FLEXIBILITY), 3.99F));
+        workouts.add(new Workout(UUID.randomUUID().toString(), "w1", List.of(mp1), List.of(WorkoutCategory.BALANCE), 5.0F, "", ""));
+        workouts.add(new Workout(UUID.randomUUID().toString(), "w2", List.of(mp1, mp2), List.of(WorkoutCategory.BALANCE, WorkoutCategory.ACCURACY), 4.5F, "", ""));
+        workouts.add(new Workout(UUID.randomUUID().toString(), "w3", List.of(mp2), List.of(WorkoutCategory.STRENGTH), 2.0F, "", ""));
+        workouts.add(new Workout(UUID.randomUUID().toString(), "w4", List.of(mp2, mp1), List.of(WorkoutCategory.POWER, WorkoutCategory.SPEED, WorkoutCategory.FLEXIBILITY), 3.99F, "", ""));
     }
 
     @Test

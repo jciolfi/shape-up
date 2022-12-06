@@ -1,22 +1,31 @@
 package edu.northeastern.numad22fa_team27.workout.adapters;
 
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 import edu.northeastern.numad22fa_team27.R;
+import edu.northeastern.numad22fa_team27.workout.models.Workout;
 
 public class WorkoutRecAdapter extends RecyclerView.Adapter<WorkoutRecHolder> {
 
-    private final List<WorkoutRecCard> list;
+    private final List<Workout> list;
     private final int layout;
+    private final int width;
+    private final int height;
 
-    public WorkoutRecAdapter(List<WorkoutRecCard> list, boolean isVertical) {
+
+    public WorkoutRecAdapter(List<Workout> list, boolean isVertical) {
         this.list = list;
         this.layout = (isVertical) ? R.layout.workout_card_horizontal : R.layout.workout_card_vertical;
+        this.width = isVertical ? 512 : 1024;
+        this.height = 512;
     }
 
     @NonNull
@@ -27,10 +36,18 @@ public class WorkoutRecAdapter extends RecyclerView.Adapter<WorkoutRecHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull WorkoutRecHolder h, int i) {
-        WorkoutRecCard card = list.get(i);
-        h.title.setText(card.getTitle());
+        Workout card = list.get(i);
+        h.title.setText(card.getWorkoutName());
         h.blurb.setText(card.getBlurb());
-        h.workoutPicture.setImageBitmap(card.getWorkoutImage());
+
+        Picasso.get()
+                .load(card.getCoverURL())
+                .placeholder(R.drawable.workout_icon)
+                .error(R.drawable.workout_icon)
+                .resize(width, height)
+                .centerCrop(Gravity.CENTER)
+                .noFade()
+                .into(h.workoutPicture);
     }
 
     @Override

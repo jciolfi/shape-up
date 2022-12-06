@@ -14,20 +14,27 @@ public class Workout {
     private List<WorkoutCategory> categoriesPresent;
     private float difficulty;
 
+    private String coverURL;
+    private String blurb;
+
     public Workout() {
         this.workoutID = UUID.randomUUID().toString();
         this.workoutName = new String();
         this.workoutDescription = new ArrayList<>();
         this.categoriesPresent = new ArrayList<>();
         this.difficulty = -1.0f;
+        this.coverURL = new String();
+        this.blurb = new String();
     }
 
-    public Workout(String workoutUUID, String workoutName, List<MediaParagraph> workoutDescription, List<WorkoutCategory> categoriesPresent, float difficulty) {
+    public Workout(String workoutUUID, String workoutName, List<MediaParagraph> workoutDescription, List<WorkoutCategory> categoriesPresent, float difficulty, String coverURL, String blurb) {
         this.workoutID = workoutUUID;
         this.workoutName = workoutName;
         this.workoutDescription = workoutDescription;
         this.categoriesPresent = categoriesPresent;
         this.difficulty = difficulty;
+        this.coverURL = coverURL;
+        this.blurb = blurb;
     }
 
     public String getWorkoutName() {
@@ -102,6 +109,22 @@ public class Workout {
         workoutID = uuid;
     }
 
+    public String getCoverURL() {
+        return coverURL;
+    }
+
+    public void setCoverURL(String coverURL) {
+        this.coverURL = coverURL;
+    }
+
+    public String getBlurb() {
+        return blurb;
+    }
+
+    public void setBlurb(String blurb) {
+        this.blurb = blurb;
+    }
+
     @Override
     public String toString() {
         return "Workout{" +
@@ -112,4 +135,6 @@ public class Workout {
                 ", difficulty=" + difficulty +
                 '}';
     }
+
+
 }

@@ -62,36 +62,54 @@ public class FirestoreService implements IFirestoreService {
     }
 
     @Override
-    public void findWorkoutsByCriteria(String workoutName, WorkoutCategory workoutCategory, WorkoutCallback callback) {
-        if (Util.stringIsNullOrEmpty(workoutName) && workoutCategory == null) {
-            warnBadParam("findWorkoutsByCriteria");
-        } else if (Util.stringIsNullOrEmpty(workoutName)) {
-            // search ONLY by workoutCategory
-            firestoreDB.collection("workouts")
-                    .whereArrayContains("categoriesPresent", String.valueOf(workoutCategory))
-                    .get()
-                    .addOnSuccessListener(callback::processQuery)
-                    .addOnFailureListener(e -> logFailure("findWorkoutsByCriteria", e.getMessage()));
-        } else if (workoutCategory == null) {
-            // search ONLY by workoutName
-            firestoreDB.collection("workouts")
+    public void findWorkoutsByCriteria(String workoutName, WorkoutCategory workoutCategory, double maxDifficulty, double minDifficulty, WorkoutCallback callback, int resultLimit) {
+        Query collectionQuery = firestoreDB.collection("workouts");
+        boolean didFiltering = false;
+
+        if (!Util.stringIsNullOrEmpty(workoutName)) {
+            // Add workout name filtering
+            didFiltering = true;
+            collectionQuery = collectionQuery
                     .orderBy("workoutName")
                     .startAt(workoutName)
-                    .endAt(workoutName + "\uf8ff")
-                    .get()
-                    .addOnSuccessListener(callback::processQuery)
-                    .addOnFailureListener(e -> logFailure("findWorkoutsByCriteria", e.getMessage()));
-        } else {
-            // search by workoutCategory AND workoutName
-            firestoreDB.collection("workouts")
-                    .whereArrayContains("categoriesPresent", String.valueOf(workoutCategory))
-                    .orderBy("workoutName")
-                    .startAt(workoutName)
-                    .endAt(workoutName + "\uf8ff")
-                    .get()
-                    .addOnSuccessListener(callback::processQuery)
-                    .addOnFailureListener(e -> logFailure("findWorkoutsByCriteria", e.getMessage()));
+                    .endAt(workoutName + "\uf8ff");
+
         }
+        if (workoutCategory != null) {
+            // Add workout category filtering
+            didFiltering = true;
+            collectionQuery = collectionQuery
+                    .whereArrayContains("categoriesPresent", String.valueOf(workoutCategory));
+        }
+
+        if (maxDifficulty > -1) {
+            // Add workout category filtering
+            didFiltering = true;
+            collectionQuery = collectionQuery
+                    .whereLessThan("difficulty", String.valueOf(workoutCategory));
+        }
+
+        if (minDifficulty > -1) {
+            // Add workout category filtering
+            didFiltering = true;
+            collectionQuery = collectionQuery
+                    .whereGreaterThan("difficulty", String.valueOf(workoutCategory));
+        }
+
+        if (resultLimit > 0) {
+            didFiltering = true;
+            collectionQuery = collectionQuery.limit(resultLimit);
+        }
+
+        // We got to the end and they didn't give us anything to filter on
+        if (!didFiltering) {
+            warnBadParam("findWorkoutsByCriteria");
+        }
+
+        // In all cases, process the query and hand off successful results to our callback
+        collectionQuery.get()
+                .addOnSuccessListener(callback::processQuery)
+                .addOnFailureListener(e -> logFailure("findWorkoutsByCriteria", e.getMessage()));
     }
 
     @Override

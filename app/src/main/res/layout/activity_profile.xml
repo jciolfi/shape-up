@@ -70,14 +70,18 @@
                             android:layout_height="wrap_content"
                             android:minHeight="48dp"
                             android:text="Completed Workouts"
-                            android:theme="@style/Theme.NUMAD22Fa_Team27" />
+                            android:textColor="@color/md_theme_light_onSecondaryContainer"
+                            android:theme="@style/Theme.NUMAD22Fa_Team27"
+                            app:chipSurfaceColor="@color/md_theme_light_secondaryContainer" />
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chip_friends"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Friends"
-                            android:theme="@style/Theme.NUMAD22Fa_Team27" />
+                            android:textColor="@color/md_theme_light_onSecondaryContainer"
+                            android:theme="@style/Theme.NUMAD22Fa_Team27"
+                            app:chipSurfaceColor="@color/md_theme_light_secondaryContainer" />
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chip_settings"
@@ -85,8 +89,10 @@
                             android:layout_height="wrap_content"
                             android:minHeight="48dp"
                             android:text="Settings"
+                            android:textColor="@color/md_theme_light_onSecondaryContainer"
                             android:theme="@style/Theme.NUMAD22Fa_Team27"
-                            app:chipIcon="@drawable/settings" />
+                            app:chipIcon="@drawable/settings"
+                            app:chipSurfaceColor="@color/md_theme_light_secondaryContainer" />
 
                     </com.google.android.material.chip.ChipGroup>
 
