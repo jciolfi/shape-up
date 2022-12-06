@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+
     <Spinner
         android:id="@+id/genreDropdown"
         android:layout_width="0dp"
@@ -39,7 +40,7 @@
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf=""
+        app:layout_constraintBottom_toTopOf="@+id/btn_add_chat"
         app:layout_constraintTop_toBottomOf="@+id/btn_add_friend"/>
     <Button
         android:id="@+id/btn_add_chat"
