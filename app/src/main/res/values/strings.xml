@@ -116,4 +116,6 @@
     <string name="streak">Streak:</string>
     <string name="congrats">Congrats Users!</string>
     <string name="mutual_friends">Mutual Friends:</string>
+    <string name="add_friends">Add Friends</string>
+    <string name="create">Create</string>
 </resources>
