@@ -6,17 +6,18 @@ import java.util.List;
 import edu.northeastern.numad22fa_team27.workout.models.Group;
 
 public class GroupDAO {
-    // name of group
     public String groupName;
-
-    // UUIDs as strings
     public List<String> members;
+    public String adminID;
+    public boolean acceptingMembers;
 
     public GroupDAO() {}
 
     public GroupDAO(Group g) {
         this.groupName = g.getGroupName();
         this.members = new ArrayList<>(g.getMembers());
+        this.adminID = g.getAdminID();
+        this.acceptingMembers = g.getAcceptingMembers();
     }
 
     @Override
@@ -24,6 +25,7 @@ public class GroupDAO {
         return "GroupDAO{" +
                 "groupName='" + groupName + '\'' +
                 ", members=" + members +
+                ", adminID='" + adminID + '\'' +
                 '}';
     }
 }

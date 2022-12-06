@@ -1,7 +1,5 @@
 package edu.northeastern.numad22fa_team27.workout.models;
 
-import android.widget.ImageView;
-
 import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
 
@@ -12,8 +10,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
+import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
 
 public class User {
+    private UUID userID;
     private String username;
     private String profilePic;
     private String encryptedPassword;
@@ -29,6 +31,8 @@ public class User {
 
     // Maps workout type -> # days in best streak
     private Map<WorkoutCategory, Integer> bestCategoryStreaks;
+
+    public User() { }
 
     /**
      * New user constructor
@@ -64,6 +68,10 @@ public class User {
         this.encryptedPassword = encryptedPassword;
         this.currentCategoryStreaks = currentCategoryStreaks;
         this.bestCategoryStreaks = bestCategoryStreaks;
+    }
+
+    public User(UserDAO userDAO, String userID) {
+        setUserFromDAO(userDAO, userID);
     }
 
     /**
@@ -160,5 +168,38 @@ public class User {
             return 0;
         }
         return this.bestCategoryStreaks.get(w);
+    }
+
+    public Object getUserID(boolean asString) {
+        return asString ? String.valueOf(userID) : userID;
+    }
+
+    public void setUserFromDAO(UserDAO userDAO, String userID) {
+        try {
+            this.userID = UUID.fromString(userID);
+        } catch (Exception ignored) {}
+
+        this.username = userDAO.username == null ? "" : userDAO.username;
+        this.friends = userDAO.friends == null ? new ArrayList<>() : userDAO.friends;
+
+        this.joinedGroups = userDAO.joinedGroups == null
+                ? new ArrayList<>()
+                : userDAO.joinedGroups.stream().map(UUID::fromString).collect(Collectors.toList());
+
+        this.currentCategoryStreaks = new HashMap<>();
+        if (userDAO.currentCategoryStreaks != null) {
+            for (String category : userDAO.currentCategoryStreaks.keySet()) {
+                this.currentCategoryStreaks.put(WorkoutCategory.toCategory(category), userDAO.currentCategoryStreaks.get(category));
+            }
+        }
+
+        this.bestCategoryStreaks = new HashMap<>();
+        if (userDAO.bestCategoryStreaks != null) {
+            for (String category : userDAO.bestCategoryStreaks.keySet()) {
+                this.bestCategoryStreaks.put(WorkoutCategory.toCategory(category), userDAO.bestCategoryStreaks.get(category));
+            }
+        }
+
+        this.profilePic = userDAO.profilePic == null ? "" : userDAO.profilePic;
     }
 }

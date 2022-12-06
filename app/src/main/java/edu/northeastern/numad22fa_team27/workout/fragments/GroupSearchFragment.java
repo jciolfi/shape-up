@@ -1,6 +1,5 @@
 package edu.northeastern.numad22fa_team27.workout.fragments;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +21,7 @@ import java.util.Objects;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.workout.callbacks.FindGroupsCallback;
-import edu.northeastern.numad22fa_team27.workout.models.DAO.GroupDAO;
+import edu.northeastern.numad22fa_team27.workout.models.Group;
 import edu.northeastern.numad22fa_team27.workout.models.groups_search.GroupAdapter;
 import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 
@@ -33,7 +32,7 @@ public class GroupSearchFragment extends Fragment {
     private String[] sortOptions;
     private String prevSort;
     private RecyclerView groupRV;
-    private final List<GroupDAO> displayGroups = new ArrayList<>();
+    private final List<Group> displayGroups = new ArrayList<>();
     private TextView noResults;
 
     public GroupSearchFragment() { }
@@ -102,22 +101,22 @@ public class GroupSearchFragment extends Fragment {
             switch (position) {
                 // Name ↑ (ascending a->z)
                 case 0: {
-                    displayGroups.sort(Comparator.comparing(g-> g.groupName));
+                    displayGroups.sort(Comparator.comparing(Group::getGroupName));
                     break;
                 }
                 // Name ↓ (descending: z-a)
                 case 1: {
-                    displayGroups.sort((g1, g2) -> -(g1.groupName.compareTo(g2.groupName)));
+                    displayGroups.sort((g1, g2) -> -(g1.getGroupName().compareTo(g2.getGroupName())));
                     break;
                 }
                 // Popularity ↑ (ascending: few -> many members)
                 case 2: {
-                    displayGroups.sort(Comparator.comparingInt(g -> g.members.size()));
+                    displayGroups.sort(Comparator.comparingInt(g -> g.getMembers().size()));
                     break;
                 }
                 // Popularity ↓ (descending: many -> few members)
                 case 3: {
-                    displayGroups.sort(Comparator.comparingInt(g -> -g.members.size()));
+                    displayGroups.sort(Comparator.comparingInt(g -> -g.getMembers().size()));
                     break;
                 }
                 default: {

@@ -43,4 +43,23 @@ public interface IFirestoreService {
      * @param callback executed on the entries returned by the query
      */
     void findStreaksLeaderboard(WorkoutCategory category, WorkoutCallback callback);
+
+    /**
+     * Try to join the group with the corresponding groupID. Users limited to 10 groups
+     * @param groupID the ID for the group
+     */
+    boolean tryJoinGroup(String groupID);
+
+    /**
+     * Try to join the group with the corresponding groupID
+     * @param groupID the ID for the group
+     */
+    boolean tryLeaveGroup(String groupID);
+
+    /**
+     * Retrieve details for user with given ID
+     * @param userID the user's ID
+     * @param callback executed on the entry returned by the query
+     */
+    void getUserByID(String userID, WorkoutCallback callback);
 }

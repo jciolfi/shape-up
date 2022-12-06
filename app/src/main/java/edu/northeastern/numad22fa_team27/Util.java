@@ -34,12 +34,10 @@ public class Util {
     }
 
     public static String limitLength(String s, int length) {
-        if (length < 1) {
+        if (length < 1 || s == null) {
             return "";
-        } else if (s.length() <= length) {
-            return s;
         }
 
-        return s.substring(0,length) + "…";
+        return s.length() <= length ? s : s.substring(0,length) + "…";
     }
 }

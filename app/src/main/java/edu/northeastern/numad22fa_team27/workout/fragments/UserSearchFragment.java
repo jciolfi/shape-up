@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -24,6 +25,7 @@ import java.util.Objects;
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.workout.callbacks.FindUsersCallback;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
+import edu.northeastern.numad22fa_team27.workout.models.User;
 import edu.northeastern.numad22fa_team27.workout.models.user_search.UserAdapter;
 import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 
@@ -34,7 +36,7 @@ public class UserSearchFragment extends Fragment {
     private String[] sortOptions;
     private String prevSort;
     private RecyclerView userRV;
-    private final List<UserDAO> displayUsers = new ArrayList<>();
+    private final List<User> displayUsers = new ArrayList<>();
     private TextView noResults;
 
     public UserSearchFragment() { }
@@ -66,8 +68,9 @@ public class UserSearchFragment extends Fragment {
         userRV = searchView.findViewById(R.id.rv_users);
         userRV.setHasFixedSize(true);
         userRV.setLayoutManager(new LinearLayoutManager(searchView.getContext()));
-        FirebaseAuth userAuth = FirebaseAuth.getInstance();
-        userRV.setAdapter(new UserAdapter(displayUsers, container, searchView, userAuth.getCurrentUser()));
+        FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();
+        String currentUserID = userAuth == null ? "" : userAuth.getUid();
+        userRV.setAdapter(new UserAdapter(displayUsers, container, searchView, currentUserID));
 
         return searchView;
     }
@@ -105,12 +108,12 @@ public class UserSearchFragment extends Fragment {
             switch (position) {
                 // Name ↑ (ascending a->z)
                 case 0: {
-                    displayUsers.sort(Comparator.comparing(u -> u.username));
+                    displayUsers.sort(Comparator.comparing(User::getUsername));
                     break;
                 }
                 // Name ↓ (descending: z-a)
                 case 1: {
-                    displayUsers.sort((u1, u2) -> -(u1.username.compareTo(u2.username)));
+                    displayUsers.sort((u1, u2) -> -(u1.getUsername().compareTo(u2.getUsername())));
                     break;
                 }
                 default: {
