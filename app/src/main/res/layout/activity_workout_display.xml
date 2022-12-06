@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".WorkoutDisplay">
+    android:backgroundTint="@color/md_theme_light_background"
+    tools:context=".workout.activity.WorkoutDisplay">
 
     <TextView
         android:id="@+id/detail_workout_name"
@@ -70,7 +71,9 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/md_theme_light_primary"
         android:text="I did it!"
+        android:textColor="@color/md_theme_light_onPrimary"
         android:theme="@style/Widget.AppCompat.Button.Borderless.Colored"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/detail_workout_cancel_btn"
@@ -83,7 +86,9 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/md_theme_light_primary"
         android:text="Cancel"
+        android:textColor="@color/md_theme_light_onPrimary"
         android:theme="@style/Widget.AppCompat.Button.Borderless.Colored"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

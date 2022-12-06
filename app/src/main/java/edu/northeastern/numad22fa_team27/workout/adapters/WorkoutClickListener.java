@@ -1,20 +1,16 @@
 package edu.northeastern.numad22fa_team27.workout.adapters;
 
-import static androidx.core.app.ActivityCompat.startActivityForResult;
-
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import edu.northeastern.numad22fa_team27.WorkoutDisplay;
+import edu.northeastern.numad22fa_team27.workout.activity.WorkoutDisplay;
 import edu.northeastern.numad22fa_team27.workout.models.MediaParagraph;
 import edu.northeastern.numad22fa_team27.workout.models.Workout;
 

@@ -1,4 +1,4 @@
-package edu.northeastern.numad22fa_team27;
+package edu.northeastern.numad22fa_team27.workout.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,6 +14,7 @@ import android.widget.TextView;
 import java.util.List;
 import java.util.Objects;
 
+import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.workout.adapters.WorkoutRecAdapter;
 import edu.northeastern.numad22fa_team27.workout.adapters.WorkoutStepAdapter;
 import edu.northeastern.numad22fa_team27.workout.models.MediaParagraph;
