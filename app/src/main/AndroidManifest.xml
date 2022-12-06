@@ -26,6 +26,13 @@
                 android:value="" />
         </activity>
         <activity
+            android:name=".workout.activity.FriendProfileActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".workout.activity.UserFriends"
             android:exported="false">
             <meta-data
