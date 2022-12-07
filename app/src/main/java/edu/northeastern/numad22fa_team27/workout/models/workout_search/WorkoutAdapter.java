@@ -63,14 +63,15 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutViewHolder> {
                     categoryIdentifier,
                     String.join(", ", categoriesList)));
 
-            // set up close button
+            // set up close button / dismiss listener
             Button closeButton = workoutInfoDialog.findViewById(R.id.btn_close_workout);
+            workoutInfoDialog.setOnDismissListener(dialogInterface -> {
+                // focus will go to search view and bring up keyboard - disable this
+                final View workoutView = searchView.findViewById(R.id.rv_workout);
+                workoutView.requestFocus();
+            });
             closeButton.setOnClickListener(view1 -> {
                 workoutInfoDialog.dismiss();
-
-                // focus will go to search view and bring up keyboard - disable this
-                final View groupsView = searchView.findViewById(R.id.rv_workout);
-                groupsView.requestFocus();
             });
 
             // TODO: what does positive button do?

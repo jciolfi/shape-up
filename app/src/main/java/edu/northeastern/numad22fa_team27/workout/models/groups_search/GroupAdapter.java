@@ -91,12 +91,13 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupViewHolder> {
 
             // set up close button
             Button closeButton = groupInfoDialog.findViewById(R.id.btn_close_group);
+            groupInfoDialog.setOnDismissListener(dialogInterface -> {
+                // focus will go to search view and bring up keyboard - disable this
+                final View groupView = searchView.findViewById(R.id.rv_groups);
+                groupView.requestFocus();
+            });
             closeButton.setOnClickListener(view1 -> {
                 groupInfoDialog.dismiss();
-
-                // focus will go to search view and bring up keyboard - disable this
-                final View groupsView = searchView.findViewById(R.id.rv_groups);
-                groupsView.requestFocus();
             });
 
             firestoreService.getUserByID(currentUser.getUserID(), new GetUserByIDCallback(currentUser));
@@ -125,7 +126,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupViewHolder> {
                             .setMessage("You may not be able to re-join in the future")
                             .setPositiveButton("Yes", (dialogInterface, i) -> {
                                 firestoreService.leaveGroup(group.getGroupID());
-                                closeButton.callOnClick();
+                                groupInfoDialog.dismiss();
                             })
                             .setNegativeButton("Cancel", null)
                             .setCancelable(false)
@@ -144,7 +145,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupViewHolder> {
                             .setTitle("Are you sure you want to join this group?")
                             .setPositiveButton("Yes", (dialogInterface, i) -> {
                                 firestoreService.tryJoinGroup(group.getGroupID());
-                                closeButton.callOnClick();
+                                groupInfoDialog.dismiss();
                             })
                             .setNegativeButton("Cancel", null)
                             .setCancelable(false)
