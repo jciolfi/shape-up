@@ -29,46 +29,45 @@ public class WorkoutDisplay extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
 
-        if (extras != null) {
-
-            String workoutId = extras.getString("WorkoutId");
-            TextView title = findViewById(R.id.detail_workout_name);
-            title.setText(extras.getString("Title"));
-
-            TextView difficulty = findViewById(R.id.detail_workout_difficulty);
-            difficulty.setText(String.format("%f / 5.0", extras.getString("Difficulty")));
-
-            TextView category = findViewById(R.id.detail_workout_category);
-            category.setText(extras.getString("Categories"));
-
-            List<MediaParagraph> steps = extras.getParcelableArrayList("Text");
-            RecyclerView rv = findViewById(R.id.workout_steps_recycler);
-            RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
-            rv.setHasFixedSize(true);
-            rv.setAdapter(new WorkoutStepAdapter(steps));
-            rv.setLayoutManager(manager);
-
-            Objects.requireNonNull(rv.getAdapter()).notifyDataSetChanged();
-
-            Button doneBtn = findViewById(R.id.detail_workout_done_btn);
-            doneBtn.setOnClickListener(v -> {
-                Intent data = new Intent();
-                data.putExtra("WorkoutId", workoutId);
-                data.putExtra("Success", true);
-                setResult(Activity.RESULT_OK, data);
-                finish();
-            });
-
-            Button cancelBtn = findViewById(R.id.detail_workout_cancel_btn);
-            cancelBtn.setOnClickListener(v -> {
-                Intent data = new Intent();
-                data.putExtra("WorkoutId", workoutId);
-                data.putExtra("Success", false);
-                setResult(Activity.RESULT_OK, data);
-                finish();
-            });
-
-
+        if (extras == null) {
+            // Nothing to do, no data to load.
+            return;
         }
+        String workoutId = extras.getString("WorkoutId");
+        TextView title = findViewById(R.id.detail_workout_name);
+        title.setText(extras.getString("Title"));
+
+        TextView difficulty = findViewById(R.id.detail_workout_difficulty);
+        difficulty.setText(String.format("%.2f / 5", extras.getFloat("Difficulty")));
+
+        TextView category = findViewById(R.id.detail_workout_category);
+        category.setText(extras.getString("Categories"));
+
+        List<MediaParagraph> steps = extras.getParcelableArrayList("Text");
+        RecyclerView rv = findViewById(R.id.workout_steps_recycler);
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
+        rv.setHasFixedSize(true);
+        rv.setAdapter(new WorkoutStepAdapter(steps));
+        rv.setLayoutManager(manager);
+
+        Objects.requireNonNull(rv.getAdapter()).notifyDataSetChanged();
+
+        Button doneBtn = findViewById(R.id.detail_workout_done_btn);
+        doneBtn.setOnClickListener(v -> {
+            Intent data = new Intent();
+            data.putExtra("WorkoutId", workoutId);
+            data.putExtra("Success", true);
+            setResult(Activity.RESULT_OK, data);
+            finish();
+        });
+
+        Button cancelBtn = findViewById(R.id.detail_workout_cancel_btn);
+        cancelBtn.setOnClickListener(v -> {
+            Intent data = new Intent();
+            data.putExtra("WorkoutId", workoutId);
+            data.putExtra("Success", false);
+            setResult(Activity.RESULT_OK, data);
+            finish();
+        });
     }
 }

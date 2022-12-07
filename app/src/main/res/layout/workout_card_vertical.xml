@@ -40,12 +40,12 @@
                 android:id="@+id/txt_workout_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
+                android:gravity="center|start"
                 android:lines="1"
                 android:minHeight="48dp"
                 android:paddingHorizontal="2dp"
                 android:text="@string/title_goes_here"
-                android:textAlignment="textStart"
+                android:textAlignment="gravity"
                 android:textColor="@color/md_theme_light_onPrimaryContainer"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -54,8 +54,10 @@
                 android:id="@+id/workout_blurb"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="start"
                 android:paddingHorizontal="2dp"
                 android:text="TextView"
+                android:textAlignment="gravity"
                 android:textColor="@color/md_theme_light_onPrimaryContainer" />
 
         </LinearLayout>

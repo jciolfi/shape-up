@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -16,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.regex.Matcher;
@@ -25,7 +27,7 @@ import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.Util;
 
 public class LoginActivity extends AppCompatActivity {
-
+    private static final String TAG = "AppCompatActivity";
     private TextView usr_email, usr_pass;
     private Button sign_in_btn, new_acc_btn;
     private ProgressBar pb;
@@ -83,9 +85,9 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             // Check if the user already exists
-            user_auth.fetchSignInMethodsForEmail(email).addOnCompleteListener(task -> {
+            user_auth.fetchSignInMethodsForEmail(email).addOnSuccessListener(result -> {
                 // Boolean to check if it is a new user or an old one
-                boolean isNewUser = task.getResult().getSignInMethods().isEmpty();
+                boolean isNewUser = result.getSignInMethods().isEmpty();
 
                 // If it is a new user show a proper message
                 if (isNewUser) {
@@ -108,6 +110,15 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     });
                 }
+                pb.setVisibility(View.INVISIBLE);
+                Log.d(TAG, "Successful fetch");
+            }).addOnFailureListener(error -> {
+                pb.setVisibility(View.INVISIBLE);
+                Log.e(TAG, error.toString());
+                Toast.makeText(LoginActivity.this, "Network error, cannot log in.", Toast.LENGTH_SHORT).show();
+            }).addOnCanceledListener(() -> {
+                pb.setVisibility(View.INVISIBLE);
+                Log.e(TAG, "Operation fetchSignInMethodsForEmail was canceled");
             });
         });
     }

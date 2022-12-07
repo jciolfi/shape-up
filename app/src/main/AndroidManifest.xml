@@ -4,6 +4,8 @@
     package="edu.northeastern.numad22fa_team27">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
@@ -61,13 +63,6 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".workout.activities.ui.main.viewpager.WorkoutListActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
             android:name=".workout.activity.ProfileActivity"
             android:exported="false">
             <meta-data
@@ -113,11 +108,10 @@
             android:configChanges="orientation|screenSize" />
         <activity
             android:name=".workout.activity.SearchActivity"
-            android:screenOrientation="portrait" />
+            android:exported="false" />
         <activity
             android:name=".workout.activity.LeaderboardActivity"
-            android:screenOrientation="portrait" />
-
+            android:exported="false" />
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
