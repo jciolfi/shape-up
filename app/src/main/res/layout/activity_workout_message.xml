@@ -27,6 +27,8 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:name="edu.northeastern.numad22fa_team27.sticker_messenger.FriendsFragment"
+        tools:layout="@layout/fragment_friends" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
