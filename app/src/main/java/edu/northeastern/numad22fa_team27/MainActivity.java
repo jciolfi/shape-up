@@ -12,6 +12,7 @@ import edu.northeastern.numad22fa_team27.workout.activity.LeaderboardActivity;
 import edu.northeastern.numad22fa_team27.workout.activity.LoginActivity;
 //import edu.northeastern.numad22fa_team27.workout.activities.ui.main.viewpager.WorkoutListActivity;
 import edu.northeastern.numad22fa_team27.workout.activity.SearchActivity;
+import edu.northeastern.numad22fa_team27.workout.activity.WorkoutMessageActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,6 +28,6 @@ public class MainActivity extends AppCompatActivity {
         btnA8.setOnClickListener(view -> Util.openActivity(this, FirebaseActivity.class));
 
         Button btnSU = findViewById(R.id.btn_proj);
-        btnSU.setOnClickListener(view -> Util.openActivity(this, LoginActivity.class));
+        btnSU.setOnClickListener(view -> Util.openActivity(this, WorkoutMessageActivity.class));
     }
 }

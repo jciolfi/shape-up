@@ -41,7 +41,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:name="edu.northeastern.numad22fa_team27.workout.fragments.NewGroupChatFragment"
-        tools:layout="@layout/fragment_friends" />
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
