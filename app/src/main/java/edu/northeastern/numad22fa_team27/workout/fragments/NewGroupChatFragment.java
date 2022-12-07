@@ -40,9 +40,7 @@ public class NewGroupChatFragment extends Fragment {
                              Bundle savedInstanceState) {
         View newGroupChatView = inflater.inflate(R.layout.fragment_add_chat, container, false);
 
-        listOfFriends = new String[] {
-                "user1", "user2"
-        };
+        addedArray = new String[0];
 
         viewModel = new ViewModelProvider(requireActivity()).get(ChatItemViewModel.class);
 
@@ -70,7 +68,11 @@ public class NewGroupChatFragment extends Fragment {
             }
             newAdded[addedArray.length] = friends.getSelectedItem().toString();
             addedArray = newAdded;
-            addedFriends.setText(addedArray.toString());
+            String resultText = "";
+            for (String s : addedArray) {
+                resultText += s + ", ";
+            }
+            addedFriends.setText(resultText);
 
         });
 
@@ -84,7 +86,11 @@ public class NewGroupChatFragment extends Fragment {
                 addedFriends.setError("Please add one more friend");
                 return;
             }
+            friends.setSelection(0);
+            addedFriends.setText("Add Friends");
             viewModel.selectItem(new ChatItem(addedArray));
+
+            //
             /*InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             Editable
             imm.hideSoftInputFromWindow(, 0);*/

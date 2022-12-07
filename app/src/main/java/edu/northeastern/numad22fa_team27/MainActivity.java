@@ -11,7 +11,6 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -22,6 +21,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import edu.northeastern.numad22fa_team27.spotify.SpotifyActivity;
 import edu.northeastern.numad22fa_team27.sticker_messenger.FirebaseActivity;
 import edu.northeastern.numad22fa_team27.workout.activity.LoginActivity;
+import edu.northeastern.numad22fa_team27.workout.activity.WorkoutMessageActivity;
 
 public class MainActivity extends AppCompatActivity {
 
