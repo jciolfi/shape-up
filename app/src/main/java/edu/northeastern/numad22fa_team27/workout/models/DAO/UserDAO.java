@@ -5,6 +5,7 @@ import androidx.core.util.Pair;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,7 @@ public class UserDAO {
     public List<String> joinedGroups;
     public Map<String, Pair<Integer, LocalDate>> currentCategoryStreaks;
     public Map<String, Integer> bestCategoryStreaks;
+    public Map<String, Integer> workoutCompletions;
     public String profilePic;
 
     public UserDAO() {}
@@ -32,7 +34,11 @@ public class UserDAO {
         this.joinedGroups = Util.nullOrDefault(u.getJoinedGroups(), new ArrayList<>()).stream()
                 .map(String::valueOf).collect(Collectors.toList());
 //        this.currentCategoryStreaks = u.getCurrentCategoryStreaks();
-//        this.bestCategoryStreaks = u.getBestCategoryStreaks();
+
+        // Load streak category information
+        this.bestCategoryStreaks = u.getBestCategoryStreaks().entrySet().stream()
+                .collect(Collectors.toMap((entry) -> entry.getKey().name(), (entry) -> entry.getValue()));
+        this.workoutCompletions = u.getWorkoutCompletions();
         this.profilePic = Util.nullOrDefault(u.getProfilePic(), "");
     }
 

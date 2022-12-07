@@ -35,7 +35,7 @@ public class UserFriends extends AppCompatActivity {
 
     private void genFakeFriends() {
         for (int i = 0; i < 20; i++) {
-            originalFriendData.add(new User(String.format("Friend %d", i + 1), "", ""));
+            originalFriendData.add(new User(String.format("Friend %d", i + 1), ""));
         }
     }
 

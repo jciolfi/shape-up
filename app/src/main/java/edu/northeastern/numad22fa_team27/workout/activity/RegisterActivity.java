@@ -94,7 +94,7 @@ public class RegisterActivity extends AppCompatActivity {
                         pb.setVisibility(View.VISIBLE);
                         user_auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
-                                User user = new User(email, pass, "");
+                                User user = new User(email, "");
                                 FirebaseFirestore db = FirebaseFirestore.getInstance();
                                 db.collection("users")
                                         .document(user_auth.getCurrentUser().getUid())
