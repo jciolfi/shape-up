@@ -2,8 +2,6 @@ package edu.northeastern.numad22fa_team27.workout.activity;
 
 import static edu.northeastern.numad22fa_team27.Util.requestNoActivityBar;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,13 +11,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Gravity;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -29,19 +24,14 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.Util;
 import edu.northeastern.numad22fa_team27.workout.adapters.WorkoutClickListener;
 import edu.northeastern.numad22fa_team27.workout.adapters.WorkoutRecAdapter;
-import edu.northeastern.numad22fa_team27.workout.adapters.WorkoutRecCard;
 import edu.northeastern.numad22fa_team27.workout.models.Workout;
 import edu.northeastern.numad22fa_team27.workout.models.workout_search.NavigationBar;
 import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
@@ -95,6 +85,18 @@ public class ProfileActivity extends AppCompatActivity {
 
 
         firestoreService = new FirestoreService();
+        TextView tv1 = findViewById(R.id.new_workouts_title);
+        tv1.setOnClickListener(v -> {
+            firestoreService.tryRequestFriend("xW3w2G6LyqbJQuWxpvh8ZiUHJg53");
+            firestoreService.tryAcceptFriendRequest("RR5HSyOk2Zbhh6p7ZtnxNbSjeeC3");
+        });
+
+        TextView tv2 = findViewById(R.id.new_workouts_title2);
+        tv2.setOnClickListener(v -> {
+            firestoreService.tryRemoveFriend("xW3w2G6LyqbJQuWxpvh8ZiUHJg53");
+            firestoreService.tryRemoveFriend("RR5HSyOk2Zbhh6p7ZtnxNbSjeeC3");
+        });
+
     }
 
     private void setupRecView(RecyclerView rv, List<Workout> dataset, boolean isVertical) {

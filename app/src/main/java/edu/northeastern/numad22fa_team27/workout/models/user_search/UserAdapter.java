@@ -90,8 +90,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
             });
 
             Button actionButton = userInfoDialog.findViewById(R.id.btn_friend_action);
+            actionButton.setEnabled(true);
             // if self -> hide positive button
-            if (String.valueOf(user.getUserID()).equals(currentUserID) || user.getFriends() == null) {
+            if (user.getUserID().equals(currentUserID) || user.getFriends() == null) {
                 actionButton.setVisibility(View.INVISIBLE);
             } else {
                 actionButton.setVisibility(View.VISIBLE);
@@ -99,14 +100,19 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
                     // already friends -> change button to remove friend
                     actionButton.setText("Remove");
                     actionButton.setOnClickListener(removeView -> {
-                        firestoreService.tryRemoveFriend(String.valueOf(user.getUserID()));
+                        firestoreService.tryRemoveFriend(user.getUserID());
                         closeButton.callOnClick();
                     });
+                } else if (user.getIncomingFriendRequests().contains(currentUserID)) {
+                    actionButton.setText("Requested");
+                    actionButton.setEnabled(false);
                 } else {
-                    // not friends -> change button to add friend
+                    // not friends and not requested -> change button to add friend
                     actionButton.setText("Add");
                     actionButton.setOnClickListener(addView -> {
-                        firestoreService.tryRequestFriend(String.valueOf(user.getUserID()));
+                        actionButton.setText("Requested");
+                        actionButton.setEnabled(false);
+                        firestoreService.tryRequestFriend(user.getUserID());
                         closeButton.callOnClick();
                     });
                 }

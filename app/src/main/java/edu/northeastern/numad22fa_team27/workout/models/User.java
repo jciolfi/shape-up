@@ -1,5 +1,7 @@
 package edu.northeastern.numad22fa_team27.workout.models;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
 
@@ -7,6 +9,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,7 +20,8 @@ import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
 
 // TODO: a lot of these "lists" should really be sets
 public class User {
-    private UUID userID;
+    private final static String TAG = "User";
+    private String userID;
     private String username;
     private String profilePic;
 
@@ -181,14 +185,12 @@ public class User {
         return this.bestCategoryStreaks.get(w);
     }
 
-    public UUID getUserID() {
+    public String getUserID() {
         return userID;
     }
 
     public void setUserFromDAO(UserDAO userDAO, String userID) {
-        try {
-            this.userID = UUID.fromString(userID);
-        } catch (Exception ignored) {}
+        this.userID = userID;
 
         this.username = userDAO.username == null ? "" : userDAO.username;
         this.friends = userDAO.friends == null ? new ArrayList<>() : userDAO.friends;
@@ -210,6 +212,8 @@ public class User {
                 this.bestCategoryStreaks.put(WorkoutCategory.toCategory(category), userDAO.bestCategoryStreaks.get(category));
             }
         }
+
+        this.incomingFriendRequests = new HashSet<>(userDAO.incomingFriendRequests);
 
         this.profilePic = userDAO.profilePic == null ? "" : userDAO.profilePic;
     }
