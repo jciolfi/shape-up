@@ -1,5 +1,6 @@
 package edu.northeastern.numad22fa_team27.workout.callbacks;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 

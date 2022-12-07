@@ -2,8 +2,6 @@ package edu.northeastern.numad22fa_team27.workout.activity;
 
 import static edu.northeastern.numad22fa_team27.Util.requestNoActivityBar;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,11 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Gravity;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -29,27 +23,20 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.Util;
 import edu.northeastern.numad22fa_team27.workout.adapters.WorkoutClickListener;
 import edu.northeastern.numad22fa_team27.workout.adapters.WorkoutRecAdapter;
-import edu.northeastern.numad22fa_team27.workout.adapters.WorkoutRecCard;
 import edu.northeastern.numad22fa_team27.workout.models.Workout;
 import edu.northeastern.numad22fa_team27.workout.models.workout_search.NavigationBar;
 import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 import edu.northeastern.numad22fa_team27.workout.services.RecommendationService;
 
 public class ProfileActivity extends AppCompatActivity {
-    private FirestoreService firestoreService;
-
     private FirebaseAuth user_auth;
     private Button settingsBtn, friendsBtn, completedWorkoutsBtn;
     private ImageView profilePic;
@@ -92,9 +79,6 @@ public class ProfileActivity extends AppCompatActivity {
         RecommendationService rs = new RecommendationService(null);
         rs.RecommendWorkouts(recWorkouts, recWorkoutCards);
         rs.RecommendFriendApprovedWorkouts(friendWorkouts, friendWorkoutCards);
-
-
-        firestoreService = new FirestoreService();
     }
 
     private void setupRecView(RecyclerView rv, List<Workout> dataset, boolean isVertical) {

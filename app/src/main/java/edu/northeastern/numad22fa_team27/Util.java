@@ -40,4 +40,8 @@ public class Util {
 
         return s.length() <= length ? s : s.substring(0,length) + "…";
     }
+
+    public static <T> T nullOrDefault(T val, T defaultVal) {
+        return val != null ? val : defaultVal;
+    }
 }

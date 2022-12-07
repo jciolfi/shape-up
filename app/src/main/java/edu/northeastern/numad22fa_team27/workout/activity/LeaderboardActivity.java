@@ -11,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -20,6 +22,7 @@ import edu.northeastern.numad22fa_team27.workout.callbacks.GetLeaderboardCallbac
 import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
 import edu.northeastern.numad22fa_team27.workout.models.WorkoutCategory;
 import edu.northeastern.numad22fa_team27.workout.models.leaderboard.LeaderboardAdapter;
+import edu.northeastern.numad22fa_team27.workout.models.workout_search.NavigationBar;
 import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 
 public class LeaderboardActivity extends AppCompatActivity {
@@ -36,6 +39,11 @@ public class LeaderboardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_leaderboard);
 
         firestoreService = new FirestoreService();
+
+        // Set up nav bar
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_toolbar);
+        bottomNav.setSelectedItemId(R.id.nav_leaderboard);
+        bottomNav.setOnItemSelectedListener(NavigationBar.setNavListener(this));
 
         // set up categories dropdown
         Spinner categoryDropdown = findViewById(R.id.dropdown_leaderboard_category);

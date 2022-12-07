@@ -1,5 +1,7 @@
 package edu.northeastern.numad22fa_team27.workout.models;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
 
@@ -7,24 +9,32 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.Set;
 
+import edu.northeastern.numad22fa_team27.Util;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
 
+// TODO: a lot of these "lists" should really be sets
 public class User {
-    private UUID userID;
+    private final static String TAG = "User";
+    private String userID;
     private String username;
     private String profilePic;
+
+    // TODO is this even being used?
     private String encryptedPassword;
 
-    // List of the usernames of our friends
+    // List of the IDs of this user's friends
     private List<String> friends;
 
+    // List of IDs of the users who requested to friend this user
+    private Set<String> incomingFriendRequests;
+
     // List of the IDs for the groups we've joined
-    private List<UUID> joinedGroups;
+    private List<String> joinedGroups;
 
     // Maps workout type -> (# days in streak, last day in streak)
     private Map<WorkoutCategory, Pair<Integer, LocalDate>> currentCategoryStreaks;
@@ -60,7 +70,7 @@ public class User {
      * @param currentCategoryStreaks Map of streak category to current streak info
      * @param bestCategoryStreaks Map of streak category to best streak info
      */
-    public User(String username, String encryptedPassword, String profilePic, List<String> friends, List<UUID> joinedGroups, Map<WorkoutCategory, Pair<Integer, LocalDate>> currentCategoryStreaks, Map<WorkoutCategory, Integer> bestCategoryStreaks) {
+    public User(String username, String encryptedPassword, String profilePic, List<String> friends, List<String> joinedGroups, Map<WorkoutCategory, Pair<Integer, LocalDate>> currentCategoryStreaks, Map<WorkoutCategory, Integer> bestCategoryStreaks) {
         this.username = username;
         this.friends = friends;
         this.profilePic = profilePic;
@@ -124,15 +134,19 @@ public class User {
         return friends;
     }
 
+    public Set<String> getIncomingFriendRequests() {
+        return incomingFriendRequests;
+    }
+
     public void setFriends(List<String> friends) {
         this.friends = friends;
     }
 
-    public List<UUID> getJoinedGroups() {
+    public List<String> getJoinedGroups() {
         return joinedGroups;
     }
 
-    public void setJoinedGroups(List<UUID> joinedGroups) {
+    public void setJoinedGroups(List<String> joinedGroups) {
         this.joinedGroups = joinedGroups;
     }
 
@@ -170,21 +184,17 @@ public class User {
         return this.bestCategoryStreaks.get(w);
     }
 
-    public Object getUserID(boolean asString) {
-        return asString ? String.valueOf(userID) : userID;
+    public String getUserID() {
+        return userID;
     }
 
     public void setUserFromDAO(UserDAO userDAO, String userID) {
-        try {
-            this.userID = UUID.fromString(userID);
-        } catch (Exception ignored) {}
+        this.userID = userID;
 
         this.username = userDAO.username == null ? "" : userDAO.username;
         this.friends = userDAO.friends == null ? new ArrayList<>() : userDAO.friends;
 
-        this.joinedGroups = userDAO.joinedGroups == null
-                ? new ArrayList<>()
-                : userDAO.joinedGroups.stream().map(UUID::fromString).collect(Collectors.toList());
+        this.joinedGroups = Util.nullOrDefault(userDAO.joinedGroups, new ArrayList<>());
 
         this.currentCategoryStreaks = new HashMap<>();
         if (userDAO.currentCategoryStreaks != null) {
@@ -200,6 +210,8 @@ public class User {
             }
         }
 
-        this.profilePic = userDAO.profilePic == null ? "" : userDAO.profilePic;
+        this.incomingFriendRequests = new HashSet<>(Util.nullOrDefault(userDAO.incomingFriendRequests, new ArrayList<>()));
+
+        this.profilePic = Util.nullOrDefault(userDAO.profilePic, "");
     }
 }
