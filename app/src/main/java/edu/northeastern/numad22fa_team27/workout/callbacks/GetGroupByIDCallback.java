@@ -7,10 +7,10 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.GroupDAO;
 import edu.northeastern.numad22fa_team27.workout.models.Group;
 
-public class FindGroupByIDCallback extends WorkoutCallback {
+public class GetGroupByIDCallback extends WorkoutCallback {
     private final Group group;
 
-    public FindGroupByIDCallback(Group group) {
+    public GetGroupByIDCallback(Group group) {
         this.group = group;
     }
 

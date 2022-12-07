@@ -20,6 +20,7 @@ import java.util.List;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.Util;
+import edu.northeastern.numad22fa_team27.workout.callbacks.GetGroupByIDCallback;
 import edu.northeastern.numad22fa_team27.workout.callbacks.GetUserByIDCallback;
 import edu.northeastern.numad22fa_team27.workout.models.Group;
 import edu.northeastern.numad22fa_team27.workout.models.User;
@@ -99,11 +100,20 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupViewHolder> {
             });
 
             firestoreService.getUserByID(currentUser.getUserID(), new GetUserByIDCallback(currentUser));
+            firestoreService.getGroupByID(group.getGroupID(), new GetGroupByIDCallback(group));
 
             Button actionButton = groupInfoDialog.findViewById(R.id.btn_join_group);
             actionButton.setEnabled(true);
 
+            /** Logic overview
+             * - if current user is in group -> change button to leave
+             *      - if user is the admin, must transfer admin before leaving -> disable button
+             * - if current user is not in group -> change button to join
+             *      - if group is not accepting members -> disable button
+             */
+
             // if user in group, change to leave group button
+            // this is a faster lookup than the group's members
             if (currentUser.getJoinedGroups().contains(group.getGroupID())) {
                 actionButton.setText("Leave");
                 if (group.getAdminID().equals(currentUser.getUserID())) {
@@ -124,16 +134,16 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupViewHolder> {
                 });
             } else {
                 actionButton.setText("Join");
+
+                if (!group.getAcceptingMembers()) {
+                    actionButton.setEnabled(false);
+                }
+
                 actionButton.setOnClickListener(v -> {
                     AlertDialog joinDialog = new AlertDialog.Builder(searchView.getContext())
                             .setTitle("Are you sure you want to join this group?")
                             .setPositiveButton("Yes", (dialogInterface, i) -> {
-                                boolean success = firestoreService.tryJoinGroup(group.getGroupID());
-                                if (success) {
-
-                                } else {
-
-                                }
+                                firestoreService.tryJoinGroup(group.getGroupID());
                                 closeButton.callOnClick();
                             })
                             .setNegativeButton("Cancel", null)
