@@ -117,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // Don't let anyone hit "back" to the login
         finish();
-        Util.openActivity(LoginActivity.this, ProfileActivity.class);
+        Util.openActivity(LoginActivity.this, WorkoutMessageActivity.class);
     }
 
     /**

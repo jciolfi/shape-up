@@ -36,4 +36,8 @@ public class WorkoutClickListener {
         intent.putExtra("Categories", String.join(", ", w.getCategoriesPresent().stream().map(c -> c.name()).collect(Collectors.toList())));
         launcher.launch(intent);
     }
+
+    public void messageOnClick(View v, int index) {
+
+    }
 }

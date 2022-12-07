@@ -3,6 +3,7 @@ package edu.northeastern.numad22fa_team27;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 
 import edu.northeastern.numad22fa_team27.spotify.SpotifyActivity;
@@ -26,8 +27,7 @@ public class MainActivity extends AppCompatActivity {
         btnA7.setOnClickListener(view -> Util.openActivity(this, SpotifyActivity.class));
         Button btnA8 = findViewById(R.id.btn_A8);
         btnA8.setOnClickListener(view -> Util.openActivity(this, FirebaseActivity.class));
-
         Button btnSU = findViewById(R.id.btn_proj);
-        btnSU.setOnClickListener(view -> Util.openActivity(this, WorkoutMessageActivity.class));
+        btnSU.setOnClickListener(view -> Util.openActivity(this, LoginActivity.class));
     }
 }

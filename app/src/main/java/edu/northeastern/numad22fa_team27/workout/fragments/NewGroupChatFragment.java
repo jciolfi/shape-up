@@ -40,9 +40,6 @@ public class NewGroupChatFragment extends Fragment {
                              Bundle savedInstanceState) {
         View newGroupChatView = inflater.inflate(R.layout.fragment_add_chat, container, false);
 
-        listOfFriends = new String[] {
-                "user1", "user2"
-        };
         addedArray = new String[0];
 
         viewModel = new ViewModelProvider(requireActivity()).get(ChatItemViewModel.class);

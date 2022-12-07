@@ -1,20 +1,30 @@
 package edu.northeastern.numad22fa_team27.workout.activity;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -26,13 +36,15 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import edu.northeastern.numad22fa_team27.R;
-import edu.northeastern.numad22fa_team27.spotify.SearchItemViewModel;
-import edu.northeastern.numad22fa_team27.spotify.SpotifyActivity;
 import edu.northeastern.numad22fa_team27.spotify.spotifyviews.Cards;
 import edu.northeastern.numad22fa_team27.spotify.spotifyviews.TrackInfo;
+import edu.northeastern.numad22fa_team27.workout.adapters.WorkoutClickListener;
+import edu.northeastern.numad22fa_team27.workout.adapters.WorkoutRecAdapter;
 import edu.northeastern.numad22fa_team27.workout.fragments.NewGroupChatFragment;
 import edu.northeastern.numad22fa_team27.workout.models.ChatItem;
 import edu.northeastern.numad22fa_team27.workout.models.ChatItemViewModel;
+import edu.northeastern.numad22fa_team27.workout.models.DAO.WorkoutDAO;
+import edu.northeastern.numad22fa_team27.workout.models.Workout;
 
 public class WorkoutMessageActivity extends AppCompatActivity {
 
@@ -58,7 +70,8 @@ public class WorkoutMessageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_workout_message);
 
         //initialize a list of firends
-        String[] listOfFriends = new String[] {"user1", "user2"};
+
+        setFriends();
 
 
         //RecyclerView
@@ -73,13 +86,8 @@ public class WorkoutMessageActivity extends AppCompatActivity {
         progressBar.setVisibility(View.INVISIBLE);
 
         //New chat fragment
-        chatFragment = new NewGroupChatFragment(listOfFriends);
-        getSupportFragmentManager().beginTransaction()
-                .setReorderingAllowed(true)
-                .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
-                .add(R.id.newMessageFragment, chatFragment, "newChat")
-                .hide(chatFragment)
-                .commit();
+
+
 
         //floating action button
         FloatingActionButton newChatButton = findViewById(R.id.fab_new_chat);
@@ -88,6 +96,7 @@ public class WorkoutMessageActivity extends AppCompatActivity {
         });
 
 
+        //for the fragment i think
         ChatItemViewModel viewModel = new ViewModelProvider(this). get(ChatItemViewModel.class);
         viewModel.getSelectedItem().observe(this, item -> {
             Log.v(TAG, "newChat");
@@ -101,21 +110,91 @@ public class WorkoutMessageActivity extends AppCompatActivity {
         recThread.start();*/
     }
 
+    //sets the friend can split this up for comprehension
+    private void setFriends() {
+        //get information on the user
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String currentID = user.getUid();
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+
+        DocumentReference reference = firestore.collection("users").document(currentID);
+        //this is code to get information on user
+        reference.get().addOnCompleteListener(task -> {
+            if(task.getResult().exists()) {
+                Object object = task.getResult().get("friends");
+                List<String> string = (List<String>) object;
+
+                if (!string.isEmpty()) {
+                    friends = new String[string.size()];
+                    friends = string.toArray(friends);
+                } else {
+                    friends = new String[] {"Blank"};
+                }
+
+                chatFragment = new NewGroupChatFragment(friends);
+                getSupportFragmentManager().beginTransaction()
+                        .setReorderingAllowed(true)
+                        .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                        .add(R.id.newMessageFragment, chatFragment, "newChat")
+                        .hide(chatFragment)
+                        .commit();
+
+            } else {
+                //Toast.makeText(ProfileActivity.this, "Couldn't fetch the profile for the user", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void setupRecView(RecyclerView rv, List<Workout> dataset) {
+
+        //this is passed to the click listener that is  created
+        ActivityResultLauncher<Intent> activityLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        Bundle extras = data.getExtras();
+                        String workoutId = extras.getString("WorkoutId");
+                        Boolean completedWorkout = extras.getBoolean("Success");
+                        if (completedWorkout) {
+                            Toast.makeText(this, String.format("Congrats on completing workout %s", workoutId), Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(this, "Okay, maybe next time.", Toast.LENGTH_LONG).show();
+                        }
+
+                        // TODO: Update user
+                    }
+                });
+
+        WorkoutClickListener clickListener = new WorkoutClickListener(dataset, activityLauncher);
+
+        @SuppressLint("WrongConstant") RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
+        rv.setHasFixedSize(true);
+        rv.setAdapter(new WorkoutRecAdapter(dataset, clickListener, true));
+        rv.setLayoutManager(manager);
+
+        Objects.requireNonNull(rv.getAdapter()).notifyDataSetChanged();
+    }
+
     /**
      * Toggle the visibility of the new chat fragment
+     * @param chatButton the add chat floating button at the bottom of the page
      */
     private void toggleSearchFragment(FloatingActionButton chatButton) {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        showingSearch = !showingSearch;
-        if (showingSearch) {
-            transaction.show(chatFragment);
-            chatButton.setVisibility(View.GONE);
-        } else {
-            transaction.hide(chatFragment);
-            chatButton.setVisibility(View.VISIBLE);
+        if(chatFragment != null) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            showingSearch = !showingSearch;
+            if (showingSearch) {
 
+                transaction.show(chatFragment);
+                chatButton.setVisibility(View.GONE);
+            } else {
+                transaction.hide(chatFragment);
+                chatButton.setVisibility(View.VISIBLE);
+
+            }
+            transaction.commit();
         }
-        transaction.commit();
     }
 
     /**
