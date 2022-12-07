@@ -79,14 +79,15 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
             groupCount.setText(String.format("Groups Joined: %s",
                     user.getJoinedGroups() == null ? 0 : user.getJoinedGroups().size()));
 
-            // set up close button
+            // set up close button / dismiss listener
             Button closeButton = userInfoDialog.findViewById(R.id.btn_close_user);
+            userInfoDialog.setOnDismissListener(dialogInterface -> {
+                // focus will go to search view and bring up keyboard - disable this
+                final View userView = searchView.findViewById(R.id.rv_users);
+                userView.requestFocus();
+            });
             closeButton.setOnClickListener(view1 -> {
                 userInfoDialog.dismiss();
-
-                // focus will go to search view and bring up keyboard - disable this
-                final View groupsView = searchView.findViewById(R.id.rv_users);
-                groupsView.requestFocus();
             });
 
             Button actionButton = userInfoDialog.findViewById(R.id.btn_friend_action);
@@ -110,7 +111,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
                 actionButton.setText("Remove");
                 actionButton.setOnClickListener(removeView -> {
                     firestoreService.removeFriend(user.getUserID());
-                    closeButton.callOnClick();
+                    userInfoDialog.dismiss();
                 });
             } else if (user.getIncomingFriendRequests().contains(currentUser.getUserID())) {
                 actionButton.setText("Requested");
@@ -119,13 +120,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
                 actionButton.setText("Accept");
                 actionButton.setOnClickListener(addView -> {
                     firestoreService.tryAcceptFriendRequest(user.getUserID());
-                    closeButton.callOnClick();
+                    userInfoDialog.dismiss();
                 });
             } else {
                 actionButton.setText("Add");
                 actionButton.setOnClickListener(addView -> {
                     firestoreService.tryRequestFriend(user.getUserID());
-                    closeButton.callOnClick();
+                    userInfoDialog.dismiss();
                 });
             }
 
