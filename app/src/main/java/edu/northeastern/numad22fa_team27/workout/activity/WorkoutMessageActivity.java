@@ -20,30 +20,25 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.nio.FloatBuffer;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import edu.northeastern.numad22fa_team27.R;
-import edu.northeastern.numad22fa_team27.spotify.spotifyviews.Cards;
 import edu.northeastern.numad22fa_team27.spotify.spotifyviews.TrackInfo;
+import edu.northeastern.numad22fa_team27.sticker_messenger.models.MessageInfo;
+import edu.northeastern.numad22fa_team27.workout.adapters.MessageAdapter;
+import edu.northeastern.numad22fa_team27.workout.adapters.MessageCard;
 import edu.northeastern.numad22fa_team27.workout.adapters.WorkoutClickListener;
 import edu.northeastern.numad22fa_team27.workout.adapters.WorkoutRecAdapter;
 import edu.northeastern.numad22fa_team27.workout.fragments.NewGroupChatFragment;
 import edu.northeastern.numad22fa_team27.workout.models.ChatItem;
 import edu.northeastern.numad22fa_team27.workout.models.ChatItemViewModel;
-import edu.northeastern.numad22fa_team27.workout.models.DAO.WorkoutDAO;
 import edu.northeastern.numad22fa_team27.workout.models.Workout;
 
 public class WorkoutMessageActivity extends AppCompatActivity {
@@ -51,7 +46,7 @@ public class WorkoutMessageActivity extends AppCompatActivity {
     //stored data variables
     private String[] friends;
     private String[] chats;
-    private final List<Cards> cards = new ArrayList<>();
+    private final List<MessageCard> cards = new ArrayList<>();
     private boolean showingSearch = false;
 
     //Activity elements
@@ -78,7 +73,7 @@ public class WorkoutMessageActivity extends AppCompatActivity {
         RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
         chatsRecycler = findViewById(R.id.rcv_chats);
         chatsRecycler.setHasFixedSize(true);
-        chatsRecycler.setAdapter(new TrackInfo(cards));
+        chatsRecycler.setAdapter(new MessageAdapter(cards));
         chatsRecycler.setLayoutManager(manager);
 
         //Loading icon

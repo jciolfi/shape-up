@@ -14,7 +14,7 @@ import edu.northeastern.numad22fa_team27.workout.activity.WorkoutDisplay;
 import edu.northeastern.numad22fa_team27.workout.models.MediaParagraph;
 import edu.northeastern.numad22fa_team27.workout.models.Workout;
 
-public class WorkoutClickListener {
+public class MessageClickListener {
     private final ActivityResultLauncher<Intent> launcher;
     List<Workout> cardData;
 
@@ -36,4 +36,5 @@ public class WorkoutClickListener {
         intent.putExtra("Categories", String.join(", ", w.getCategoriesPresent().stream().map(c -> c.name()).collect(Collectors.toList())));
         launcher.launch(intent);
     }
+}
 }
