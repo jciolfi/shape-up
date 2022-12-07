@@ -1,20 +1,22 @@
 package edu.northeastern.numad22fa_team27.workout.models;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import edu.northeastern.numad22fa_team27.Util;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.GroupDAO;
 
 public class Group {
-    private final UUID groupID;
-    private final String groupName;
-    private final Set<String> members;
-    private final String adminID;
-    private final Boolean acceptingMembers;
+    private String groupID;
+    private String groupName;
+    private Set<String> members;
+    private String adminID;
+    private boolean acceptingMembers;
 
     public Group(String groupName, String creatorID) {
-        this.groupID = UUID.randomUUID();
+        this.groupID = String.valueOf(UUID.randomUUID());
         this.groupName = groupName;
         members = new HashSet<>(){{ add(creatorID); }};
         this.adminID = creatorID;
@@ -22,14 +24,10 @@ public class Group {
     }
 
     public Group(GroupDAO g, String groupID) {
-        this.groupID = UUID.fromString(groupID);
-        this.groupName = g.groupName;
-        this.members = new HashSet<>(g.members);
-        this.adminID = g.adminID;
-        this.acceptingMembers = g.acceptingMembers;
+        setFromGroupDAO(g, groupID);
     }
 
-    public UUID getGroupID() {
+    public String getGroupID() {
         return groupID;
     }
 
@@ -45,7 +43,15 @@ public class Group {
         return adminID;
     }
 
-    public Boolean getAcceptingMembers() {
+    public boolean getAcceptingMembers() {
         return acceptingMembers;
+    }
+
+    public void setFromGroupDAO(GroupDAO g, String groupID) {
+        this.groupID = groupID;
+        this.groupName = Util.nullOrDefault(g.groupName, "");
+        this.members = new HashSet<>(Util.nullOrDefault(g.members, new ArrayList<>()));
+        this.adminID = Util.nullOrDefault(g.adminID, "");
+        this.acceptingMembers = g.acceptingMembers;
     }
 }

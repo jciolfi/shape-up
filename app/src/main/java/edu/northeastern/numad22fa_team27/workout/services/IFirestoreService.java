@@ -45,6 +45,13 @@ public interface IFirestoreService {
     void findStreaksLeaderboard(WorkoutCategory category, WorkoutCallback callback);
 
     /**
+     * Get a group with the given ID
+     * @param groupID ID for the group
+     * @param callback executed on the entry returned by the query
+     */
+    void getGroupByID(String groupID, WorkoutCallback callback);
+
+    /**
      * Try to join the group with the corresponding groupID. Users limited to 10 groups
      * @param groupID the ID for the group
      */
@@ -54,7 +61,7 @@ public interface IFirestoreService {
      * Try to join the group with the corresponding groupID
      * @param groupID the ID for the group
      */
-    boolean tryLeaveGroup(String groupID);
+    void leaveGroup(String groupID);
 
     /**
      * Retrieve details for user with given ID
@@ -73,14 +80,20 @@ public interface IFirestoreService {
     /**
      * Try to accept a friend request
      * @param friendID ID of user that friended this user
-     * @return true if users are friends, false otherwise
+     * @return true if users can be friends, false otherwise
      */
     boolean tryAcceptFriendRequest(String friendID);
 
     /**
+     * Try to reject a friend request
+     * @param friendID ID of user that friended this user
+     * @return true if friend request no longer present, false otherwise
+     */
+    boolean tryRejectFriendRequest(String friendID);
+
+    /**
      * Try to remove friend - removes each other from both users' friends list
      * @param friendID the ID of friend to remove
-     * @return true if users are not friends anymore, false otherwise
      */
-    boolean tryRemoveFriend(String friendID);
+    void removeFriend(String friendID);
 }

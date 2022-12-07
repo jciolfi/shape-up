@@ -13,14 +13,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseUser;
-
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 
 import edu.northeastern.numad22fa_team27.R;
-import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
+import edu.northeastern.numad22fa_team27.workout.callbacks.GetUserByIDCallback;
 import edu.northeastern.numad22fa_team27.workout.models.User;
 import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 
@@ -30,14 +28,16 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
     private final ViewGroup container;
     private final View searchView;
     private final FirestoreService firestoreService;
-    private final String currentUserID;
+    private final User currentUser = new User();
 
     public UserAdapter(List<User> users, ViewGroup container, View searchView, FirestoreService firestoreService, String currentUserID) {
         this.users = users;
         this.container = container;
         this.searchView = searchView;
         this.firestoreService = firestoreService;
-        this.currentUserID = currentUserID;
+
+        // set current user
+        firestoreService.getUserByID(currentUserID, new GetUserByIDCallback(currentUser));
     }
 
     @NonNull
@@ -91,31 +91,42 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
 
             Button actionButton = userInfoDialog.findViewById(R.id.btn_friend_action);
             actionButton.setEnabled(true);
-            // if self -> hide positive button
-            if (user.getUserID().equals(currentUserID) || user.getFriends() == null) {
+            actionButton.setVisibility(View.VISIBLE);
+
+            // query db to get the user state
+            firestoreService.getUserByID(user.getUserID(), new GetUserByIDCallback(user));
+            firestoreService.getUserByID(currentUser.getUserID(), new GetUserByIDCallback(currentUser));
+
+            /**
+             * Logic overview:
+             * - if self -> hide action button
+             * - if friends -> change to remove
+             * - if not friends and user has requested currentUser-> change to accept
+             * - if not friends and incoming request present -> change to add
+             */
+            if (user.getUserID().equals(currentUser.getUserID())) {
                 actionButton.setVisibility(View.INVISIBLE);
+            } else if (user.getFriends().contains(currentUser.getUserID())) {
+                actionButton.setText("Remove");
+                actionButton.setOnClickListener(removeView -> {
+                    firestoreService.removeFriend(user.getUserID());
+                    closeButton.callOnClick();
+                });
+            } else if (user.getIncomingFriendRequests().contains(currentUser.getUserID())) {
+                actionButton.setText("Requested");
+                actionButton.setEnabled(false);
+            } else if (currentUser.getIncomingFriendRequests().contains(user.getUserID())) {
+                actionButton.setText("Accept");
+                actionButton.setOnClickListener(addView -> {
+                    firestoreService.tryAcceptFriendRequest(user.getUserID());
+                    closeButton.callOnClick();
+                });
             } else {
-                actionButton.setVisibility(View.VISIBLE);
-                if (user.getFriends().contains(currentUserID)) {
-                    // already friends -> change button to remove friend
-                    actionButton.setText("Remove");
-                    actionButton.setOnClickListener(removeView -> {
-                        firestoreService.tryRemoveFriend(user.getUserID());
-                        closeButton.callOnClick();
-                    });
-                } else if (user.getIncomingFriendRequests().contains(currentUserID)) {
-                    actionButton.setText("Requested");
-                    actionButton.setEnabled(false);
-                } else {
-                    // not friends and not requested -> change button to add friend
-                    actionButton.setText("Add");
-                    actionButton.setOnClickListener(addView -> {
-                        actionButton.setText("Requested");
-                        actionButton.setEnabled(false);
-                        firestoreService.tryRequestFriend(user.getUserID());
-                        closeButton.callOnClick();
-                    });
-                }
+                actionButton.setText("Add");
+                actionButton.setOnClickListener(addView -> {
+                    firestoreService.tryRequestFriend(user.getUserID());
+                    closeButton.callOnClick();
+                });
             }
 
             userInfoDialog.show();

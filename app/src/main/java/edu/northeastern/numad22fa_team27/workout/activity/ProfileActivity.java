@@ -14,7 +14,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -38,8 +37,6 @@ import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 import edu.northeastern.numad22fa_team27.workout.services.RecommendationService;
 
 public class ProfileActivity extends AppCompatActivity {
-    private FirestoreService firestoreService;
-
     private FirebaseAuth user_auth;
     private Button settingsBtn, friendsBtn, completedWorkoutsBtn;
     private ImageView profilePic;
@@ -82,21 +79,6 @@ public class ProfileActivity extends AppCompatActivity {
         RecommendationService rs = new RecommendationService(null);
         rs.RecommendWorkouts(recWorkouts, recWorkoutCards);
         rs.RecommendFriendApprovedWorkouts(friendWorkouts, friendWorkoutCards);
-
-
-        firestoreService = new FirestoreService();
-        TextView tv1 = findViewById(R.id.new_workouts_title);
-        tv1.setOnClickListener(v -> {
-            firestoreService.tryRequestFriend("xW3w2G6LyqbJQuWxpvh8ZiUHJg53");
-            firestoreService.tryAcceptFriendRequest("RR5HSyOk2Zbhh6p7ZtnxNbSjeeC3");
-        });
-
-        TextView tv2 = findViewById(R.id.new_workouts_title2);
-        tv2.setOnClickListener(v -> {
-            firestoreService.tryRemoveFriend("xW3w2G6LyqbJQuWxpvh8ZiUHJg53");
-            firestoreService.tryRemoveFriend("RR5HSyOk2Zbhh6p7ZtnxNbSjeeC3");
-        });
-
     }
 
     private void setupRecView(RecyclerView rv, List<Workout> dataset, boolean isVertical) {

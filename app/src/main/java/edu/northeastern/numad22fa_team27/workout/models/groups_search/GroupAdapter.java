@@ -98,21 +98,23 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupViewHolder> {
                 groupsView.requestFocus();
             });
 
+            firestoreService.getUserByID(currentUser.getUserID(), new GetUserByIDCallback(currentUser));
+
             Button actionButton = groupInfoDialog.findViewById(R.id.btn_join_group);
+            actionButton.setEnabled(true);
+
             // if user in group, change to leave group button
             if (currentUser.getJoinedGroups().contains(group.getGroupID())) {
                 actionButton.setText("Leave");
+                if (group.getAdminID().equals(currentUser.getUserID())) {
+                    actionButton.setEnabled(false);
+                }
                 actionButton.setOnClickListener(v -> {
                     AlertDialog leaveDialog = new AlertDialog.Builder(searchView.getContext())
                             .setTitle("Are you sure you want to leave this group?")
                             .setMessage("You may not be able to re-join in the future")
                             .setPositiveButton("Yes", (dialogInterface, i) -> {
-                                boolean success = firestoreService.tryLeaveGroup(String.valueOf(group.getGroupID()));
-                                if (success) {
-
-                                } else {
-
-                                }
+                                firestoreService.leaveGroup(group.getGroupID());
                                 closeButton.callOnClick();
                             })
                             .setNegativeButton("Cancel", null)
@@ -126,7 +128,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupViewHolder> {
                     AlertDialog joinDialog = new AlertDialog.Builder(searchView.getContext())
                             .setTitle("Are you sure you want to join this group?")
                             .setPositiveButton("Yes", (dialogInterface, i) -> {
-                                boolean success = firestoreService.tryJoinGroup(String.valueOf(group.getGroupID()));
+                                boolean success = firestoreService.tryJoinGroup(group.getGroupID());
                                 if (success) {
 
                                 } else {

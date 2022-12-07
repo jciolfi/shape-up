@@ -186,6 +186,20 @@ public class FirestoreService implements IFirestoreService {
     }
 
     @Override
+    public void getGroupByID(String groupID, WorkoutCallback callback) {
+        if (Util.stringIsNullOrEmpty(groupID)) {
+            warnBadParam("getGroupByID");
+            return;
+        }
+
+        firestoreDB.collection(GROUPS)
+                .document(groupID)
+                .get()
+                .addOnSuccessListener(callback::processDocument)
+                .addOnFailureListener(e -> logFailure("findGroupByID", e.getMessage()));
+    }
+
+    @Override
     public boolean tryJoinGroup(String groupID) {
         if (Util.stringIsNullOrEmpty(groupID) || !tryFetchUserDetails()) {
             warnBadParam("joinGroup");
@@ -203,91 +217,64 @@ public class FirestoreService implements IFirestoreService {
                 .get()
                 .addOnSuccessListener(snapshot -> {
                     GroupDAO groupDAO = snapshot.toObject(GroupDAO.class);
-                    if (groupDAO == null) {
+                    if (groupDAO == null || !groupDAO.acceptingMembers) {
                         success.set(false);
                     } else {
                         // add user to group
-                        Group group = new Group(groupDAO, snapshot.getId());
-
-                        if (group.getMembers().contains(userID)) {
-                            success.set(false);
-                        } else {
-                            groupDAO.members.add(userID);
-                            firestoreDB.collection(GROUPS)
-                                    .document(groupID)
-                                    .update("members", groupDAO.members)
-                                    .addOnSuccessListener(unused -> {
-                                        // add group to user
-                                        currentUser.joinedGroups.add(groupID);
-                                        firestoreDB.collection(USERS)
-                                                .document(userID)
-                                                .set(currentUser)
-                                                .addOnFailureListener(e -> {
-                                                    success.set(false);
-                                                    logFailure("tryJoinGroup", e.getMessage());
-                                                });
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        success.set(false);
-                                        logFailure("tryJoinGroup", e.getMessage());
-                                    });
-                        }
+                        firestoreDB.collection(GROUPS)
+                                .document(groupID)
+                                .update("members", FieldValue.arrayUnion(userID))
+                                .addOnFailureListener(e -> {
+                                    // hit here if group doesn't exist
+                                    success.set(false);
+                                    logFailure("tryJoinGroup",
+                                            String.join("%s doesn't exist: %s", groupID, e.getMessage()));
+                                })
+                                .addOnSuccessListener(unused -> {
+                                    // add group to user
+                                    firestoreDB.collection(USERS)
+                                            .document(userID)
+                                            .update("joinedGroups", FieldValue.arrayUnion(groupID))
+                                            .addOnFailureListener(e -> {
+                                                success.set(false);
+                                                logFailure("tryJoinGroup", e.getMessage());
+                                            });
+                                });
                     }
-                })
-                .addOnFailureListener(e -> {
-                    success.set(false);
-                    logFailure("tryJoinGroup", e.getMessage());
                 });
 
         return success.get();
     }
 
     @Override
-    public boolean tryLeaveGroup(String groupID) {
+    public void leaveGroup(String groupID) {
         if (Util.stringIsNullOrEmpty(groupID) || !tryFetchUserDetails()) {
             warnBadParam("joinGroup");
-            return false;
+            return;
         }
 
         String userID = userAuth.getCurrentUser().getUid();
-        AtomicBoolean success = new AtomicBoolean(true);
 
         firestoreDB.collection(GROUPS)
                 .document(groupID)
                 .get()
                 .addOnSuccessListener(snapshot -> {
+                    // remove this user from group if not admin
                     GroupDAO groupDAO = snapshot.toObject(GroupDAO.class);
-                    if (groupDAO == null) {
-                        success.set(false);
-                    } else {
-                        // remove user from group
-                        groupDAO.members.remove(userID);
+                    if (groupDAO != null && !groupDAO.adminID.equals(userID)) {
                         firestoreDB.collection(GROUPS)
                                 .document(groupID)
-                                .update("members", groupDAO.members)
-                                .addOnSuccessListener(unused -> {
-                                    // remove group from user
-                                    currentUser.joinedGroups.remove(groupID);
-                                    firestoreDB.collection(USERS)
-                                            .document(userID)
-                                            .update("joinedGroups", currentUser.joinedGroups)
-                                            .addOnFailureListener(e -> {
-                                                success.set(false);
-                                                logFailure("tryJoinGroup", e.getMessage());
-                                            });
-                                })
-                                .addOnFailureListener(e -> {
-                                    success.set(false);
-                                    logFailure("tryJoinGroup", e.getMessage());
-                                });
+                                .update("members", FieldValue.arrayRemove(userID))
+                                .addOnFailureListener(e -> logFailure("leaveGroup", e.getMessage()));
+
+                        // remove group from this user
+                        firestoreDB.collection(USERS)
+                                .document(userID)
+                                .update("joinedGroups", FieldValue.arrayRemove(groupID))
+                                .addOnFailureListener(e -> logFailure("leaveGroup", e.getMessage()));
                     }
                 })
-                .addOnFailureListener(e -> {
-                    success.set(false);
-                    logFailure("tryJoinGroup", e.getMessage());
-                });
-
-        return success.get();
+                .addOnFailureListener(e -> logFailure("leaveGroup", e.getMessage()));
     }
 
     @Override
@@ -330,20 +317,19 @@ public class FirestoreService implements IFirestoreService {
                 .addOnSuccessListener(snapshot -> {
                     UserDAO requestedFriend = snapshot.toObject(UserDAO.class);
 
-                    // can't request someone you're already friends with
+                    // can't request user that doesn't exist/they're already friends with this user
+                    // the check for the requestedFriend's friend list is the important part here
                     if (requestedFriend == null || requestedFriend.friends.contains(userID)) {
                         success.set(false);
                     } else {
-                        // if this user already requested the friend, that's fine. Still return true
-                        if (!requestedFriend.incomingFriendRequests.contains(userID)) {
-                            firestoreDB.collection(USERS)
-                                    .document(friendID)
-                                    .update("incomingFriendRequests", FieldValue.arrayUnion(userID))
-                                    .addOnFailureListener(e -> {
-                                        success.set(false);
-                                        logFailure("tryRequestFriend", e.getMessage());
-                                    });
-                        }
+                        // add friend request
+                        firestoreDB.collection(USERS)
+                                .document(friendID)
+                                .update("incomingFriendRequests", FieldValue.arrayUnion(userID))
+                                .addOnFailureListener(e -> {
+                                    success.set(false);
+                                    logFailure("tryRequestFriend", e.getMessage());
+                                });
                     }
                 });
 
@@ -358,6 +344,12 @@ public class FirestoreService implements IFirestoreService {
         }
 
         String userID = userAuth.getCurrentUser().getUid();
+
+        // can't friend self
+        if (userID.equals(friendID)) {
+            return false;
+        }
+
         AtomicBoolean success = new AtomicBoolean(true);
 
         firestoreDB.collection(USERS)
@@ -372,41 +364,35 @@ public class FirestoreService implements IFirestoreService {
                     UserDAO userWhoSentRequest = snapshot.toObject(UserDAO.class);
 
                     if (userWhoSentRequest == null) {
-                        // if no friend found, can't accept friend
+                        // if user doesn't exist with friendID, can't accept user as friend
                         success.set(false);
                     } else if (!currentUser.incomingFriendRequests.contains(friendID)) {
-                        // success depends on if they're both already friends when no friend request present
+                        // with no request - success depends on if both already friends
                         success.set(currentUser.friends.contains(friendID) && userWhoSentRequest.friends.contains(userID));
                     } else {
-                        // hit here only when this user has an incoming friend request from given friendID
+                        // handle when this user has request and user who sent request exists
 
-                        // remove friend from requests, add friend to user
-                        if (!currentUser.friends.contains(friendID)) {
-                            currentUser.friends.add(friendID);
-                        }
-
-                        // happens outside of if since requests need to always be removed
+                        // remove userWhoSentRequest from requests, add to this user's frends list
                         firestoreDB.collection(USERS)
                                 .document(userID)
                                 .update(
                                         "incomingFriendRequests", FieldValue.arrayRemove(friendID),
-                                        "friends", currentUser.friends
+                                        "friends", FieldValue.arrayUnion(friendID)
                                 )
                                 .addOnFailureListener(e -> {
                                     success.set(false);
                                     logFailure("tryAcceptFriendRequest", e.getMessage());
+                                })
+                                .addOnSuccessListener(unused -> {
+                                    // add this user to userWhoSentRequest's friends
+                                    firestoreDB.collection(USERS)
+                                            .document(friendID)
+                                            .update("friends", FieldValue.arrayUnion(userID))
+                                            .addOnFailureListener(e -> {
+                                                success.set(false);
+                                                logFailure("tryAcceptFriendRequest", e.getMessage());
+                                            });
                                 });
-
-                        // add user to friend if not already friends
-                        if (success.get() && !userWhoSentRequest.friends.contains(userID)) {
-                            firestoreDB.collection(USERS)
-                                    .document(friendID)
-                                    .update("friends", FieldValue.arrayUnion(userID))
-                                    .addOnFailureListener(e -> {
-                                        success.set(false);
-                                        logFailure("tryAcceptFriendRequest", e.getMessage());
-                                    });
-                        }
                     }
                 });
 
@@ -414,7 +400,7 @@ public class FirestoreService implements IFirestoreService {
     }
 
     @Override
-    public boolean tryRemoveFriend(String friendID) {
+    public boolean tryRejectFriendRequest(String friendID) {
         if (Util.stringIsNullOrEmpty(friendID) || !tryFetchUserDetails()) {
             warnBadParam("joinGroup");
             return false;
@@ -423,45 +409,40 @@ public class FirestoreService implements IFirestoreService {
         String userID = userAuth.getCurrentUser().getUid();
         AtomicBoolean success = new AtomicBoolean(true);
 
-        firestoreDB.collection(USERS)
-                .document(friendID)
-                .get()
-                .addOnFailureListener(e -> {
-                    success.set(false);
-                    logFailure("tryAcceptFriend", e.getMessage());
-                })
-                .addOnSuccessListener(snapshot -> {
-                    UserDAO friendToRemove = snapshot.toObject(UserDAO.class);
-
-                    if (friendToRemove == null) {
+        if (currentUser.incomingFriendRequests.contains(friendID)) {
+            firestoreDB.collection(USERS)
+                    .document(userID)
+                    .update("incomingFriendRequests", FieldValue.arrayRemove(friendID))
+                    .addOnFailureListener(e -> {
                         success.set(false);
-                    } else {
-                        // if they're not friends to begin with, still don't care - could still return true
-                        // remove friend from user
-                        if (currentUser.friends.contains(friendID)) {
-                            firestoreDB.collection(USERS)
-                                    .document(userID)
-                                    .update(FRIENDS, FieldValue.arrayRemove(friendID))
-                                    .addOnFailureListener(e -> {
-                                        success.set(false);
-                                        logFailure("tryAcceptFriend", e.getMessage());
-                                    });
-                        }
-
-                        // remove user from friend
-                        if (success.get() && friendToRemove.friends.contains(userID)) {
-                            firestoreDB.collection(USERS)
-                                    .document(friendID)
-                                    .update(FRIENDS, FieldValue.arrayRemove(userID))
-                                    .addOnFailureListener(e -> {
-                                        success.set(false);
-                                        logFailure("tryAcceptFriend", e.getMessage());
-                                    });
-                        }
-                    }
-                });
+                        logFailure("tryRejectFriendRequest", e.getMessage());
+                    });
+        }
 
         return success.get();
+    }
+
+    @Override
+    public void removeFriend(String friendID) {
+        if (Util.stringIsNullOrEmpty(friendID) || !tryFetchUserDetails()) {
+            warnBadParam("joinGroup");
+            return;
+        }
+
+        String userID = userAuth.getCurrentUser().getUid();
+
+        // we don't really care if these users don't exist, then they're already removed
+        // remove friend from this user
+        firestoreDB.collection(USERS)
+                .document(userID)
+                .update(FRIENDS, FieldValue.arrayRemove(friendID))
+                .addOnFailureListener(e -> logFailure("tryRemoveFriend", e.getMessage()));
+
+        // remove this user from friend
+        firestoreDB.collection(USERS)
+                .document(friendID)
+                .update(FRIENDS, FieldValue.arrayRemove(userID))
+                .addOnFailureListener(e -> logFailure("tryRemoveFriend", e.getMessage()));
     }
 
     // ---------- Helpers ----------

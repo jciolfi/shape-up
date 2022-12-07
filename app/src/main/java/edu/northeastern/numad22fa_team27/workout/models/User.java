@@ -13,9 +13,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
+import edu.northeastern.numad22fa_team27.Util;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
 
 // TODO: a lot of these "lists" should really be sets
@@ -35,7 +34,7 @@ public class User {
     private Set<String> incomingFriendRequests;
 
     // List of the IDs for the groups we've joined
-    private List<UUID> joinedGroups;
+    private List<String> joinedGroups;
 
     // Maps workout type -> (# days in streak, last day in streak)
     private Map<WorkoutCategory, Pair<Integer, LocalDate>> currentCategoryStreaks;
@@ -71,7 +70,7 @@ public class User {
      * @param currentCategoryStreaks Map of streak category to current streak info
      * @param bestCategoryStreaks Map of streak category to best streak info
      */
-    public User(String username, String encryptedPassword, String profilePic, List<String> friends, List<UUID> joinedGroups, Map<WorkoutCategory, Pair<Integer, LocalDate>> currentCategoryStreaks, Map<WorkoutCategory, Integer> bestCategoryStreaks) {
+    public User(String username, String encryptedPassword, String profilePic, List<String> friends, List<String> joinedGroups, Map<WorkoutCategory, Pair<Integer, LocalDate>> currentCategoryStreaks, Map<WorkoutCategory, Integer> bestCategoryStreaks) {
         this.username = username;
         this.friends = friends;
         this.profilePic = profilePic;
@@ -143,11 +142,11 @@ public class User {
         this.friends = friends;
     }
 
-    public List<UUID> getJoinedGroups() {
+    public List<String> getJoinedGroups() {
         return joinedGroups;
     }
 
-    public void setJoinedGroups(List<UUID> joinedGroups) {
+    public void setJoinedGroups(List<String> joinedGroups) {
         this.joinedGroups = joinedGroups;
     }
 
@@ -195,9 +194,7 @@ public class User {
         this.username = userDAO.username == null ? "" : userDAO.username;
         this.friends = userDAO.friends == null ? new ArrayList<>() : userDAO.friends;
 
-        this.joinedGroups = userDAO.joinedGroups == null
-                ? new ArrayList<>()
-                : userDAO.joinedGroups.stream().map(UUID::fromString).collect(Collectors.toList());
+        this.joinedGroups = Util.nullOrDefault(userDAO.joinedGroups, new ArrayList<>());
 
         this.currentCategoryStreaks = new HashMap<>();
         if (userDAO.currentCategoryStreaks != null) {
@@ -213,8 +210,8 @@ public class User {
             }
         }
 
-        this.incomingFriendRequests = new HashSet<>(userDAO.incomingFriendRequests);
+        this.incomingFriendRequests = new HashSet<>(Util.nullOrDefault(userDAO.incomingFriendRequests, new ArrayList<>()));
 
-        this.profilePic = userDAO.profilePic == null ? "" : userDAO.profilePic;
+        this.profilePic = Util.nullOrDefault(userDAO.profilePic, "");
     }
 }
