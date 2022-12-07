@@ -9,19 +9,26 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
 
+// TODO: a lot of these "lists" should really be sets
 public class User {
     private UUID userID;
     private String username;
     private String profilePic;
+
+    // TODO is this even being used?
     private String encryptedPassword;
 
-    // List of the usernames of our friends
+    // List of the IDs of this user's friends
     private List<String> friends;
+
+    // List of IDs of the users who requested to friend this user
+    private Set<String> incomingFriendRequests;
 
     // List of the IDs for the groups we've joined
     private List<UUID> joinedGroups;
@@ -122,6 +129,10 @@ public class User {
 
     public List<String> getFriends() {
         return friends;
+    }
+
+    public Set<String> getIncomingFriendRequests() {
+        return incomingFriendRequests;
     }
 
     public void setFriends(List<String> friends) {

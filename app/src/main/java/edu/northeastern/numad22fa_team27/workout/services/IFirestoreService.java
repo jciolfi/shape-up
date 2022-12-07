@@ -62,4 +62,25 @@ public interface IFirestoreService {
      * @param callback executed on the entry returned by the query
      */
     void getUserByID(String userID, WorkoutCallback callback);
+
+    /**
+     * Try to send a friend request for the given friend
+     * @param friendID ID of the user to friend
+     * @return true if this userID shows up in friend's incoming requests, false otherwise
+     */
+    boolean tryRequestFriend(String friendID);
+
+    /**
+     * Try to accept a friend request
+     * @param friendID ID of user that friended this user
+     * @return true if users are friends, false otherwise
+     */
+    boolean tryAcceptFriendRequest(String friendID);
+
+    /**
+     * Try to remove friend - removes each other from both users' friends list
+     * @param friendID the ID of friend to remove
+     * @return true if users are not friends anymore, false otherwise
+     */
+    boolean tryRemoveFriend(String friendID);
 }

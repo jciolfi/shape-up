@@ -1,39 +1,48 @@
 package edu.northeastern.numad22fa_team27.workout.models.DAO;
 
+import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import edu.northeastern.numad22fa_team27.Util;
 import edu.northeastern.numad22fa_team27.workout.models.User;
-import edu.northeastern.numad22fa_team27.workout.models.WorkoutCategory;
 
 public class UserDAO {
     public String username;
     public List<String> friends;
+    public List<String> incomingFriendRequests;
     public List<String> joinedGroups;
     public Map<String, Pair<Integer, LocalDate>> currentCategoryStreaks;
-    public Map <String, Integer> bestCategoryStreaks;
+    public Map<String, Integer> bestCategoryStreaks;
     public String profilePic;
 
     public UserDAO() {}
 
     public UserDAO(User u) {
-        this.username = u.getUsername();
-        this.friends = u.getFriends();
-        this.joinedGroups = u.getJoinedGroups().stream().map(String::valueOf).collect(Collectors.toList());
+        this.username = Util.nullOrDefault(u.getUsername(), "");
+        this.friends = Util.nullOrDefault(u.getFriends(), new ArrayList<>());
+        this.incomingFriendRequests = new ArrayList<>(
+                Util.nullOrDefault(u.getIncomingFriendRequests(), new HashSet<>()));
+        this.joinedGroups = Util.nullOrDefault(u.getJoinedGroups(), new ArrayList<>()).stream()
+                .map(String::valueOf).collect(Collectors.toList());
 //        this.currentCategoryStreaks = u.getCurrentCategoryStreaks();
 //        this.bestCategoryStreaks = u.getBestCategoryStreaks();
-//        this.profilePic = u.getProfilePic;
+        this.profilePic = Util.nullOrDefault(u.getProfilePic(), "");
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "UserDAO{" +
                 "username='" + username + '\'' +
                 ", friends=" + friends +
+                ", incomingFriendRequests=" + incomingFriendRequests +
                 ", joinedGroups=" + joinedGroups +
                 ", currentCategoryStreaks=" + currentCategoryStreaks +
                 ", bestCategoryStreaks=" + bestCategoryStreaks +
