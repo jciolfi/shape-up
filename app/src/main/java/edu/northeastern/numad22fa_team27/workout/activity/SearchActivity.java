@@ -6,11 +6,14 @@ import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.workout.fragments.GroupSearchFragment;
 import edu.northeastern.numad22fa_team27.workout.fragments.SearchType;
 import edu.northeastern.numad22fa_team27.workout.fragments.UserSearchFragment;
 import edu.northeastern.numad22fa_team27.workout.fragments.WorkoutSearchFragment;
+import edu.northeastern.numad22fa_team27.workout.models.workout_search.NavigationBar;
 
 public class SearchActivity extends AppCompatActivity {
     private static final float selectAlpha = 1.0f;
@@ -27,6 +30,11 @@ public class SearchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+
+        // Set up nav bar
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_toolbar);
+        bottomNav.setSelectedItemId(R.id.nav_search);
+        bottomNav.setOnItemSelectedListener(NavigationBar.setNavListener(this));
 
         // initialize search instances
         groupSearchFragment = new GroupSearchFragment();

@@ -22,18 +22,21 @@ import java.util.List;
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
 import edu.northeastern.numad22fa_team27.workout.models.User;
+import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 
 public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
     private final String TAG = "UserAdapter";
     private final List<User> users;
     private final ViewGroup container;
     private final View searchView;
+    private final FirestoreService firestoreService;
     private final String currentUserID;
 
-    public UserAdapter(List<User> users, ViewGroup container, View searchView, String currentUserID) {
+    public UserAdapter(List<User> users, ViewGroup container, View searchView, FirestoreService firestoreService, String currentUserID) {
         this.users = users;
         this.container = container;
         this.searchView = searchView;
+        this.firestoreService = firestoreService;
         this.currentUserID = currentUserID;
     }
 
@@ -88,8 +91,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
 
             Button actionButton = userInfoDialog.findViewById(R.id.btn_friend_action);
             // if self -> hide positive button
-            if (user.getUserID(true).equals(currentUserID)
-                    || user.getFriends() == null || user.getFriends().isEmpty()) {
+            if (String.valueOf(user.getUserID()).equals(currentUserID) || user.getFriends() == null) {
                 actionButton.setVisibility(View.INVISIBLE);
             } else {
                 actionButton.setVisibility(View.VISIBLE);
@@ -97,16 +99,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
                     // already friends -> change button to remove friend
                     actionButton.setText("Remove");
                     actionButton.setOnClickListener(removeView -> {
-                        // TODO - tryRemoveFriend
-
+                        firestoreService.tryRemoveFriend(String.valueOf(user.getUserID()));
                         closeButton.callOnClick();
                     });
                 } else {
                     // not friends -> change button to add friend
                     actionButton.setText("Add");
                     actionButton.setOnClickListener(addView -> {
-                        // TODO - sendFriendRequest
-
+                        firestoreService.tryRequestFriend(String.valueOf(user.getUserID()));
                         closeButton.callOnClick();
                     });
                 }

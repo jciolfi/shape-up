@@ -181,8 +181,8 @@ public class User {
         return this.bestCategoryStreaks.get(w);
     }
 
-    public Object getUserID(boolean asString) {
-        return asString ? String.valueOf(userID) : userID;
+    public UUID getUserID() {
+        return userID;
     }
 
     public void setUserFromDAO(UserDAO userDAO, String userID) {

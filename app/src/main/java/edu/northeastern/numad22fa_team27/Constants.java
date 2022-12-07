@@ -9,10 +9,14 @@ public class Constants {
     // constants for user collection
     public static final String USERS = "users";
     public static final String FRIENDS = "friends";
+    public static final String USERNAME = "username";
 
     // constants for group collection
     public static final String GROUPS = "groups";
 
     // constants for workout collection
     public static final String WORKOUTS = "workouts";
+    public static final String WORKOUT_NAME = "workoutName";
+    public static final String DIFFICULTY = "difficulty";
+
 }

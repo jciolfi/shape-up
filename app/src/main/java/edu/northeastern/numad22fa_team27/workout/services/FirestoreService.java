@@ -72,7 +72,7 @@ public class FirestoreService implements IFirestoreService {
             // Add workout name filtering
             didFiltering = true;
             collectionQuery = collectionQuery
-                    .orderBy("workoutName")
+                    .orderBy(WORKOUT_NAME)
                     .startAt(workoutName)
                     .endAt(workoutName + "\uf8ff");
 
@@ -88,14 +88,14 @@ public class FirestoreService implements IFirestoreService {
             // Add workout category filtering
             didFiltering = true;
             collectionQuery = collectionQuery
-                    .whereLessThan("difficulty", String.valueOf(workoutCategory));
+                    .whereLessThan(DIFFICULTY, String.valueOf(workoutCategory));
         }
 
         if (minDifficulty > -1) {
             // Add workout category filtering
             didFiltering = true;
             collectionQuery = collectionQuery
-                    .whereGreaterThan("difficulty", String.valueOf(workoutCategory));
+                    .whereGreaterThan(DIFFICULTY, String.valueOf(workoutCategory));
         }
 
         if (resultLimit > 0) {
@@ -122,7 +122,7 @@ public class FirestoreService implements IFirestoreService {
         }
 
         firestoreDB.collection(USERS)
-                .orderBy("username")
+                .orderBy(USERNAME)
                 .startAt(username)
                 .endAt(username + "\uf8ff")
                 .get()
@@ -172,6 +172,11 @@ public class FirestoreService implements IFirestoreService {
 
     @Override
     public void findStreaksLeaderboard(WorkoutCategory category, WorkoutCallback callback) {
+        if (category == null) {
+            warnBadParam("findStreaksLeaderboard");
+            return;
+        }
+
         firestoreDB.collection(USERS)
                 .orderBy(String.format("bestCategoryStreaks.%s", category), Query.Direction.DESCENDING)
                 .limit(100L)

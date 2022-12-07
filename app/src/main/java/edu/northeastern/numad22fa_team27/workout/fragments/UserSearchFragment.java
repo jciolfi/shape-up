@@ -70,7 +70,7 @@ public class UserSearchFragment extends Fragment {
         userRV.setLayoutManager(new LinearLayoutManager(searchView.getContext()));
         FirebaseUser userAuth = FirebaseAuth.getInstance().getCurrentUser();
         String currentUserID = userAuth == null ? "" : userAuth.getUid();
-        userRV.setAdapter(new UserAdapter(displayUsers, container, searchView, currentUserID));
+        userRV.setAdapter(new UserAdapter(displayUsers, container, searchView, firestoreService, currentUserID));
 
         return searchView;
     }
