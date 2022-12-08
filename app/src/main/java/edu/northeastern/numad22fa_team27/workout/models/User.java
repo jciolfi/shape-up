@@ -4,7 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -219,7 +221,11 @@ public class User {
         this.currentCategoryStreaks = new HashMap<>();
         if (userDAO.currentCategoryStreaks != null) {
             for (String category : userDAO.currentCategoryStreaks.keySet()) {
-                this.currentCategoryStreaks.put(WorkoutCategory.toCategory(category), userDAO.currentCategoryStreaks.get(category));
+                Pair<Integer, Long> info = userDAO.currentCategoryStreaks.get(category);
+                this.currentCategoryStreaks.put(
+                        WorkoutCategory.toCategory(category),
+                        new Pair<>(info.first, Instant.ofEpochSecond(info.second).atZone(ZoneId.systemDefault()).toLocalDate())
+                );
             }
         }
 

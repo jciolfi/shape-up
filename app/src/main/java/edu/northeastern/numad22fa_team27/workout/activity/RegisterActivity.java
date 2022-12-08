@@ -22,6 +22,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.regex.Matcher;
@@ -102,9 +103,14 @@ public class RegisterActivity extends AppCompatActivity {
                                 pb.setVisibility(View.INVISIBLE);
                                 showMainPage();
                             } else {
-                                // If registration not successful that means there is a user with this credentials in our DB
-                                Toast.makeText(RegisterActivity.this, "User already exists! Please log in.", Toast.LENGTH_SHORT).show();
-                                Util.openActivity(RegisterActivity.this, LoginActivity.class);
+                                pb.setVisibility(View.INVISIBLE);
+                                if (task.getException() instanceof FirebaseAuthUserCollisionException) {
+                                    Toast.makeText(RegisterActivity.this, "This user already exists! Please log in.", Toast.LENGTH_LONG).show();
+                                    Util.openActivity(RegisterActivity.this, LoginActivity.class);
+                                } else {
+                                    // Report whatever the error is and let the user figure out what to do
+                                    Toast.makeText(RegisterActivity.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                                }
                             }
                         });
                     } else {

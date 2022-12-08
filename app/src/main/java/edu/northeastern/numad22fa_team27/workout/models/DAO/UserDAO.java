@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,7 +20,7 @@ public class UserDAO {
     public List<String> friends;
     public List<String> incomingFriendRequests;
     public List<String> joinedGroups;
-    public Map<String, Pair<Integer, LocalDate>> currentCategoryStreaks;
+    public Map<String, Pair<Integer, Long>> currentCategoryStreaks;
     public Map<String, Integer> bestCategoryStreaks;
     public Map<String, Integer> workoutCompletions;
     public String profilePic;
@@ -33,9 +34,10 @@ public class UserDAO {
                 Util.nullOrDefault(u.getIncomingFriendRequests(), new HashSet<>()));
         this.joinedGroups = Util.nullOrDefault(u.getJoinedGroups(), new ArrayList<>()).stream()
                 .map(String::valueOf).collect(Collectors.toList());
-//        this.currentCategoryStreaks = u.getCurrentCategoryStreaks();
 
         // Load streak category information
+        this.currentCategoryStreaks = u.getCurrentCategoryStreaks().entrySet().stream()
+                .collect(Collectors.toMap((entry) -> entry.getKey().name(), (entry) -> new Pair<>(entry.getValue().first, entry.getValue().second.atStartOfDay(ZoneId.systemDefault()).toEpochSecond())));
         this.bestCategoryStreaks = u.getBestCategoryStreaks().entrySet().stream()
                 .collect(Collectors.toMap((entry) -> entry.getKey().name(), (entry) -> entry.getValue()));
         this.workoutCompletions = u.getWorkoutCompletions();
