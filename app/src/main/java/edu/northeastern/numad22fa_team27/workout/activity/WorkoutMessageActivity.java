@@ -34,11 +34,13 @@ import edu.northeastern.numad22fa_team27.spotify.spotifyviews.TrackInfo;
 import edu.northeastern.numad22fa_team27.sticker_messenger.models.MessageInfo;
 import edu.northeastern.numad22fa_team27.workout.adapters.MessageAdapter;
 import edu.northeastern.numad22fa_team27.workout.adapters.MessageCard;
+import edu.northeastern.numad22fa_team27.workout.adapters.MessageClickListener;
 import edu.northeastern.numad22fa_team27.workout.adapters.WorkoutClickListener;
 import edu.northeastern.numad22fa_team27.workout.adapters.WorkoutRecAdapter;
 import edu.northeastern.numad22fa_team27.workout.fragments.NewGroupChatFragment;
 import edu.northeastern.numad22fa_team27.workout.models.ChatItem;
 import edu.northeastern.numad22fa_team27.workout.models.ChatItemViewModel;
+import edu.northeastern.numad22fa_team27.workout.models.Message;
 import edu.northeastern.numad22fa_team27.workout.models.Workout;
 
 public class WorkoutMessageActivity extends AppCompatActivity {
@@ -46,7 +48,7 @@ public class WorkoutMessageActivity extends AppCompatActivity {
     //stored data variables
     private String[] friends;
     private String[] chats;
-    private final List<MessageCard> cards = new ArrayList<>();
+    private List<Message> cards;
     private boolean showingSearch = false;
 
     //Activity elements
@@ -65,16 +67,9 @@ public class WorkoutMessageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_workout_message);
 
         //initialize a list of firends
-
+        //and initialize the fragment whe its ready
         setFriends();
 
-
-        //RecyclerView
-        RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
-        chatsRecycler = findViewById(R.id.rcv_chats);
-        chatsRecycler.setHasFixedSize(true);
-        chatsRecycler.setAdapter(new MessageAdapter(cards));
-        chatsRecycler.setLayoutManager(manager);
 
         //Loading icon
         progressBar = findViewById(R.id.pb_loading);
@@ -98,6 +93,13 @@ public class WorkoutMessageActivity extends AppCompatActivity {
             newChatQuery = item;
             toggleSearchFragment(newChatButton);
         });
+
+        //RecyclerView
+        cards = new ArrayList<>();
+        chatsRecycler = findViewById(R.id.rcv_chats);
+
+        setupRecView(chatsRecycler, cards);
+
 
 
         //hold off on thread for now
@@ -140,7 +142,7 @@ public class WorkoutMessageActivity extends AppCompatActivity {
         });
     }
 
-    private void setupRecView(RecyclerView rv, List<Workout> dataset) {
+    private void setupRecView(RecyclerView rv, List<Message> dataset) {
 
         //this is passed to the click listener that is  created
         ActivityResultLauncher<Intent> activityLauncher = registerForActivityResult(
@@ -161,11 +163,11 @@ public class WorkoutMessageActivity extends AppCompatActivity {
                     }
                 });
 
-        WorkoutClickListener clickListener = new WorkoutClickListener(dataset, activityLauncher);
+        MessageClickListener clickListener = new MessageClickListener(dataset, activityLauncher);
 
-        @SuppressLint("WrongConstant") RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
         rv.setHasFixedSize(true);
-        rv.setAdapter(new WorkoutRecAdapter(dataset, clickListener, true));
+        rv.setAdapter(new MessageAdapter(dataset, clickListener));
         rv.setLayoutManager(manager);
 
         Objects.requireNonNull(rv.getAdapter()).notifyDataSetChanged();
