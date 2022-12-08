@@ -44,6 +44,7 @@ public class User implements Summarizeable {
 
     private Map<String, Integer> workoutCompletions;
 
+    // List of chat IDs that the user is a part of
     private List<String> chats;
 
     public User() { }
@@ -169,6 +170,14 @@ public class User implements Summarizeable {
         this.friends = friends;
     }
 
+    public List<String> getChats() {
+        return chats;
+    }
+
+    public void setChats(List<String> chats) {
+        this.chats = chats;
+    }
+
     public List<String> getJoinedGroups() {
         return joinedGroups;
     }
@@ -223,6 +232,8 @@ public class User implements Summarizeable {
 
         this.joinedGroups = Util.nullOrDefault(userDAO.joinedGroups, new ArrayList<>());
 
+        this.chats = userDAO.chats == null ? new ArrayList<>() : userDAO.chats;
+
         this.currentCategoryStreaks = new HashMap<>();
         if (userDAO.currentCategoryStreaks != null) {
             for (String category : userDAO.currentCategoryStreaks.keySet()) {
@@ -256,10 +267,6 @@ public class User implements Summarizeable {
 
     public void setWorkoutCompletions(Map<String, Integer> workoutCompletions) {
         this.workoutCompletions = workoutCompletions;
-    }
-
-    public List<String> getChats() {
-        return chats;
     }
 
     @Override

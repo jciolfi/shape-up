@@ -36,7 +36,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageHolder> {
     }
 
     private void getInfo(MessageHolder h, Message cards) {
-        h.title.setText(cards.getChatID());
+        h.title.setText(cards.getName());
         h.lastMessage.setText(cards.getLastMessage());
     }
 

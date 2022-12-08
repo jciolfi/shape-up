@@ -118,4 +118,6 @@
     <string name="mutual_friends">Mutual Friends:</string>
     <string name="add_friends">Add Friends</string>
     <string name="create">Create</string>
+    <string name="name_chat">Name Chat</string>
+    <string name="new_message">New Message</string>
 </resources>

@@ -54,6 +54,7 @@ public class UserDAO {
                 "username='" + username + '\'' +
                 ", friends=" + friends +
                 ", incomingFriendRequests=" + incomingFriendRequests +
+                ", chats=" + chats +
                 ", joinedGroups=" + joinedGroups +
                 ", currentCategoryStreaks=" + currentCategoryStreaks +
                 ", bestCategoryStreaks=" + bestCategoryStreaks +

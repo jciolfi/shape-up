@@ -20,7 +20,7 @@
         android:windowSoftInputMode="adjustResize"
         tools:targetApi="33">
         <activity
-            android:name=".ReadMeassageActivity"
+            android:name=".workout.activity.ReadMessageActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

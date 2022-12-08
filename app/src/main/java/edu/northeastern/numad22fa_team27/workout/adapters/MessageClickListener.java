@@ -8,8 +8,10 @@ import androidx.activity.result.ActivityResultLauncher;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import edu.northeastern.numad22fa_team27.workout.activity.ReadMessageActivity;
 import edu.northeastern.numad22fa_team27.workout.activity.WorkoutDisplay;
 import edu.northeastern.numad22fa_team27.workout.models.MediaParagraph;
 import edu.northeastern.numad22fa_team27.workout.models.Message;
@@ -31,12 +33,11 @@ public class MessageClickListener {
         Activity source = (Activity) v.getContext();
         //fix the intent so that it goes to a message activity
         //look at the workout click listener to see where it goes and how the intent gets the information
-        Intent intent = new Intent(source, WorkoutDisplay.class);
-        /*intent.putParcelableArrayListExtra("Text", (ArrayList<MediaParagraph>) m.getWorkoutDescription());
-        intent.putExtra("WorkoutId", m.getWorkoutID());
-        intent.putExtra("Difficulty", m.getDifficulty());
-        intent.putExtra("Title", m.getWorkoutName());
-        intent.putExtra("Categories", String.join(", ", m.getCategoriesPresent().stream().map(c -> c.name()).collect(Collectors.toList())));
-        */launcher.launch(intent);
+        Intent intent = new Intent(source, ReadMessageActivity.class);
+
+        intent.putExtra("chatId", m.getChatId());
+        intent.putExtra("title", m.getName());
+
+        launcher.launch(intent);
     }
 }
