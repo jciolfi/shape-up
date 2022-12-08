@@ -96,6 +96,9 @@ public class WorkoutMessageActivity extends AppCompatActivity {
 
         //RecyclerView
         cards = new ArrayList<>();
+        List<String> chathist = new ArrayList<>();
+        chathist.add("firstMessage");
+        cards.add(new Message("test", new ArrayList<>(), chathist));
         chatsRecycler = findViewById(R.id.rcv_chats);
 
         setupRecView(chatsRecycler, cards);

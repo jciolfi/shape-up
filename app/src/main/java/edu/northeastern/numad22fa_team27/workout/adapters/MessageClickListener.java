@@ -30,12 +30,13 @@ public class MessageClickListener {
 
         Activity source = (Activity) v.getContext();
         //fix the intent so that it goes to a message activity
-        //Intent intent = new Intent(source, WorkoutDisplay.class);
+        //look at the workout click listener to see where it goes and how the intent gets the information
+        Intent intent = new Intent(source, WorkoutDisplay.class);
         /*intent.putParcelableArrayListExtra("Text", (ArrayList<MediaParagraph>) m.getWorkoutDescription());
         intent.putExtra("WorkoutId", m.getWorkoutID());
         intent.putExtra("Difficulty", m.getDifficulty());
         intent.putExtra("Title", m.getWorkoutName());
         intent.putExtra("Categories", String.join(", ", m.getCategoriesPresent().stream().map(c -> c.name()).collect(Collectors.toList())));
-        launcher.launch(intent);*/
+        */launcher.launch(intent);
     }
 }
