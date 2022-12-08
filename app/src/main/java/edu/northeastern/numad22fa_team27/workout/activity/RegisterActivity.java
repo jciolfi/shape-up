@@ -12,6 +12,7 @@ import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.text.style.ClickableSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -30,10 +31,11 @@ import java.util.regex.Pattern;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.Util;
+import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
 import edu.northeastern.numad22fa_team27.workout.models.User;
 
 public class RegisterActivity extends AppCompatActivity {
-
+    private static final String TAG = "RegisterActivity";
     private TextView usr_email, usr_pass, usr_pass_confirm;
     private Button sign_up_btn;
     private ProgressBar pb;
@@ -99,9 +101,16 @@ public class RegisterActivity extends AppCompatActivity {
                                 FirebaseFirestore db = FirebaseFirestore.getInstance();
                                 db.collection("users")
                                         .document(user_auth.getCurrentUser().getUid())
-                                        .set(user);
-                                pb.setVisibility(View.INVISIBLE);
-                                showMainPage();
+                                        .set(new UserDAO(user))
+                                        .addOnSuccessListener(task1 -> {
+                                            pb.setVisibility(View.INVISIBLE);
+                                            showMainPage();
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            pb.setVisibility(View.INVISIBLE);
+                                            Log.e(TAG, e.getMessage());
+                                            Toast.makeText(RegisterActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                                        });
                             } else {
                                 pb.setVisibility(View.INVISIBLE);
                                 if (task.getException() instanceof FirebaseAuthUserCollisionException) {

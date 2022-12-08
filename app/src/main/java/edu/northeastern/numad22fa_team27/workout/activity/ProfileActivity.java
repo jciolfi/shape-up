@@ -12,6 +12,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -23,20 +24,26 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import edu.northeastern.numad22fa_team27.Constants;
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.Util;
 import edu.northeastern.numad22fa_team27.workout.adapters.WorkoutClickListener;
 import edu.northeastern.numad22fa_team27.workout.adapters.WorkoutRecAdapter;
+import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
+import edu.northeastern.numad22fa_team27.workout.models.DAO.WorkoutDAO;
+import edu.northeastern.numad22fa_team27.workout.models.User;
 import edu.northeastern.numad22fa_team27.workout.models.Workout;
 import edu.northeastern.numad22fa_team27.workout.models.workout_search.NavigationBar;
 import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 import edu.northeastern.numad22fa_team27.workout.services.RecommendationService;
 
 public class ProfileActivity extends AppCompatActivity {
+    private static final String TAG = "ProfileActivity";
     private FirebaseAuth user_auth;
     private Button settingsBtn, friendsBtn, completedWorkoutsBtn;
     private ImageView profilePic;
@@ -97,6 +104,32 @@ public class ProfileActivity extends AppCompatActivity {
                         } else {
                             Toast.makeText(this, "Okay, maybe next time.", Toast.LENGTH_LONG).show();
                         }
+
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        db.collection(Constants.WORKOUTS).document(workoutId).get().addOnSuccessListener(
+                            ds -> {
+                                Workout w = new Workout(ds.toObject(WorkoutDAO.class));
+                                db.collection(Constants.USERS)
+                                        .document(user_auth.getUid())
+                                        .get()
+                                        .addOnSuccessListener(
+                                            ds1 -> {
+                                                User self = new User(ds1.toObject(UserDAO.class), user_auth.getUid());
+                                                self.recordWorkout(w, LocalDate.now());
+                                                db.collection(Constants.USERS)
+                                                        .document(user_auth.getUid())
+                                                        .set(new UserDAO(self))
+                                                        .addOnFailureListener(e -> {
+                                                            Log.e(TAG, e.getMessage());
+                                                        });
+                                            }
+                                ).addOnFailureListener(e -> {
+                                    Log.e(TAG, e.getMessage());
+                                });
+                            }
+                        ).addOnFailureListener(e -> {
+                            Log.e(TAG, e.getMessage());
+                        });
 
                         // TODO: Update user
                     }
