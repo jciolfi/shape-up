@@ -17,6 +17,7 @@ import java.util.Set;
 
 import edu.northeastern.numad22fa_team27.Util;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
+import edu.northeastern.numad22fa_team27.workout.utilities.StoreablePair;
 
 // TODO: a lot of these "lists" should really be sets
 public class User {
@@ -221,10 +222,10 @@ public class User {
         this.currentCategoryStreaks = new HashMap<>();
         if (userDAO.currentCategoryStreaks != null) {
             for (String category : userDAO.currentCategoryStreaks.keySet()) {
-                Pair<Integer, Long> info = userDAO.currentCategoryStreaks.get(category);
+                StoreablePair<Integer, Long> info = userDAO.currentCategoryStreaks.get(category);
                 this.currentCategoryStreaks.put(
                         WorkoutCategory.toCategory(category),
-                        new Pair<>(info.first, Instant.ofEpochSecond(info.second).atZone(ZoneId.systemDefault()).toLocalDate())
+                        new Pair<>(info.getFirst(), Instant.ofEpochSecond(info.getSecond()).atZone(ZoneId.systemDefault()).toLocalDate())
                 );
             }
         }

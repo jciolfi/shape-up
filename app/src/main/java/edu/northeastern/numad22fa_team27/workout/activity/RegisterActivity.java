@@ -53,7 +53,6 @@ public class RegisterActivity extends AppCompatActivity {
         pb = findViewById(R.id.progressbar_register);
         user_auth = FirebaseAuth.getInstance();
 
-
         registerButtonClicked();
 
         // Specify the part of the test where user can click to register an account
@@ -86,54 +85,55 @@ public class RegisterActivity extends AppCompatActivity {
             String pass_confirm = usr_pass_confirm.getText().toString();
 
             // Checks the empty Fields
-            boolean isNotEmptyField = !TextUtils.isEmpty(email)
-                                      && !TextUtils.isEmpty(pass)
-                                      && !TextUtils.isEmpty(pass_confirm);
-            if (isEmailValid(email)) {
-                // If the fields are not empty
-                if (isNotEmptyField) {
-                    // if the pass and pass_confirm matches
-                    if (pass.equals(pass_confirm)) {
-                        pb.setVisibility(View.VISIBLE);
-                        user_auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                User user = new User(email, "");
-                                FirebaseFirestore db = FirebaseFirestore.getInstance();
-                                db.collection("users")
-                                        .document(user_auth.getCurrentUser().getUid())
-                                        .set(new UserDAO(user))
-                                        .addOnSuccessListener(task1 -> {
-                                            pb.setVisibility(View.INVISIBLE);
-                                            showMainPage();
-                                        })
-                                        .addOnFailureListener(e -> {
-                                            pb.setVisibility(View.INVISIBLE);
-                                            Log.e(TAG, e.getMessage());
-                                            Toast.makeText(RegisterActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
-                                        });
-                            } else {
-                                pb.setVisibility(View.INVISIBLE);
-                                if (task.getException() instanceof FirebaseAuthUserCollisionException) {
-                                    Toast.makeText(RegisterActivity.this, "This user already exists! Please log in.", Toast.LENGTH_LONG).show();
-                                    Util.openActivity(RegisterActivity.this, LoginActivity.class);
-                                } else {
-                                    // Report whatever the error is and let the user figure out what to do
-                                    Toast.makeText(RegisterActivity.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                                }
-                            }
-                        });
-                    } else {
-                        pb.setVisibility(View.INVISIBLE);
-                        Toast.makeText(RegisterActivity.this, "Passwords doesn't match! Please Try again.", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(RegisterActivity.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
-                }
-            } else {
+            boolean isEmptyField = TextUtils.isEmpty(email)
+                    || TextUtils.isEmpty(pass)
+                    || TextUtils.isEmpty(pass_confirm);
+
+            if (!isEmailValid(email)) {
                 Toast.makeText(RegisterActivity.this, "Please enter a valid email address!", Toast.LENGTH_SHORT).show();
+                return;
             }
 
-        });
+            // If the fields are not empty
+            if (isEmptyField) {
+                Toast.makeText(RegisterActivity.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // if the pass and pass_confirm matches
+            if (!pass.equals(pass_confirm)) {
+                pb.setVisibility(View.INVISIBLE);
+                Toast.makeText(RegisterActivity.this, "Passwords doesn't match! Please Try again.", Toast.LENGTH_SHORT).show();
+            }
+
+            pb.setVisibility(View.VISIBLE);
+            user_auth.createUserWithEmailAndPassword(email, pass)
+                    .addOnSuccessListener(result -> {
+                        User user = new User(email, "");
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        db.collection("users")
+                                .document(user_auth.getCurrentUser().getUid())
+                                .set(new UserDAO(user))
+                                .addOnSuccessListener(task1 -> {
+                                    pb.setVisibility(View.INVISIBLE);
+                                    showMainPage();
+                                })
+                                .addOnFailureListener(e -> {
+                                    pb.setVisibility(View.INVISIBLE);
+                                    Log.e(TAG, e.getMessage());
+                                    Toast.makeText(RegisterActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                                });
+                    }).addOnFailureListener(exception -> {
+                        pb.setVisibility(View.INVISIBLE);
+                        if (exception instanceof FirebaseAuthUserCollisionException) {
+                            Toast.makeText(RegisterActivity.this, "This user already exists! Please log in.", Toast.LENGTH_LONG).show();
+                            Util.openActivity(RegisterActivity.this, LoginActivity.class);
+                        } else {
+                            // Report whatever the error is and let the user figure out what to do
+                            Toast.makeText(RegisterActivity.this, exception.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
+            });
     }
 
     public void showMainPage() {

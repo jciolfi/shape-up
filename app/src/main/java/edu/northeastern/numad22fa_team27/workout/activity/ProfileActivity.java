@@ -41,6 +41,7 @@ import edu.northeastern.numad22fa_team27.workout.models.Workout;
 import edu.northeastern.numad22fa_team27.workout.models.workout_search.NavigationBar;
 import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 import edu.northeastern.numad22fa_team27.workout.services.RecommendationService;
+import edu.northeastern.numad22fa_team27.workout.utilities.UserUtil;
 
 public class ProfileActivity extends AppCompatActivity {
     private static final String TAG = "ProfileActivity";
@@ -109,23 +110,14 @@ public class ProfileActivity extends AppCompatActivity {
                         db.collection(Constants.WORKOUTS).document(workoutId).get().addOnSuccessListener(
                             ds -> {
                                 Workout w = new Workout(ds.toObject(WorkoutDAO.class));
+                                User self = UserUtil.getInstance().getUser();
+                                self.recordWorkout(w, LocalDate.now());
                                 db.collection(Constants.USERS)
                                         .document(user_auth.getUid())
-                                        .get()
-                                        .addOnSuccessListener(
-                                            ds1 -> {
-                                                User self = new User(ds1.toObject(UserDAO.class), user_auth.getUid());
-                                                self.recordWorkout(w, LocalDate.now());
-                                                db.collection(Constants.USERS)
-                                                        .document(user_auth.getUid())
-                                                        .set(new UserDAO(self))
-                                                        .addOnFailureListener(e -> {
-                                                            Log.e(TAG, e.getMessage());
-                                                        });
-                                            }
-                                ).addOnFailureListener(e -> {
-                                    Log.e(TAG, e.getMessage());
-                                });
+                                        .set(new UserDAO(self))
+                                        .addOnFailureListener(e -> {
+                                            Log.e(TAG, e.getMessage());
+                                        });
                             }
                         ).addOnFailureListener(e -> {
                             Log.e(TAG, e.getMessage());

@@ -14,13 +14,14 @@ import java.util.stream.Collectors;
 
 import edu.northeastern.numad22fa_team27.Util;
 import edu.northeastern.numad22fa_team27.workout.models.User;
+import edu.northeastern.numad22fa_team27.workout.utilities.StoreablePair;
 
 public class UserDAO {
     public String username;
     public List<String> friends;
     public List<String> incomingFriendRequests;
     public List<String> joinedGroups;
-    public Map<String, Pair<Integer, Long>> currentCategoryStreaks;
+    public Map<String, StoreablePair<Integer, Long>> currentCategoryStreaks;
     public Map<String, Integer> bestCategoryStreaks;
     public Map<String, Integer> workoutCompletions;
     public String profilePic;
@@ -37,7 +38,7 @@ public class UserDAO {
 
         // Load streak category information
         this.currentCategoryStreaks = u.getCurrentCategoryStreaks().entrySet().stream()
-                .collect(Collectors.toMap((entry) -> entry.getKey().name(), (entry) -> new Pair<>(entry.getValue().first, entry.getValue().second.atStartOfDay(ZoneId.systemDefault()).toEpochSecond())));
+                .collect(Collectors.toMap((entry) -> entry.getKey().name(), (entry) -> new StoreablePair<>(entry.getValue().first, entry.getValue().second.atStartOfDay(ZoneId.systemDefault()).toEpochSecond())));
         this.bestCategoryStreaks = u.getBestCategoryStreaks().entrySet().stream()
                 .collect(Collectors.toMap((entry) -> entry.getKey().name(), (entry) -> entry.getValue()));
         this.workoutCompletions = u.getWorkoutCompletions();
