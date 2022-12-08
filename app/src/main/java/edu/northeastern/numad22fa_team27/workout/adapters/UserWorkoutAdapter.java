@@ -6,6 +6,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,11 +41,11 @@ public class UserWorkoutAdapter extends RecyclerView.Adapter<UserWorkoutHolder> 
 
         h.workoutName.setText(cards.getWorkout().getWorkoutName());
         h.categoryName.setText(categories);
-        h.workoutProgress.setMax(100);
-        h.workoutProgress.setProgress(cards.getCompletionPercentage());
-        h.workoutProgress.invalidate();
-
-        h.workoutProgressText.setText(String.format("%d%%", cards.getCompletionPercentage()));
+        Picasso.get()
+            .load(cards.getCoverURL())
+            .resize(256, 256)
+            .centerCrop()
+            .into(h.workoutImage);
         h.numBadges.setText(String.format("x%d", cards.getTimesCompleted()));
     }
 
