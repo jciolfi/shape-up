@@ -8,6 +8,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <EditText
+            android:id="@+id/txt_name_chat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="32dp"
+            android:text="@string/name_chat"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/spn_friends"
+            app:layout_constraintTop_toTopOf="parent"/>
+
         <Spinner
             android:id="@+id/spn_friends"
             android:layout_width="0dp"
@@ -18,7 +32,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintEnd_toStartOf="@+id/btn_add_friend"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/txt_name_chat" />
         <Button
             android:id="@+id/btn_add_friend"
             android:layout_width="wrap_content"
@@ -28,7 +42,7 @@
             android:layout_marginHorizontal="16dp"
             android:text="@string/add"
             app:layout_constraintBottom_toTopOf="@+id/txt_added_friends"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txt_name_chat"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/spn_friends"
             app:layout_constraintVertical_bias="1.0" />

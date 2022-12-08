@@ -9,26 +9,33 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.spotify.SearchItemViewModel;
 import edu.northeastern.numad22fa_team27.workout.models.ChatItem;
 import edu.northeastern.numad22fa_team27.workout.models.ChatItemViewModel;
+import edu.northeastern.numad22fa_team27.workout.models.Message;
 
 public class NewGroupChatFragment extends Fragment {
-    private String[] listOfFriends; // this is the current list of friends of the user
+    private String[][] listOfFriends; // this is the current list of friends of the userid
     private String[] addedArray; // this will go with the text view
     private ChatItemViewModel viewModel;
+    private String userId;
 
-    public NewGroupChatFragment(String[] listOfFriends) {
+    public NewGroupChatFragment(String userId, String[][] listOfFriends) {
         //requrired empty public constructor
         //add here list of friends of users?
         this.listOfFriends = listOfFriends;
+        this.userId = userId;
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,10 +51,13 @@ public class NewGroupChatFragment extends Fragment {
 
         viewModel = new ViewModelProvider(requireActivity()).get(ChatItemViewModel.class);
 
+        //Name of chat
+        EditText nameChat = newGroupChatView.findViewById(R.id.txt_name_chat);
+
         //Friends spinner
         Spinner friends = newGroupChatView.findViewById(R.id.spn_friends);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(newGroupChatView.getContext(),
-                android.R.layout.simple_spinner_item, listOfFriends);
+                android.R.layout.simple_spinner_item, listOfFriends[1]);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         friends.setAdapter(adapter);
         friends.setSelection(0);
@@ -86,9 +96,20 @@ public class NewGroupChatFragment extends Fragment {
                 addedFriends.setError("Please add one more friend");
                 return;
             }
+            List<String> chatUserids = new ArrayList<>();
+            chatUserids.add(userId);
+            for (String s: listOfFriends[0]) {
+                chatUserids.add(s);
+            }
+
+            Message message = new Message("unknown", nameChat.getText().toString(), chatUserids);
+
             friends.setSelection(0);
             addedFriends.setText("Add Friends");
-            viewModel.selectItem(new ChatItem(addedArray));
+            viewModel.selectItem(message);
+
+
+
 
             //
             /*InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
