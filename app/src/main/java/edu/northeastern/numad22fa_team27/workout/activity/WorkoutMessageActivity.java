@@ -20,6 +20,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -33,8 +34,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -67,6 +70,8 @@ public class WorkoutMessageActivity extends AppCompatActivity {
     private Message newChatQuery;
     Thread recThread;
     FirebaseFirestore firestore;
+    private String newChatId = "";
+    private List<String> eachMember;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +106,60 @@ public class WorkoutMessageActivity extends AppCompatActivity {
             Log.v(TAG, "newChat");
             newChatQuery = item;
             //create the new message
+            Map<String, Object> newMessage = new HashMap<>();
+            newMessage.put("title", item.getName());
+            newMessage.put("members", item.getChatMembers());
+            newMessage.put("messages", item.getChatHistory());
+
+            //public items to be set for the on succes listener because the don't allow var
+            eachMember = item.getChatMembers();
+            
+            firestore.collection("messages")
+                    .add(newMessage)
+                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+                            Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId());
+
+                            newChatId = documentReference.getId();
+                            chats.add(newChatId.trim());
+
+                            for (String s : eachMember) {
+                                FirebaseFirestore
+                                        .getInstance()
+                                        .collection("users")
+                                        .document(s.trim())
+                                        .get()
+                                        .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        List<String> userChats = new ArrayList<>();
+                                        try {
+                                            userChats = (List<String>) documentSnapshot
+                                                    .getData()
+                                                    .get("chats");
+                                        } catch (NullPointerException e) {
+                                            //don't need to do anything will create a new chat
+                                        }
+                                        userChats.add(newChatId);
+                                        Map<String, Object> newInput = new HashMap<>();
+                                        newInput.put("chats", userChats);
+
+                                        firestore.collection("user")
+                                                .document(s.trim())
+                                                .set(newInput, SetOptions.merge());
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w(TAG, "Error writing document", e);
+                                    }
+                                });;
+                            }
+                        }
+                    });
+            cards.add(new Message(newChatId, item.getName(), item.getChatMembers(), item.getChatHistory()));
+            chatsRecycler.getAdapter().notifyDataSetChanged();
 
             toggleSearchFragment(newChatButton);
         });
