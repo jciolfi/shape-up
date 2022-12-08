@@ -24,10 +24,6 @@ public class NavigationBar {
                             intent = new Intent(context, ProfileActivity.class);
                             context.startActivity(intent);
                             break;
-                        case R.id.nav_search:
-                            intent = new Intent(context, SearchActivity.class);
-                            context.startActivity(intent);
-                            break;
                         case R.id.nav_groups:
                             intent = new Intent(context, UserGroupsActivity.class);
                             context.startActivity(intent);

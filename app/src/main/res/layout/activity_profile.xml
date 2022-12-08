@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/md_theme_light_background"
+    android:backgroundTint="@color/md_theme_light_background"
+    android:elevation="0dp"
+    android:theme="@style/Theme.NUMAD22Fa_Team27">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:layout_weight="1"
         android:fillViewport="true">
 
@@ -42,7 +45,6 @@
                         android:id="@+id/cardView"
                         android:layout_width="80dp"
                         android:layout_height="80dp"
-                        android:paddingLeft="8dp"
                         app:cardCornerRadius="60dp"
                         app:cardPreventCornerOverlap="false">
 
@@ -60,7 +62,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:minHeight="48dp"
-                        android:paddingLeft="8dp">
+                        android:paddingStart="8dp">
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chip_workouts"
@@ -97,7 +99,7 @@
 
                 </LinearLayout>
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/new_workouts_title2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -115,7 +117,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/rec_workouts" />
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/new_workouts_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -173,18 +175,49 @@
                     app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_toolbar"
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:id="@+id/bottomAppBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/md_theme_light_onBackground"
+        android:layout_gravity="bottom"
+        android:gravity="bottom"
         android:visibility="visible"
-        app:menu="@menu/bottom_toolbar">
+        app:elevation="8dp"
+        app:fabAlignmentMode="center"
+        app:fabAnchorMode="cradle"
+        app:fabAnimationMode="scale"
+        app:hideOnScroll="true"
+        app:layout_scrollFlags="scroll|enterAlways"
+        app:removeEmbeddedFabElevation="false">
 
-    </com.google.android.material.bottomnavigation.BottomNavigationView>
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/navigation"
+            style="@style/Widget.MaterialComponents.BottomNavigationView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:visibility="visible"
+            app:backgroundTint="#00FFFBFE"
+            app:elevation="0dp"
+            app:menu="@menu/bottom_toolbar_left" />
 
-</LinearLayout>
+    </com.google.android.material.bottomappbar.BottomAppBar>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/searchButton"
+        style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton.Icon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/search"
+        android:tint="@color/md_theme_light_onPrimary"
+        android:visibility="visible"
+        app:backgroundTint="@color/md_theme_light_primary"
+        app:elevation="0dp"
+        app:layout_anchor="@id/bottomAppBar"
+        app:layout_insetEdge="none"
+        app:srcCompat="@drawable/search_icon" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

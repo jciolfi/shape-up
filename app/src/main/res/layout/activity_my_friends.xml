@@ -16,7 +16,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/bottom_toolbar"
+        app:menu="@menu/bottom_toolbar_right"
         tools:ignore="MissingConstraints" />
 
     <androidx.recyclerview.widget.RecyclerView

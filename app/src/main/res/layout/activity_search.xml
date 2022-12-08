@@ -39,7 +39,7 @@
                 android:alpha="0.3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/group_icon"
+                app:srcCompat="@drawable/groups_icon"
                 android:contentDescription="@string/search_for_groups" />
 
             <ImageView
@@ -94,7 +94,7 @@
         android:layout_height="wrap_content"
         android:backgroundTint="@color/md_theme_light_onBackground"
         android:visibility="visible"
-        app:menu="@menu/bottom_toolbar">
+        app:menu="@menu/bottom_toolbar_right">
 
     </com.google.android.material.bottomnavigation.BottomNavigationView>
 

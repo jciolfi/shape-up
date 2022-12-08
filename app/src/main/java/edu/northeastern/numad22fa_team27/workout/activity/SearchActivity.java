@@ -32,9 +32,9 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search);
 
         // Set up nav bar
-        BottomNavigationView bottomNav = findViewById(R.id.bottom_toolbar);
-        bottomNav.setSelectedItemId(R.id.nav_search);
-        bottomNav.setOnItemSelectedListener(NavigationBar.setNavListener(this));
+        //BottomNavigationView bottomNav = findViewById(R.id.bottom_toolbar);
+        //bottomNav.setSelectedItemId(R.id.nav_search);
+        //bottomNav.setOnItemSelectedListener(NavigationBar.setNavListener(this));
 
         // initialize search instances
         groupSearchFragment = new GroupSearchFragment();
