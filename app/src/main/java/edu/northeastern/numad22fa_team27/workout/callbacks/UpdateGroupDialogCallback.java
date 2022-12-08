@@ -14,7 +14,7 @@ import edu.northeastern.numad22fa_team27.workout.models.DAO.GroupDAO;
 import edu.northeastern.numad22fa_team27.workout.models.Group;
 import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 
-public class GetGroupByIDCallback extends WorkoutCallback {
+public class UpdateGroupDialogCallback extends WorkoutCallback {
     private final Group group;
     private final String currentUserID;
     private final Button actionButton;
@@ -22,7 +22,7 @@ public class GetGroupByIDCallback extends WorkoutCallback {
     private final Dialog groupInfoDialog;
     private final FirestoreService firestoreService;
 
-    public GetGroupByIDCallback(Group group, String currentUserID, Button actionButton, View searchView, Dialog groupInfoDialog, FirestoreService firestoreService) {
+    public UpdateGroupDialogCallback(Group group, String currentUserID, Button actionButton, View searchView, Dialog groupInfoDialog, FirestoreService firestoreService) {
         this.group = group;
         this.currentUserID = currentUserID;
         this.actionButton = actionButton;

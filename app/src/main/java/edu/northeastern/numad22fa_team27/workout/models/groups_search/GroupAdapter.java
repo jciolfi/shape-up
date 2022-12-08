@@ -1,7 +1,6 @@
 package edu.northeastern.numad22fa_team27.workout.models.groups_search;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +8,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -19,8 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.northeastern.numad22fa_team27.R;
-import edu.northeastern.numad22fa_team27.Util;
-import edu.northeastern.numad22fa_team27.workout.callbacks.GetGroupByIDCallback;
+import edu.northeastern.numad22fa_team27.workout.callbacks.UpdateGroupDialogCallback;
 import edu.northeastern.numad22fa_team27.workout.callbacks.GetUserByIDCallback;
 import edu.northeastern.numad22fa_team27.workout.models.Group;
 import edu.northeastern.numad22fa_team27.workout.models.User;
@@ -102,7 +99,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupViewHolder> {
             });
 
             Button actionButton = groupInfoDialog.findViewById(R.id.btn_join_group);
-            firestoreService.getGroupByID(group.getGroupID(), new GetGroupByIDCallback(
+            firestoreService.getGroupByID(group.getGroupID(), new UpdateGroupDialogCallback(
                     group, currentUser.getUserID(), actionButton, searchView, groupInfoDialog, firestoreService));
 
 //            /** Logic overview

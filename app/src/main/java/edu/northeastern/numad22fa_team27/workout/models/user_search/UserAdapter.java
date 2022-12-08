@@ -13,6 +13,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
@@ -30,14 +33,17 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
     private final FirestoreService firestoreService;
     private final User currentUser = new User();
 
-    public UserAdapter(List<User> users, ViewGroup container, View searchView, FirestoreService firestoreService, String currentUserID) {
+    public UserAdapter(List<User> users, ViewGroup container, View searchView, FirestoreService firestoreService) {
         this.users = users;
         this.container = container;
         this.searchView = searchView;
         this.firestoreService = firestoreService;
 
         // set current user
-        firestoreService.getUserByID(currentUserID, new GetUserByIDCallback(currentUser));
+        FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (fbUser != null) {
+            firestoreService.getUserByID(fbUser.getUid(), new GetUserByIDCallback(currentUser));
+        }
     }
 
     @NonNull
