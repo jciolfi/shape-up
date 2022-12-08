@@ -149,22 +149,11 @@ public class WorkoutMessageActivity extends AppCompatActivity {
                         .add(R.id.newMessageFragment, chatFragment, "newChat")
                         .hide(chatFragment)
                         .commit();
-
-                /*for(int i = 0; i < string.size(); i++){
-                    DocumentReference reference2 = firestore.collection("users").document(string.get(i));
-                    //this is code to get information on user
-                    reference2.get().addOnCompleteListener(task2 -> {
-                        Object object2 = task.getResult().get("username");
-                        String userName = (String) object2;
-                        friends[1][i] = username;
-
-                    });
-                }*/
+                
                 if (runRecur){
                     for (int i = 0; i < friends[0].length; i++) {
                         recurUserName(i);
                     }
-
                 }
 
 
@@ -175,13 +164,6 @@ public class WorkoutMessageActivity extends AppCompatActivity {
     }
 
     private void recurUserName(int index) {
-
-        /*CollectionReference reference1 = firestore.collection("users");
-        reference1.get().addOnCompleteListener(task -> {
-            Object object = task.getResult();
-            List<DocumentSnapshot> objects2 = task.;
-            int test = 0;
-        });*/
 
         DocumentReference newReference = FirebaseFirestore.getInstance().collection("users").document(friends[0][index]);
         //this is code to get information on user
@@ -197,30 +179,6 @@ public class WorkoutMessageActivity extends AppCompatActivity {
             }
 
         });
-
-
-
-
-        /*if (accum == 0) {
-            //chatFragment = new NewGroupChatFragment(friends[1]);
-            return;
-        } else {
-            *//*String [] added = new String[index];
-            for (int i = 0; i < soFar.length; i++) {
-                added[i] = soFar[i];
-            }*//*
-            //added[soFar.length] =
-            DocumentReference reference = firestore.collection("users").document(friends[0][index]);
-            //this is code to get information on user
-            reference.get().addOnCompleteListener(task -> {
-                Object object = task.getResult().get("username");
-                String userName = (String) object;
-                friends[1][index] = userName;
-                recurUserName(index + 1, accum - 1);
-            });
-
-
-        }*/
     }
 
     private void setupRecView(RecyclerView rv, List<Message> dataset) {
