@@ -81,9 +81,8 @@
                 android:textColor="@color/md_theme_light_onPrimary"
                 android:textColorHint="@color/md_theme_light_inversePrimary" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_login"
-                style="@style/Widget.AppCompat.Button"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_gravity="center"
@@ -91,9 +90,10 @@
                 android:backgroundTint="@color/md_theme_light_onPrimary"
                 android:gravity="center"
                 android:text="@string/log_in_btn"
-                android:textColor="@color/md_theme_light_primary" />
+                android:textColor="@color/md_theme_light_primary"
+                app:cornerRadius="8dp" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_new_account"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="match_parent"

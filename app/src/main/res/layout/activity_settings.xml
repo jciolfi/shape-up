@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -17,16 +17,19 @@
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_toolbar"
+            style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:backgroundTint="@color/md_theme_light_onBackground"
+            android:backgroundTint="@color/md_theme_light_onTertiaryContainer"
+            android:theme="@style/Theme.NUMAD22Fa_Team27"
             android:visibility="visible"
+            app:itemIconTint="@color/md_theme_light_onPrimary"
+            app:itemTextColor="@color/md_theme_light_onPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:menu="@menu/bottom_toolbar"
-            tools:ignore="MissingConstraints" />
+            app:menu="@menu/bottom_toolbar_left" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardViewSetting"
@@ -49,24 +52,26 @@
 
         </androidx.cardview.widget.CardView>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/cancelButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="55dp"
             android:backgroundTint="@color/md_theme_light_primary"
             android:text="@string/cancelBtn"
+            app:cornerRadius="8dp"
             app:layout_constraintEnd_toStartOf="@+id/saveButton"
             app:layout_constraintStart_toStartOf="@+id/editTextNewPass"
             app:layout_constraintTop_toBottomOf="@+id/editTextNewPass" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/saveButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="55dp"
             android:backgroundTint="@color/md_theme_light_primary"
             android:text="@string/saveBtn"
+            app:cornerRadius="8dp"
             app:layout_constraintEnd_toEndOf="@+id/editTextNewPass"
             app:layout_constraintStart_toEndOf="@+id/cancelButton"
             app:layout_constraintTop_toBottomOf="@+id/editTextNewPass" />

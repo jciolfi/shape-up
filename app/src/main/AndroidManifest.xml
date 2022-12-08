@@ -16,7 +16,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Platform.MaterialComponents"
+        android:theme="@style/Theme.NUMAD22Fa_Team27"
         android:windowSoftInputMode="adjustResize"
         tools:targetApi="33">
         <activity

@@ -130,7 +130,7 @@
         android:layout_height="wrap_content"
         android:backgroundTint="@color/md_theme_light_onBackground"
         android:visibility="visible"
-        app:menu="@menu/bottom_toolbar">
+        app:menu="@menu/bottom_toolbar_right">
 
     </com.google.android.material.bottomnavigation.BottomNavigationView>
 
