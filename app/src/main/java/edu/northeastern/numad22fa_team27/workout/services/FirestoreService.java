@@ -46,13 +46,12 @@ public class FirestoreService implements IFirestoreService {
         Group newGroup = new Group(groupName, userID);
 
         firestoreDB.collection(GROUPS)
-                .document(String.valueOf(newGroup.getGroupID()))
+                .document(newGroup.getGroupID())
                 .set(new GroupDAO(newGroup))
                 .addOnSuccessListener(unused1 -> {
-                    this.currentUser.joinedGroups.add(String.valueOf(newGroup.getGroupID()));
                     firestoreDB.collection(USERS)
                             .document(userID)
-                            .update("joinedGroups", this.currentUser.joinedGroups)
+                            .update(JOINED_GROUPS, FieldValue.arrayUnion(newGroup.getGroupID()))
                             .addOnSuccessListener(unused2 -> {
                                 // TODO
                                 Log.d(TAG, String.format("Successfully created group %s", groupName));
@@ -202,7 +201,7 @@ public class FirestoreService implements IFirestoreService {
     @Override
     public boolean tryJoinGroup(String groupID) {
         if (Util.stringIsNullOrEmpty(groupID) || !tryFetchUserDetails()) {
-            warnBadParam("joinGroup");
+            warnBadParam("tryJoinGroup");
             return false;
         } else if (currentUser.joinedGroups.size() >= 10) {
             // not in same line as above to avoid race condition with getting currentUser
@@ -223,7 +222,7 @@ public class FirestoreService implements IFirestoreService {
                         // add user to group
                         firestoreDB.collection(GROUPS)
                                 .document(groupID)
-                                .update("members", FieldValue.arrayUnion(userID))
+                                .update(MEMBERS, FieldValue.arrayUnion(userID))
                                 .addOnFailureListener(e -> {
                                     // hit here if group doesn't exist
                                     success.set(false);
@@ -234,7 +233,7 @@ public class FirestoreService implements IFirestoreService {
                                     // add group to user
                                     firestoreDB.collection(USERS)
                                             .document(userID)
-                                            .update("joinedGroups", FieldValue.arrayUnion(groupID))
+                                            .update(JOINED_GROUPS, FieldValue.arrayUnion(groupID))
                                             .addOnFailureListener(e -> {
                                                 success.set(false);
                                                 logFailure("tryJoinGroup", e.getMessage());
@@ -249,7 +248,7 @@ public class FirestoreService implements IFirestoreService {
     @Override
     public void leaveGroup(String groupID) {
         if (Util.stringIsNullOrEmpty(groupID) || !tryFetchUserDetails()) {
-            warnBadParam("joinGroup");
+            warnBadParam("leaveGroup");
             return;
         }
 
@@ -264,13 +263,13 @@ public class FirestoreService implements IFirestoreService {
                     if (groupDAO != null && !groupDAO.adminID.equals(userID)) {
                         firestoreDB.collection(GROUPS)
                                 .document(groupID)
-                                .update("members", FieldValue.arrayRemove(userID))
+                                .update(MEMBERS, FieldValue.arrayRemove(userID))
                                 .addOnFailureListener(e -> logFailure("leaveGroup", e.getMessage()));
 
                         // remove group from this user
                         firestoreDB.collection(USERS)
                                 .document(userID)
-                                .update("joinedGroups", FieldValue.arrayRemove(groupID))
+                                .update(JOINED_GROUPS, FieldValue.arrayRemove(groupID))
                                 .addOnFailureListener(e -> logFailure("leaveGroup", e.getMessage()));
                     }
                 })
@@ -294,7 +293,7 @@ public class FirestoreService implements IFirestoreService {
     @Override
     public boolean tryRequestFriend(String friendID) {
         if (Util.stringIsNullOrEmpty(friendID) || !tryFetchUserDetails()) {
-            warnBadParam("joinGroup");
+            warnBadParam("tryRequestFriend");
             return false;
         }
 
@@ -339,7 +338,7 @@ public class FirestoreService implements IFirestoreService {
     @Override
     public boolean tryAcceptFriendRequest(String friendID) {
         if (Util.stringIsNullOrEmpty(friendID) || !tryFetchUserDetails()) {
-            warnBadParam("joinGroup");
+            warnBadParam("tryAcceptFriendRequest");
             return false;
         }
 
@@ -402,7 +401,7 @@ public class FirestoreService implements IFirestoreService {
     @Override
     public boolean tryRejectFriendRequest(String friendID) {
         if (Util.stringIsNullOrEmpty(friendID) || !tryFetchUserDetails()) {
-            warnBadParam("joinGroup");
+            warnBadParam("tryRejectFriendRequest");
             return false;
         }
 
@@ -425,7 +424,7 @@ public class FirestoreService implements IFirestoreService {
     @Override
     public void removeFriend(String friendID) {
         if (Util.stringIsNullOrEmpty(friendID) || !tryFetchUserDetails()) {
-            warnBadParam("joinGroup");
+            warnBadParam("removeFriend");
             return;
         }
 
