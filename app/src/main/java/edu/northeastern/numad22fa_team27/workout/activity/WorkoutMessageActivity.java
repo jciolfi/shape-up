@@ -22,7 +22,9 @@ import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -47,6 +49,7 @@ public class WorkoutMessageActivity extends AppCompatActivity {
 
     //stored data variables
     private String[][] friends;
+    private List<String> usernames = new ArrayList<>();
     private String[] chats;
     private List<Message> cards;
     private boolean showingSearch = false;
@@ -157,8 +160,13 @@ public class WorkoutMessageActivity extends AppCompatActivity {
 
                     });
                 }*/
-                if (runRecur)
-                    recurUserName(0, friends[1].length);
+                if (runRecur){
+                    for (int i = 0; i < friends[0].length; i++) {
+                        recurUserName(i);
+                    }
+
+                }
+
 
             } else {
                 //Toast.makeText(ProfileActivity.this, "Couldn't fetch the profile for the user", Toast.LENGTH_SHORT).show();
@@ -166,17 +174,42 @@ public class WorkoutMessageActivity extends AppCompatActivity {
         });
     }
 
-    private void recurUserName(int index, int accum) {
-        if (accum == 0) {
+    private void recurUserName(int index) {
+
+        /*CollectionReference reference1 = firestore.collection("users");
+        reference1.get().addOnCompleteListener(task -> {
+            Object object = task.getResult();
+            List<DocumentSnapshot> objects2 = task.;
+            int test = 0;
+        });*/
+
+        DocumentReference newReference = FirebaseFirestore.getInstance().collection("users").document(friends[0][index]);
+        //this is code to get information on user
+        newReference.get().addOnCompleteListener(task-> {
+            Object object = task.getResult().get("username");
+            String userName = (String) object;
+            if (object == null) {
+                usernames.add("User Not Found");
+                friends[1][usernames.size() - 1] = usernames.get(usernames.size() - 1);
+            } else {
+                usernames.add(userName);
+                friends[1][usernames.size() - 1] = usernames.get(usernames.size() - 1);
+            }
+
+        });
+
+
+
+
+        /*if (accum == 0) {
             //chatFragment = new NewGroupChatFragment(friends[1]);
             return;
         } else {
-            /*String [] added = new String[index];
+            *//*String [] added = new String[index];
             for (int i = 0; i < soFar.length; i++) {
                 added[i] = soFar[i];
-            }*/
+            }*//*
             //added[soFar.length] =
-
             DocumentReference reference = firestore.collection("users").document(friends[0][index]);
             //this is code to get information on user
             reference.get().addOnCompleteListener(task -> {
@@ -186,7 +219,8 @@ public class WorkoutMessageActivity extends AppCompatActivity {
                 recurUserName(index + 1, accum - 1);
             });
 
-        }
+
+        }*/
     }
 
     private void setupRecView(RecyclerView rv, List<Message> dataset) {
