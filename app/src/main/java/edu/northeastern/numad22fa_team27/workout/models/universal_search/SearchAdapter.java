@@ -39,7 +39,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchHolder> {
         h.searchResultTitle.setText(card.getTitle());
         h.searchResultMiscText.setText(card.getMisc());
 
-        if (card.getImage() != null) {
+        if (card.getImage() != null && !card.getImage().isEmpty()) {
             Picasso.get()
                     .load(card.getImage())
                     .placeholder(R.drawable.workout_icon)

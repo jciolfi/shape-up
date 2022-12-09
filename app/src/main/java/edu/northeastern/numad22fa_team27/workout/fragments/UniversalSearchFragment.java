@@ -30,6 +30,9 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import edu.northeastern.numad22fa_team27.R;
+import edu.northeastern.numad22fa_team27.Util;
+import edu.northeastern.numad22fa_team27.workout.activity.FriendProfileActivity;
+import edu.northeastern.numad22fa_team27.workout.activity.MyFriendsActivity;
 import edu.northeastern.numad22fa_team27.workout.callbacks.FindGroupsCallback;
 import edu.northeastern.numad22fa_team27.workout.callbacks.FindUsersCallback;
 import edu.northeastern.numad22fa_team27.workout.callbacks.FindWorkoutsCallback;
@@ -54,6 +57,10 @@ public class UniversalSearchFragment extends DialogFragment {
                              Bundle savedInstanceState) {
 
         firestoreService = new FirestoreService();
+        AtomicBoolean includeWorkouts = new AtomicBoolean(true);
+        AtomicBoolean includeGroups = new AtomicBoolean(false);
+        AtomicBoolean includeUsers = new AtomicBoolean(false);
+        AtomicBoolean reverseSort = new AtomicBoolean(false);
 
         // Inflate out actual view
         View fragmentView = inflater.inflate(R.layout.fragment_universal_search, container, false);
@@ -66,8 +73,10 @@ public class UniversalSearchFragment extends DialogFragment {
         // Set up search result recycler view
         ActivityResultLauncher<Intent> activityLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
-                result -> {});
-        SearchClickListener clickListener = new SearchClickListener(displayedResults, activityLauncher);
+                result -> {
+
+                });
+        SearchClickListener clickListener = new SearchClickListener(getActivity(), displayedResults, activityLauncher);
 
         searchRV = searchView.findViewById(R.id.search_rv);
         searchRV.setHasFixedSize(true);
@@ -83,11 +92,6 @@ public class UniversalSearchFragment extends DialogFragment {
         for (int i = 0; i < search.getMenu().size(); i++) {
             setMenuItemColor(search.getMenu().getItem(i));
         }
-
-        AtomicBoolean includeWorkouts = new AtomicBoolean(true);
-        AtomicBoolean includeGroups = new AtomicBoolean(false);
-        AtomicBoolean includeUsers = new AtomicBoolean(false);
-        AtomicBoolean reverseSort = new AtomicBoolean(false);
 
         search.setOnMenuItemClickListener(
                 menuItem -> {
