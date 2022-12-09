@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -68,6 +69,7 @@ public class WorkoutMessageActivity extends AppCompatActivity {
 
     //Activity elements
     private RecyclerView chatsRecycler;
+    private FloatingActionButton newChatButton;
     ProgressBar progressBar;
     NewGroupChatFragment chatFragment;
 
@@ -79,6 +81,7 @@ public class WorkoutMessageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workout_message);
+
         cards = new ArrayList<>();
 
         //initialize a list of friends
@@ -93,18 +96,27 @@ public class WorkoutMessageActivity extends AppCompatActivity {
         //New chat fragment
 
         //floating action button
-        FloatingActionButton newChatButton = findViewById(R.id.fab_new_chat);
+        newChatButton = findViewById(R.id.fab_new_chat);
         newChatButton.setOnClickListener(v -> {
-            toggleSearchFragment(newChatButton);
+            toggleSearchFragment();
         });
 
 
         // for the fragment i think
+        incomingInfo();
+
+
+        //RecyclerView
+        chatsRecycler = findViewById(R.id.rcv_chats);
+        setupRecView(chatsRecycler, cards);
+    }
+
+    private void incomingInfo() {
         ChatItemViewModel viewModel = new ViewModelProvider(this).get(ChatItemViewModel.class);
         viewModel.getSelectedItem().observe(this, item -> {
             Log.v(TAG, "newChat");
             if (item.getChatId() == "null" && item.getName() == "null") {
-                toggleSearchFragment(newChatButton);
+                toggleSearchFragment();
                 return;
             }
 
@@ -113,8 +125,8 @@ public class WorkoutMessageActivity extends AppCompatActivity {
             ChatDAO cd = new ChatDAO();
             cd.title = item.getName();
             cd.members = item.getChatMembers();
-            cd.messages = item.getChatHistory();;
-            
+            cd.messages = item.getChatHistory();
+
             firestore.collection(Constants.MESSAGES)
                     .document(item.getChatId())
                     .set(cd)
@@ -146,12 +158,8 @@ public class WorkoutMessageActivity extends AppCompatActivity {
             cards.add(new Message(item.getChatId(), item.getName(), item.getChatMembers(), item.getChatHistory()));
             chatsRecycler.getAdapter().notifyDataSetChanged();
 
-            toggleSearchFragment(newChatButton);
+            toggleSearchFragment();
         });
-
-        //RecyclerView
-        chatsRecycler = findViewById(R.id.rcv_chats);
-        setupRecView(chatsRecycler, cards);
     }
 
     private void setChats() {
@@ -243,6 +251,7 @@ public class WorkoutMessageActivity extends AppCompatActivity {
                 });
     }
 
+
     private void setupRecView(RecyclerView rv, List<Message> dataset) {
         RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
         rv.setHasFixedSize(true);
@@ -278,9 +287,8 @@ public class WorkoutMessageActivity extends AppCompatActivity {
 
     /**
      * Toggle the visibility of the new chat fragment
-     * @param chatButton the add chat floating button at the bottom of the page
      */
-    private void toggleSearchFragment(FloatingActionButton chatButton) {
+    private void toggleSearchFragment() {
         if(chatFragment == null) {
             return;
         }
@@ -289,10 +297,10 @@ public class WorkoutMessageActivity extends AppCompatActivity {
         showingSearch = !showingSearch;
         if (showingSearch) {
             transaction.show(chatFragment);
-            chatButton.setVisibility(View.GONE);
+            newChatButton.setVisibility(View.GONE);
         } else {
             transaction.hide(chatFragment);
-            chatButton.setVisibility(View.VISIBLE);
+            newChatButton.setVisibility(View.VISIBLE);
 
         }
         transaction.commit();
