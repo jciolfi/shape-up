@@ -4,18 +4,55 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group
-        android:id="@+id/currencies">
+        android:id="@+id/searchMenuSearchGroups"
+        android:checkableBehavior="single"
+        android:menuCategory="container">
         <item
-            android:id="@+id/us"
+            android:id="@+id/search_menu_workout"
+            android:checkable="true"
             android:orderInCategory="1"
-            android:title="US"
+            android:title="Workouts"
             app:showAsAction="never" />
         <item
-            android:id="@+id/tr"
+            android:id="@+id/search_menu_groups"
+            android:checkable="true"
             android:orderInCategory="2"
-            android:title="TR"
+            android:title="Groups"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/search_menu_users"
+            android:checkable="true"
+            android:orderInCategory="3"
+            android:title="Users"
             app:showAsAction="never" />
     </group>
 
+    <group
+        android:id="@+id/searchMenuNameSortGroup">
+        <item
+            android:id="@+id/search_menu_sort_z_a"
+            android:checkable="false"
+            android:title="Name ↑"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/search_menu_sort_a_z"
+            android:checkable="false"
+            android:title="Name ↓"
+            app:showAsAction="never" />
+    </group>
 
+    <group
+        android:id="@+id/searchMenuWorkoutDifficultySortGroup"
+        android:title="Sort">
+        <item
+            android:id="@+id/search_menu_sort_diff_0_5"
+            android:checkable="false"
+            android:title="Difficulty ↑"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/search_menu_sort_diff_5_0"
+            android:checkable="false"
+            android:title="Difficulty ↓"
+            app:showAsAction="never" />
+    </group>
 </menu>
