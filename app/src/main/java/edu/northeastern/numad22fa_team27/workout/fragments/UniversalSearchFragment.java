@@ -25,6 +25,7 @@ import com.google.android.material.search.SearchBar;
 import com.google.android.material.search.SearchView;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -83,7 +84,7 @@ public class UniversalSearchFragment extends DialogFragment {
             setMenuItemColor(search.getMenu().getItem(i));
         }
 
-        AtomicBoolean includeWorkouts = new AtomicBoolean(false);
+        AtomicBoolean includeWorkouts = new AtomicBoolean(true);
         AtomicBoolean includeGroups = new AtomicBoolean(false);
         AtomicBoolean includeUsers = new AtomicBoolean(false);
         AtomicBoolean reverseSort = new AtomicBoolean(false);
@@ -148,18 +149,14 @@ public class UniversalSearchFragment extends DialogFragment {
                 // Trigger a search based on the category we selected.
                 if (includeWorkouts.get()) {
                     firestoreService.findWorkoutsByCriteria(s.toString(), null, -1, -1,
-                            new FindWorkoutsCallback(displayedResults, searchRV), 10);
+                            new FindWorkoutsCallback(displayedResults, searchRV), 10, reverseSort.get());
                 } else if (includeGroups.get()) {
-                    firestoreService.findGroupsByName(s.toString(), new FindGroupsCallback(displayedResults, searchRV));
+                    firestoreService.findGroupsByName(s.toString(), new FindGroupsCallback(displayedResults, searchRV), reverseSort.get());
                 } else if (includeUsers.get()) {
-                    firestoreService.findUsersByUsername(s.toString(), new FindUsersCallback(displayedResults, searchRV));
+                    firestoreService.findUsersByUsername(s.toString(), new FindUsersCallback(displayedResults, searchRV), reverseSort.get());
                 } else {
                     // Invalid state
                     Log.v("XYZ", "Invalid state!");
-                }
-
-                if (reverseSort.get()) {
-
                 }
             }
 

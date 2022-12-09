@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
-        app:cardBackgroundColor="@color/md_theme_light_primaryContainer"
+        app:cardBackgroundColor="@color/md_theme_light_surface"
         app:cardCornerRadius="15dp"
         app:cardElevation="7dp">
 
