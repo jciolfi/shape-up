@@ -1,127 +1,192 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/md_theme_light_background"
+    android:backgroundTint="@color/md_theme_light_background"
+    android:elevation="0dp"
+    android:theme="@style/Theme.NUMAD22Fa_Team27">
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical">
 
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:fillViewport="true">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true">
 
-            <TextView
-                android:id="@+id/title_leaderboard"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:fontFamily="@font/fjalla_one"
-                android:text="@string/leaderboard"
-                android:textSize="26sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.1"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        <!--    <ImageView-->
-        <!--        android:id="@+id/icon_friends"-->
-        <!--        android:layout_width="35dp"-->
-        <!--        android:layout_height="35dp"-->
-        <!--        android:layout_marginTop="16dp"-->
-        <!--        android:layout_marginEnd="32dp"-->
-        <!--        android:alpha="1"-->
-        <!--        android:contentDescription="@string/friends_leaderboard"-->
-        <!--        app:layout_constraintEnd_toStartOf="@+id/icon_globe"-->
-        <!--        app:layout_constraintTop_toTopOf="parent"-->
-        <!--        app:srcCompat="@drawable/user_icon" />-->
-
-        <!--    <ImageView-->
-        <!--        android:id="@+id/icon_globe"-->
-        <!--        android:layout_width="35dp"-->
-        <!--        android:layout_height="35dp"-->
-        <!--        android:layout_marginTop="16dp"-->
-        <!--        android:layout_marginEnd="16dp"-->
-        <!--        android:alpha="0.3"-->
-        <!--        android:contentDescription="@string/global_leaderboard"-->
-        <!--        app:layout_constraintEnd_toEndOf="parent"-->
-        <!--        app:layout_constraintTop_toTopOf="parent"-->
-        <!--        app:srcCompat="@drawable/globe_icon" />-->
-
-            <Spinner
-                android:id="@+id/dropdown_leaderboard_category"
-                android:layout_width="175dp"
-                android:layout_height="48dp"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
-                android:fontFamily="@font/fjalla_one"
-                android:contentDescription="@string/workout_category_dropdown"
-                android:minHeight="48dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/leaderboard_divider" />
-
-            <View
-                android:id="@+id/leaderboard_divider"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
-                android:background="#c0c0c0"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/title_leaderboard" />
+                android:layout_height="match_parent">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_leaderboard"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:fontFamily="@font/fjalla_one"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/dropdown_leaderboard_category"
-                app:layout_constraintVertical_bias="0.0" />
+                <TextView
+                    android:id="@+id/title_leaderboard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="@font/fjalla_one"
+                    android:text="@string/leaderboard"
+                    android:textColor="@color/md_theme_light_onBackground"
+                    android:textSize="26sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/txt_leaderboard_order_by"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:layout_marginEnd="16dp"
-                android:fontFamily="@font/fjalla_one"
-                android:text="@string/order_by"
-                app:layout_constraintEnd_toStartOf="@+id/dropdown_leaderboard_category"
-                app:layout_constraintTop_toBottomOf="@+id/leaderboard_divider" />
+            <!--    <ImageView-->
+            <!--        android:id="@+id/icon_friends"-->
+            <!--        android:layout_width="35dp"-->
+            <!--        android:layout_height="35dp"-->
+            <!--        android:layout_marginTop="16dp"-->
+            <!--        android:layout_marginEnd="32dp"-->
+            <!--        android:alpha="1"-->
+            <!--        android:contentDescription="@string/friends_leaderboard"-->
+            <!--        app:layout_constraintEnd_toStartOf="@+id/icon_globe"-->
+            <!--        app:layout_constraintTop_toTopOf="parent"-->
+            <!--        app:srcCompat="@drawable/user_icon" />-->
 
-            <TextView
-                android:id="@+id/txt_congrats"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="22dp"
-                android:fontFamily="@font/fjalla_one"
-                android:layout_marginEnd="16dp"
-                android:text="@string/congrats"
-                android:textSize="18sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <!--    <ImageView-->
+            <!--        android:id="@+id/icon_globe"-->
+            <!--        android:layout_width="35dp"-->
+            <!--        android:layout_height="35dp"-->
+            <!--        android:layout_marginTop="16dp"-->
+            <!--        android:layout_marginEnd="16dp"-->
+            <!--        android:alpha="0.3"-->
+            <!--        android:contentDescription="@string/global_leaderboard"-->
+            <!--        app:layout_constraintEnd_toEndOf="parent"-->
+            <!--        app:layout_constraintTop_toTopOf="parent"-->
+            <!--        app:srcCompat="@drawable/globe_icon" />-->
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <Spinner
+                    android:id="@+id/dropdown_leaderboard_category"
+                    android:layout_width="175dp"
+                    android:layout_height="48dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:fontFamily="@font/fjalla_one"
+                    android:contentDescription="@string/workout_category_dropdown"
+                    android:minHeight="48dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/leaderboard_divider" />
 
-    </androidx.core.widget.NestedScrollView>
+                <View
+                    android:id="@+id/leaderboard_divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="#c0c0c0"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/title_leaderboard" />
 
-</LinearLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_leaderboard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:fontFamily="@font/fjalla_one"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/dropdown_leaderboard_category"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <TextView
+                    android:id="@+id/txt_leaderboard_order_by"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginEnd="16dp"
+                    android:fontFamily="@font/fjalla_one"
+                    android:text="@string/order_by"
+                    android:textColor="@color/md_theme_light_onBackground"
+                    app:layout_constraintEnd_toStartOf="@+id/dropdown_leaderboard_category"
+                    app:layout_constraintTop_toBottomOf="@+id/leaderboard_divider" />
+
+                <TextView
+                    android:id="@+id/txt_congrats"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="22dp"
+                    android:layout_marginEnd="16dp"
+                    android:fontFamily="@font/fjalla_one"
+                    android:text="@string/congrats"
+                    android:textColor="@color/md_theme_light_onBackground"
+                    android:textSize="18sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </LinearLayout>
+
+    <!-- Begin nav and search bar snippet -->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentSearch"
+        android:name="edu.northeastern.numad22fa_team27.workout.fragments.UniversalSearchFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="2dp"
+        android:visibility="visible"
+        tools:layout="@layout/fragment_universal_search" />
+
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:id="@+id/bottomAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:gravity="bottom"
+        android:visibility="visible"
+        app:elevation="8dp"
+        app:fabAlignmentMode="center"
+        app:fabAnchorMode="cradle"
+        app:fabAnimationMode="scale"
+        app:hideOnScroll="true"
+        app:layout_scrollFlags="scroll|enterAlways"
+        app:removeEmbeddedFabElevation="false">
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/navigation"
+            style="@style/Widget.MaterialComponents.BottomNavigationView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:visibility="visible"
+            app:backgroundTint="#00FFFBFE"
+            app:elevation="0dp"
+            app:menu="@menu/bottom_toolbar" />
+    </com.google.android.material.bottomappbar.BottomAppBar>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/searchButton"
+        style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton.Icon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/search"
+        android:tint="@color/md_theme_light_onPrimary"
+        android:visibility="visible"
+        app:backgroundTint="@color/md_theme_light_primary"
+        app:elevation="8dp"
+        app:layout_anchor="@id/bottomAppBar"
+        app:layout_insetEdge="none"
+        app:srcCompat="@android:drawable/ic_menu_search" />
+    <!-- End nav and search bar snippet -->
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

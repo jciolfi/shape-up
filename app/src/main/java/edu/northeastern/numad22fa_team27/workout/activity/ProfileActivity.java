@@ -81,6 +81,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
             searchHidden.set(!searchHidden.get());
         });
+        // End setup nav bar
 
         // Find all our UI elements
         user_auth = FirebaseAuth.getInstance();

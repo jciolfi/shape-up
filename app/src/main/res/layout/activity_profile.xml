@@ -178,6 +178,7 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
+    <!-- Begin nav and search bar snippet -->
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentSearch"
         android:name="edu.northeastern.numad22fa_team27.workout.fragments.UniversalSearchFragment"
@@ -212,7 +213,6 @@
             app:backgroundTint="#00FFFBFE"
             app:elevation="0dp"
             app:menu="@menu/bottom_toolbar" />
-
     </com.google.android.material.bottomappbar.BottomAppBar>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -228,5 +228,6 @@
         app:layout_anchor="@id/bottomAppBar"
         app:layout_insetEdge="none"
         app:srcCompat="@android:drawable/ic_menu_search" />
+    <!-- End nav and search bar snippet -->
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
