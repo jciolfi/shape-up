@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,6 +39,7 @@ import javax.annotation.Nullable;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.Util;
+import edu.northeastern.numad22fa_team27.workout.models.universal_search.NavigationBar;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -54,6 +56,11 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+
+        // Set up a subset of the nav bar
+        BottomNavigationView bottomNav = findViewById(R.id.navigation);
+        bottomNav.setSelectedItemId(R.id.nav_profile);
+        bottomNav.setOnItemSelectedListener(NavigationBar.setNavListener(this));
 
         imageView = findViewById(R.id.profilePic);
         saveBtn = findViewById(R.id.saveButton);
