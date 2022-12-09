@@ -178,6 +178,15 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentSearch"
+        android:name="edu.northeastern.numad22fa_team27.workout.fragments.WorkoutSearchFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="2dp"
+        android:visibility="visible"
+        tools:layout="@layout/fragment_workout_search" />
+
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottomAppBar"
         android:layout_width="match_parent"
@@ -215,7 +224,7 @@
         android:tint="@color/md_theme_light_onPrimary"
         android:visibility="visible"
         app:backgroundTint="@color/md_theme_light_primary"
-        app:elevation="0dp"
+        app:elevation="8dp"
         app:layout_anchor="@id/bottomAppBar"
         app:layout_insetEdge="none"
         app:srcCompat="@android:drawable/ic_menu_search" />

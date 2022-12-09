@@ -14,49 +14,35 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import edu.northeastern.numad22fa_team27.workout.models.DAO.WorkoutDAO;
+import edu.northeastern.numad22fa_team27.workout.models.Workout;
 import edu.northeastern.numad22fa_team27.workout.models.WorkoutCategory;
 
 public class FindWorkoutsCallback extends WorkoutCallback {
-    private final List<WorkoutDAO> queryWorkouts;
-    private final List<WorkoutDAO> displayWorkouts;
-    private final WorkoutCategory category;
+    private final List<Workout> queryWorkouts;
+    private final List<Workout> displayWorkouts;
     private final RecyclerView workoutRV;
-    private final TextView noResults;
 
-    public FindWorkoutsCallback(List<WorkoutDAO> queryWorkouts,
-                                List<WorkoutDAO> displayWorkouts,
-                                WorkoutCategory category,
-                                RecyclerView workoutRV,
-                                TextView noResults) {
+    public FindWorkoutsCallback(List<Workout> queryWorkouts,
+                                List<Workout> displayWorkouts,
+                                RecyclerView workoutRV) {
         this.queryWorkouts = queryWorkouts;
         this.displayWorkouts = displayWorkouts;
-        this.category = category;
         this.workoutRV = workoutRV;
-        this.noResults = noResults;
     }
 
     @Override
     public void processQuery(@NonNull QuerySnapshot snapshot) {
         // add all query workouts
         queryWorkouts.clear();
-        queryWorkouts.addAll(snapshot.toObjects(WorkoutDAO.class));
+        List<WorkoutDAO> intermediary = snapshot.toObjects(WorkoutDAO.class);
+        queryWorkouts.addAll(intermediary.stream()
+                .map(wd -> new Workout(wd))
+                .collect(Collectors.toList()));
 
         // add workouts that contain the given category
+        // TODO: Filtering from a list
         displayWorkouts.clear();
-        if (category == null) {
-            displayWorkouts.addAll(snapshot.toObjects(WorkoutDAO.class));
-        } else {
-            displayWorkouts.addAll(snapshot.toObjects(WorkoutDAO.class).stream()
-                    .filter(w -> w.categoriesPresent.contains(category))
-                    .collect(Collectors.toList()));
-        }
-
-        // display message when no results returned
-        //if (displayWorkouts.size() == 0) {
-        //    noResults.setVisibility(View.VISIBLE);
-        //} else {
-        //    noResults.setVisibility(View.INVISIBLE);
-        //}
+        displayWorkouts.addAll(queryWorkouts);
 
         Objects.requireNonNull(workoutRV.getAdapter()).notifyDataSetChanged();
     }

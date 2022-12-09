@@ -48,13 +48,5 @@
         <item name="colorSurfaceInverse">@color/md_theme_light_inverseSurface</item>
         <item name="colorOnSurfaceInverse">@color/md_theme_light_inverseOnSurface</item>
         <item name="colorPrimaryInverse">@color/md_theme_light_inversePrimary</item>
-
     </style>
-
-    <style name="CustomPopupTheme" parent="Theme.MaterialComponents.Bridge">
-        <item name="android:colorControlActivated">@color/md_theme_light_primary</item>
-        <item name="android:colorControlHighlight">@color/md_theme_light_primary</item>
-        <item name="android:colorControlNormal">@color/md_theme_light_onPrimary</item>
-    </style>
-
 </resources>
