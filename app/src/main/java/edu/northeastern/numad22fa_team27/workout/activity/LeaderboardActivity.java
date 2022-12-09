@@ -7,18 +7,25 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.workout.callbacks.GetLeaderboardCallback;
+import edu.northeastern.numad22fa_team27.workout.fragments.UniversalSearchFragment;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
 import edu.northeastern.numad22fa_team27.workout.models.WorkoutCategory;
 import edu.northeastern.numad22fa_team27.workout.models.leaderboard.LeaderboardAdapter;
+import edu.northeastern.numad22fa_team27.workout.models.universal_search.NavigationBar;
 import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 
 public class LeaderboardActivity extends AppCompatActivity {
@@ -37,9 +44,30 @@ public class LeaderboardActivity extends AppCompatActivity {
         firestoreService = new FirestoreService();
 
         // Set up nav bar
-        //BottomNavigationView bottomNav = findViewById(R.id.bottom_toolbar);
-        //bottomNav.setSelectedItemId(R.id.nav_leaderboard);
-        //bottomNav.setOnItemSelectedListener(NavigationBar.setNavListener(this));
+        BottomNavigationView bottomNav = findViewById(R.id.navigation);
+        bottomNav.setSelectedItemId(R.id.nav_profile);
+        bottomNav.setOnItemSelectedListener(NavigationBar.setNavListener(this));
+        FloatingActionButton fabSearch = findViewById(R.id.searchButton);
+
+        AtomicBoolean searchHidden = new AtomicBoolean(true);
+        UniversalSearchFragment search = new UniversalSearchFragment();
+        getSupportFragmentManager().beginTransaction()
+                .setReorderingAllowed(true)
+                .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                .replace(R.id.fragmentSearch, search, "search")
+                .hide(search)
+                .commit();
+
+        fabSearch.setOnClickListener(v -> {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            if (searchHidden.get()) {
+                transaction.show(search).commit();
+            } else {
+                transaction.hide(search).commit();
+            }
+            searchHidden.set(!searchHidden.get());
+        });
+        // End setup nav bar
 
         // set up categories dropdown
         Spinner categoryDropdown = findViewById(R.id.dropdown_leaderboard_category);
