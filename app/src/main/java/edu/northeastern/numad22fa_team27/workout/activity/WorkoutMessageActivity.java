@@ -201,16 +201,19 @@ public class WorkoutMessageActivity extends AppCompatActivity {
                 //if (task.getResult().exists()) {
                     Object object = documentSnapshot.getData().get("chats"); //task.getResult().get("chats");
                     List<String> string = (List<String>) object;
+                    try {
+                        if (string != null || !string.isEmpty()) {
+                            chats = string;
+                            for (int i = 0; i < chats.size(); i++) {
+                                findChatInfo(i);
+                            }
+                            //adapter.notifyItemInserted(insertIndex);
 
-                    if (!string.isEmpty()) {
-                        chats = string;
-                        for (int i = 0; i < chats.size(); i++) {
-                            findChatInfo(i);
+                            //chatsRecycler.setAdapter(new MessageAdapter(cards, setUpMClickListener(cards)));
+                            //setupRecView(chatsRecycler,cards);
                         }
-                        //adapter.notifyItemInserted(insertIndex);
-
-                        //chatsRecycler.setAdapter(new MessageAdapter(cards, setUpMClickListener(cards)));
-                        //setupRecView(chatsRecycler,cards);
+                    } catch (NullPointerException e) {
+                        
                     }
                 /*} else {
                     Toast.makeText(WorkoutMessageActivity.this, "Couldn't fetch chat List", Toast.LENGTH_SHORT).show();
@@ -275,6 +278,7 @@ public class WorkoutMessageActivity extends AppCompatActivity {
                     friends[1] =  friends1;
                     runRecur = true;
                 } else {
+                    friends = new String[2][1];
                     friends[0] = new String[] {"Blank"};
                     friends[1] = new String[] {"Blank"};
                 }
