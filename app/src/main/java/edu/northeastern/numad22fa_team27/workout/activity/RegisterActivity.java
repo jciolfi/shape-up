@@ -12,6 +12,7 @@ import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.text.style.ClickableSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -22,6 +23,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.regex.Matcher;
@@ -29,10 +31,11 @@ import java.util.regex.Pattern;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.Util;
+import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
 import edu.northeastern.numad22fa_team27.workout.models.User;
 
 public class RegisterActivity extends AppCompatActivity {
-
+    private static final String TAG = "RegisterActivity";
     private TextView usr_email, usr_pass, usr_pass_confirm;
     private Button sign_up_btn;
     private ProgressBar pb;
@@ -49,7 +52,6 @@ public class RegisterActivity extends AppCompatActivity {
         sign_up_btn = findViewById(R.id.btn_signup);
         pb = findViewById(R.id.progressbar_register);
         user_auth = FirebaseAuth.getInstance();
-
 
         registerButtonClicked();
 
@@ -83,42 +85,55 @@ public class RegisterActivity extends AppCompatActivity {
             String pass_confirm = usr_pass_confirm.getText().toString();
 
             // Checks the empty Fields
-            boolean isNotEmptyField = !TextUtils.isEmpty(email)
-                                      && !TextUtils.isEmpty(pass)
-                                      && !TextUtils.isEmpty(pass_confirm);
-            if (isEmailValid(email)) {
-                // If the fields are not empty
-                if (isNotEmptyField) {
-                    // if the pass and pass_confirm matches
-                    if (pass.equals(pass_confirm)) {
-                        pb.setVisibility(View.VISIBLE);
-                        user_auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                User user = new User(email, pass, "");
-                                FirebaseFirestore db = FirebaseFirestore.getInstance();
-                                db.collection("users")
-                                        .document(user_auth.getCurrentUser().getUid())
-                                        .set(user);
-                                pb.setVisibility(View.INVISIBLE);
-                                showMainPage();
-                            } else {
-                                // If registration not successful that means there is a user with this credentials in our DB
-                                Toast.makeText(RegisterActivity.this, "User already exists! Please log in.", Toast.LENGTH_SHORT).show();
-                                Util.openActivity(RegisterActivity.this, LoginActivity.class);
-                            }
-                        });
-                    } else {
-                        pb.setVisibility(View.INVISIBLE);
-                        Toast.makeText(RegisterActivity.this, "Passwords doesn't match! Please Try again.", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(RegisterActivity.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
-                }
-            } else {
+            boolean isEmptyField = TextUtils.isEmpty(email)
+                    || TextUtils.isEmpty(pass)
+                    || TextUtils.isEmpty(pass_confirm);
+
+            if (!isEmailValid(email)) {
                 Toast.makeText(RegisterActivity.this, "Please enter a valid email address!", Toast.LENGTH_SHORT).show();
+                return;
             }
 
-        });
+            // If the fields are not empty
+            if (isEmptyField) {
+                Toast.makeText(RegisterActivity.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // if the pass and pass_confirm matches
+            if (!pass.equals(pass_confirm)) {
+                pb.setVisibility(View.INVISIBLE);
+                Toast.makeText(RegisterActivity.this, "Passwords doesn't match! Please Try again.", Toast.LENGTH_SHORT).show();
+            }
+
+            pb.setVisibility(View.VISIBLE);
+            user_auth.createUserWithEmailAndPassword(email, pass)
+                    .addOnSuccessListener(result -> {
+                        User user = new User(email, "");
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        db.collection("users")
+                                .document(user_auth.getCurrentUser().getUid())
+                                .set(new UserDAO(user))
+                                .addOnSuccessListener(task1 -> {
+                                    pb.setVisibility(View.INVISIBLE);
+                                    showMainPage();
+                                })
+                                .addOnFailureListener(e -> {
+                                    pb.setVisibility(View.INVISIBLE);
+                                    Log.e(TAG, e.getMessage());
+                                    Toast.makeText(RegisterActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                                });
+                    }).addOnFailureListener(exception -> {
+                        pb.setVisibility(View.INVISIBLE);
+                        if (exception instanceof FirebaseAuthUserCollisionException) {
+                            Toast.makeText(RegisterActivity.this, "This user already exists! Please log in.", Toast.LENGTH_LONG).show();
+                            Util.openActivity(RegisterActivity.this, LoginActivity.class);
+                        } else {
+                            // Report whatever the error is and let the user figure out what to do
+                            Toast.makeText(RegisterActivity.this, exception.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
+            });
     }
 
     public void showMainPage() {

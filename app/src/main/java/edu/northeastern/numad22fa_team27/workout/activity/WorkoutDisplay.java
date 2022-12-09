@@ -36,7 +36,7 @@ public class WorkoutDisplay extends AppCompatActivity {
             title.setText(extras.getString("Title"));
 
             TextView difficulty = findViewById(R.id.detail_workout_difficulty);
-            difficulty.setText(String.format("%f / 5.0", extras.getString("Difficulty")));
+            difficulty.setText(String.format("%.2f / 5.0", extras.getFloat("Difficulty")));
 
             TextView category = findViewById(R.id.detail_workout_category);
             category.setText(extras.getString("Categories"));
@@ -67,8 +67,6 @@ public class WorkoutDisplay extends AppCompatActivity {
                 setResult(Activity.RESULT_OK, data);
                 finish();
             });
-
-
         }
     }
 }

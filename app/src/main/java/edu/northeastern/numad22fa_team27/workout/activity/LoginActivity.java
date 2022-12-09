@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.Util;
+import edu.northeastern.numad22fa_team27.workout.utilities.UserUtil;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -117,6 +118,9 @@ public class LoginActivity extends AppCompatActivity {
 
         // Don't let anyone hit "back" to the login
         finish();
+
+        // We know that the auth is set up and the user is valid
+        UserUtil.getInstance().startWatchingUserChanges();
         Util.openActivity(LoginActivity.this, ProfileActivity.class);
     }
 

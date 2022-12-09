@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import edu.northeastern.numad22fa_team27.workout.models.DAO.WorkoutDAO;
+
 /**
  * Object representation of a single workout exercise
  */
@@ -35,6 +37,16 @@ public class Workout {
         this.difficulty = difficulty;
         this.coverURL = coverURL;
         this.blurb = blurb;
+    }
+
+    public Workout(WorkoutDAO wd) {
+        this.workoutID = wd.workoutID;
+        this.workoutName = wd.workoutName;
+        this.workoutDescription = wd.workoutDescription;
+        this.categoriesPresent = wd.categoriesPresent;
+        this.difficulty = wd.difficulty;
+        this.coverURL = wd.coverURL;
+        this.blurb = wd.blurb;
     }
 
     public String getWorkoutName() {

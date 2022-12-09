@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
+
 public class UserTest {
     private List<Workout> workouts = new ArrayList<>();
 
@@ -28,7 +30,7 @@ public class UserTest {
     @Test
     public void testRecordWorkout() {
         LocalDate today = LocalDate.now();
-        User user = new User("User", "abc", "Image");
+        User user = new User("User", "Image");
 
         // D - 4 : Balance x1
         user.recordWorkout(workouts.get(0), today.minusDays(4));
@@ -54,7 +56,16 @@ public class UserTest {
 
         assertEquals(1, user.getCurrentStreak(WorkoutCategory.BALANCE));
         assertEquals(4, user.getBestStreak(WorkoutCategory.BALANCE));
+    }
 
+    @Test
+    public void testDaoConversion() {
+        User originalUser = new User("Me", "my-picture-here");
+        String userId = originalUser.getUserID();
 
+        UserDAO dao = new UserDAO(originalUser);
+        User recreatedUser = new User(dao, userId);
+
+        assertEquals(originalUser, recreatedUser);
     }
 }
