@@ -1,11 +1,8 @@
 package edu.northeastern.numad22fa_team27.workout.activity;
 
-import static edu.northeastern.numad22fa_team27.Util.requestNoActivityBar;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.ActionMenuView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,7 +15,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -58,11 +54,9 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
         // Set up nav bar
-        //ActionMenuView bottomNavLeft = findViewById(R.id.left_menu);
-        //getMenuInflater().inflate(R.menu.bottom_toolbar_left, bottomNavLeft.getMenu());
-
-        //bottomNav.setSelectedItemId(R.id.nav_profile);
-        //bottomNav.setOnItemSelectedListener(NavigationBar.setNavListener(this));
+        BottomNavigationView bottomNav = findViewById(R.id.navigation);
+        bottomNav.setSelectedItemId(R.id.nav_profile);
+        bottomNav.setOnItemSelectedListener(NavigationBar.setNavListener(this));
 
         // Find all our UI elements
         user_auth = FirebaseAuth.getInstance();
