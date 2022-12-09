@@ -1,17 +1,12 @@
 package edu.northeastern.numad22fa_team27.workout.fragments;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.SpannableString;
 import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
-import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,7 +16,6 @@ import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.core.view.MenuCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,7 +26,6 @@ import com.google.android.material.search.SearchView;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.workout.adapters.WorkoutClickListener;
@@ -41,7 +34,7 @@ import edu.northeastern.numad22fa_team27.workout.callbacks.FindWorkoutsCallback;
 import edu.northeastern.numad22fa_team27.workout.models.Workout;
 import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 
-public class WorkoutSearchFragment extends DialogFragment {
+public class UniversalSearchFragment extends DialogFragment {
     private final String TAG = "WorkoutSearchActivity";
     private FirestoreService firestoreService;
     private RecyclerView workoutRV;
@@ -52,7 +45,7 @@ public class WorkoutSearchFragment extends DialogFragment {
     private final List<Workout> displayWorkouts = new ArrayList<>();
     private TextView noResults;
 
-    public WorkoutSearchFragment() { }
+    public UniversalSearchFragment() { }
 
     @SuppressLint("ResourceAsColor")
     @Override
