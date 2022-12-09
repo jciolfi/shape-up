@@ -48,7 +48,6 @@ public class UniversalSearchFragment extends DialogFragment {
 
     public UniversalSearchFragment() { }
 
-    @SuppressLint("ResourceAsColor")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -76,20 +75,18 @@ public class UniversalSearchFragment extends DialogFragment {
 
         // Add menu functionality
         Menu menu = search.getMenu();
-        //menu.findItem(R.id.search_menu_workout).setChecked(true);
+        menu.findItem(R.id.search_menu_workout).setChecked(true);
         menu.setGroupCheckable(R.id.searchMenuSearchGroups, true, true);
 
         // Hackish, but this is literally a library in alpha.
         for (int i = 0; i < search.getMenu().size(); i++) {
-            MenuItem item = search.getMenu().getItem(i);
-            SpannableString coloredTitle = new SpannableString(item.getTitle());
-            coloredTitle.setSpan(new ForegroundColorSpan(R.color.md_theme_light_onBackground), 0, coloredTitle.length(), 0);
-            item.setTitle(coloredTitle);
+            setMenuItemColor(search.getMenu().getItem(i));
         }
 
         AtomicBoolean includeWorkouts = new AtomicBoolean(false);
         AtomicBoolean includeGroups = new AtomicBoolean(false);
         AtomicBoolean includeUsers = new AtomicBoolean(false);
+        AtomicBoolean reverseSort = new AtomicBoolean(false);
 
         search.setOnMenuItemClickListener(
                 menuItem -> {
@@ -114,6 +111,22 @@ public class UniversalSearchFragment extends DialogFragment {
                             default:
                                 return false;
                         }
+                    } else {
+                        // Handle search and sort options
+                        switch (menuItem.getItemId()) {
+                            case R.id.search_menu_sort_alphabetical:
+                                reverseSort.set(!reverseSort.get());
+                                if (reverseSort.get()) {
+                                    menuItem.setTitle("Name ↓");
+                                } else {
+                                    menuItem.setTitle("Name ↑");
+                                }
+                                setMenuItemColor(menuItem);
+                                break;
+                            default:
+                                break;
+                        }
+
                     }
 
                     if (includeWorkouts.get()) {
@@ -144,6 +157,10 @@ public class UniversalSearchFragment extends DialogFragment {
                     // Invalid state
                     Log.v("XYZ", "Invalid state!");
                 }
+
+                if (reverseSort.get()) {
+
+                }
             }
 
             @Override
@@ -151,5 +168,12 @@ public class UniversalSearchFragment extends DialogFragment {
         });
 
         return fragmentView;
+    }
+
+    @SuppressLint("ResourceAsColor")
+    private void setMenuItemColor(MenuItem item){
+        SpannableString coloredTitle = new SpannableString(item.getTitle());
+        coloredTitle.setSpan(new ForegroundColorSpan(R.color.md_theme_light_onBackground), 0, coloredTitle.length(), 0);
+        item.setTitle(coloredTitle);
     }
 }
