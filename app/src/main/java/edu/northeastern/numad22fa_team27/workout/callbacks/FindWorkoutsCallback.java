@@ -13,37 +13,29 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import edu.northeastern.numad22fa_team27.workout.interfaces.Summarizeable;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.WorkoutDAO;
 import edu.northeastern.numad22fa_team27.workout.models.Workout;
 import edu.northeastern.numad22fa_team27.workout.models.WorkoutCategory;
 
 public class FindWorkoutsCallback extends WorkoutCallback {
-    private final List<Workout> queryWorkouts;
-    private final List<Workout> displayWorkouts;
-    private final RecyclerView workoutRV;
+    private final List<Summarizeable> displayWorkouts;
+    private final RecyclerView dataRv;
 
-    public FindWorkoutsCallback(List<Workout> queryWorkouts,
-                                List<Workout> displayWorkouts,
-                                RecyclerView workoutRV) {
-        this.queryWorkouts = queryWorkouts;
+    public FindWorkoutsCallback(List<Summarizeable> displayWorkouts,
+                                RecyclerView rv) {
         this.displayWorkouts = displayWorkouts;
-        this.workoutRV = workoutRV;
+        this.dataRv = rv;
     }
 
     @Override
     public void processQuery(@NonNull QuerySnapshot snapshot) {
         // add all query workouts
-        queryWorkouts.clear();
-        List<WorkoutDAO> intermediary = snapshot.toObjects(WorkoutDAO.class);
-        queryWorkouts.addAll(intermediary.stream()
+        displayWorkouts.clear();
+        displayWorkouts.addAll(snapshot.toObjects(WorkoutDAO.class).stream()
                 .map(wd -> new Workout(wd))
                 .collect(Collectors.toList()));
 
-        // add workouts that contain the given category
-        // TODO: Filtering from a list
-        displayWorkouts.clear();
-        displayWorkouts.addAll(queryWorkouts);
-
-        Objects.requireNonNull(workoutRV.getAdapter()).notifyDataSetChanged();
+        Objects.requireNonNull(dataRv.getAdapter()).notifyDataSetChanged();
     }
 }

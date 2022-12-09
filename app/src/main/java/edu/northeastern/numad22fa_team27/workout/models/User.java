@@ -16,11 +16,12 @@ import java.util.Objects;
 import java.util.Set;
 
 import edu.northeastern.numad22fa_team27.Util;
+import edu.northeastern.numad22fa_team27.workout.interfaces.Summarizeable;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
 import edu.northeastern.numad22fa_team27.workout.utilities.StoreablePair;
 
 // TODO: a lot of these "lists" should really be sets
-public class User {
+public class User implements Summarizeable {
     private final static String TAG = "User";
     private String userID;
     private String username;
@@ -266,5 +267,20 @@ public class User {
                 ", bestCategoryStreaks=" + bestCategoryStreaks +
                 ", workoutCompletions=" + workoutCompletions +
                 '}';
+    }
+
+    @Override
+    public String getTitle() {
+        return this.getUsername();
+    }
+
+    @Override
+    public String getMisc() {
+        return "";
+    }
+
+    @Override
+    public String getImage() {
+        return this.getProfilePic();
     }
 }

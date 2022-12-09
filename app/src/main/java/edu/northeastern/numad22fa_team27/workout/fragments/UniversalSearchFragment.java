@@ -7,6 +7,7 @@ import android.text.Editable;
 import android.text.SpannableString;
 import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,21 +29,21 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import edu.northeastern.numad22fa_team27.R;
-import edu.northeastern.numad22fa_team27.workout.adapters.WorkoutClickListener;
-import edu.northeastern.numad22fa_team27.workout.adapters.WorkoutRecAdapter;
+import edu.northeastern.numad22fa_team27.workout.callbacks.FindGroupsCallback;
+import edu.northeastern.numad22fa_team27.workout.callbacks.FindUsersCallback;
 import edu.northeastern.numad22fa_team27.workout.callbacks.FindWorkoutsCallback;
-import edu.northeastern.numad22fa_team27.workout.models.Workout;
+import edu.northeastern.numad22fa_team27.workout.interfaces.Summarizeable;
+import edu.northeastern.numad22fa_team27.workout.models.universal_search.SearchAdapter;
+import edu.northeastern.numad22fa_team27.workout.models.universal_search.SearchClickListener;
 import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 
 public class UniversalSearchFragment extends DialogFragment {
     private final String TAG = "WorkoutSearchActivity";
     private FirestoreService firestoreService;
-    private RecyclerView workoutRV;
+    private RecyclerView searchRV;
 
     // workouts returned from search view
-    private final List<Workout> workoutCache = new ArrayList<>();
-    // workouts filtered on category
-    private final List<Workout> displayWorkouts = new ArrayList<>();
+    private final List<Summarizeable> displayedResults = new ArrayList<>();
     private TextView noResults;
 
     public UniversalSearchFragment() { }
@@ -51,27 +52,31 @@ public class UniversalSearchFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View fragmentView = inflater.inflate(R.layout.fragment_workout_search, container, false);
+
         firestoreService = new FirestoreService();
 
+        // Inflate out actual view
+        View fragmentView = inflater.inflate(R.layout.fragment_universal_search, container, false);
+
+        // Find our searchbar + searchview and set up its filtering menu
         SearchBar search = fragmentView.findViewById(R.id.search_bar);
         SearchView searchView  = fragmentView.findViewById(R.id.search_view);
         search.inflateMenu(R.menu.search_menu);
-        search.setHint("Search...");
 
-        // set up workout recycler view
+        // Set up search result recycler view
         ActivityResultLauncher<Intent> activityLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {});
-        WorkoutClickListener clickListener = new WorkoutClickListener(displayWorkouts, activityLauncher);
+        SearchClickListener clickListener = new SearchClickListener(displayedResults, activityLauncher);
 
-        workoutRV = searchView.findViewById(R.id.search_rv);
-        workoutRV.setHasFixedSize(true);
-        workoutRV.setLayoutManager(new LinearLayoutManager(searchView.getContext()));
-        workoutRV.setAdapter(new WorkoutRecAdapter(displayWorkouts, clickListener, true));
+        searchRV = searchView.findViewById(R.id.search_rv);
+        searchRV.setHasFixedSize(true);
+        searchRV.setLayoutManager(new LinearLayoutManager(searchView.getContext()));
+        searchRV.setAdapter(new SearchAdapter(displayedResults, clickListener));
 
-
+        // Add menu functionality
         Menu menu = search.getMenu();
+        //menu.findItem(R.id.search_menu_workout).setChecked(true);
         menu.setGroupCheckable(R.id.searchMenuSearchGroups, true, true);
 
         // Hackish, but this is literally a library in alpha.
@@ -89,17 +94,22 @@ public class UniversalSearchFragment extends DialogFragment {
         search.setOnMenuItemClickListener(
                 menuItem -> {
                     if (menuItem.isCheckable()) {
-                        menuItem.setChecked(!menuItem.isChecked());
+                        menuItem.setChecked(true);
+
+                        // Reset
+                        includeWorkouts.set(false);
+                        includeGroups.set(false);
+                        includeUsers.set(false);
 
                         switch (menuItem.getItemId()) {
                             case R.id.search_menu_workout:
-                                includeWorkouts.set(menuItem.isChecked());
+                                includeWorkouts.set(true);
                                 break;
                             case R.id.search_menu_groups:
-                                includeGroups.set(menuItem.isChecked());
+                                includeGroups.set(true);
                                 break;
                             case R.id.search_menu_users:
-                                includeUsers.set(menuItem.isChecked());
+                                includeUsers.set(true);
                                 break;
                             default:
                                 return false;
@@ -115,71 +125,30 @@ public class UniversalSearchFragment extends DialogFragment {
                     return true;
                 });
 
+        // Add callbacks to perform search when the user enters text
         searchView.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 // Trigger a search based on the category we selected.
                 if (includeWorkouts.get()) {
                     firestoreService.findWorkoutsByCriteria(s.toString(), null, -1, -1,
-                            new FindWorkoutsCallback(workoutCache, displayWorkouts, workoutRV), 10);
+                            new FindWorkoutsCallback(displayedResults, searchRV), 10);
                 } else if (includeGroups.get()) {
-
+                    firestoreService.findGroupsByName(s.toString(), new FindGroupsCallback(displayedResults, searchRV));
                 } else if (includeUsers.get()) {
-
+                    firestoreService.findUsersByUsername(s.toString(), new FindUsersCallback(displayedResults, searchRV));
                 } else {
                     // Invalid state
+                    Log.v("XYZ", "Invalid state!");
                 }
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
-
-            }
+            public void afterTextChanged(Editable s) {}
         });
-
-        /**
-
-        //noResults = searchView.findViewById(R.id.txt_no_workout_results);
-
-        // populate categories dropdown
-        //categoriesDropdown = searchView.findViewById(R.id.dropdown_categories);
-        List<String> workoutCategories = WorkoutCategory.listCategories(true, true);
-        workoutCategories.add(0, "Any");
-        ArrayAdapter<String> categoriesAdapter = new ArrayAdapter<>(searchView.getContext(),
-                android.R.layout.simple_spinner_item,
-                workoutCategories);
-        categoriesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        categoriesDropdown.setAdapter(categoriesAdapter);
-        categoriesDropdown.setSelection(0);
-        prevFilter = null;
-        categoriesDropdown.setOnItemSelectedListener(new CategoriesFilterListener());
-
-        // populate sort dropdown
-        sortOptions = new String[]{"Name ↑", "Name ↓", "Difficulty ↑", "Difficulty ↓"};
-        //sortDropdown = searchView.findViewById(R.id.dropdown_workout_sort);
-        ArrayAdapter<String> sortAdapter = new ArrayAdapter<>(searchView.getContext(),
-                android.R.layout.simple_spinner_item, sortOptions);
-        sortAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        sortDropdown.setAdapter(sortAdapter);
-        sortDropdown.setSelection(0);
-        prevSort = sortOptions[0];
-        sortDropdown.setOnItemSelectedListener(new SortListener());
-
-        // add query listener to search view
-        //SearchView workoutSearch = searchView.findViewById(R.id.sv_workout);
-        //workoutSearch.setOnQueryTextListener(new WorkoutQueryListener());
-
-        // set up workout recycler view
-        //workoutRV = searchView.findViewById(R.id.rv_workout);
-        workoutRV.setHasFixedSize(true);
-        workoutRV.setLayoutManager(new LinearLayoutManager(searchView.getContext()));
-        workoutRV.setAdapter(new WorkoutAdapter(displayWorkouts, container, searchView));
-         */
 
         return fragmentView;
     }

@@ -185,7 +185,7 @@
         android:layout_height="match_parent"
         android:elevation="2dp"
         android:visibility="visible"
-        tools:layout="@layout/fragment_workout_search" />
+        tools:layout="@layout/fragment_universal_search" />
 
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottomAppBar"

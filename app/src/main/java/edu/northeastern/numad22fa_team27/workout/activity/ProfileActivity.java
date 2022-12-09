@@ -39,7 +39,7 @@ import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.WorkoutDAO;
 import edu.northeastern.numad22fa_team27.workout.models.User;
 import edu.northeastern.numad22fa_team27.workout.models.Workout;
-import edu.northeastern.numad22fa_team27.workout.models.workout_search.NavigationBar;
+import edu.northeastern.numad22fa_team27.workout.models.universal_search.NavigationBar;
 import edu.northeastern.numad22fa_team27.workout.services.RecommendationService;
 import edu.northeastern.numad22fa_team27.workout.utilities.UserUtil;
 

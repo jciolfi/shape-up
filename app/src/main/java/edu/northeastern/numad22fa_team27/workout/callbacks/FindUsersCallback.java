@@ -14,18 +14,17 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import java.util.List;
 import java.util.Objects;
 
+import edu.northeastern.numad22fa_team27.workout.interfaces.Summarizeable;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
 import edu.northeastern.numad22fa_team27.workout.models.User;
 
 public class FindUsersCallback extends WorkoutCallback {
-    private final List<User> displayUsers;
+    private final List<Summarizeable> displayUsers;
     private final RecyclerView userRV;
-    private final TextView noResults;
 
-    public FindUsersCallback(List<User> displayUsers, RecyclerView userRV, TextView noResults) {
+    public FindUsersCallback(List<Summarizeable> displayUsers, RecyclerView userRV) {
         this.displayUsers = displayUsers;
         this.userRV = userRV;
-        this.noResults = noResults;
     }
 
     @Override
@@ -37,13 +36,6 @@ public class FindUsersCallback extends WorkoutCallback {
             if (userDAO != null) {
                 displayUsers.add(new User(userDAO, ds.getId()));
             }
-        }
-
-        // display message when no results returned
-        if (displayUsers.size() == 0) {
-            noResults.setVisibility(View.VISIBLE);
-        } else {
-            noResults.setVisibility(View.INVISIBLE);
         }
 
         Objects.requireNonNull(userRV.getAdapter()).notifyDataSetChanged();
