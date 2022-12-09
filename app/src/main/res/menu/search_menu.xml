@@ -30,14 +30,9 @@
     <group
         android:id="@+id/searchMenuNameSortGroup">
         <item
-            android:id="@+id/search_menu_sort_z_a"
+            android:id="@+id/search_menu_sort_alphabetical"
             android:checkable="false"
             android:title="Name ↑"
-            app:showAsAction="never" />
-        <item
-            android:id="@+id/search_menu_sort_a_z"
-            android:checkable="false"
-            android:title="Name ↓"
             app:showAsAction="never" />
     </group>
 
