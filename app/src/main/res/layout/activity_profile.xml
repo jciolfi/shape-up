@@ -180,7 +180,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentSearch"
-        android:name="edu.northeastern.numad22fa_team27.workout.fragments.WorkoutSearchFragment"
+        android:name="edu.northeastern.numad22fa_team27.workout.fragments.UniversalSearchFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:elevation="2dp"

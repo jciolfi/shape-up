@@ -3,8 +3,6 @@ package edu.northeastern.numad22fa_team27.workout.activity;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,7 +13,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -35,17 +32,14 @@ import java.util.Objects;
 import edu.northeastern.numad22fa_team27.Constants;
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.Util;
-import edu.northeastern.numad22fa_team27.spotify.SearchFragment;
 import edu.northeastern.numad22fa_team27.workout.adapters.WorkoutClickListener;
 import edu.northeastern.numad22fa_team27.workout.adapters.WorkoutRecAdapter;
-import edu.northeastern.numad22fa_team27.workout.fragments.UserSearchFragment;
-import edu.northeastern.numad22fa_team27.workout.fragments.WorkoutSearchFragment;
+import edu.northeastern.numad22fa_team27.workout.fragments.UniversalSearchFragment;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.WorkoutDAO;
 import edu.northeastern.numad22fa_team27.workout.models.User;
 import edu.northeastern.numad22fa_team27.workout.models.Workout;
 import edu.northeastern.numad22fa_team27.workout.models.workout_search.NavigationBar;
-import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 import edu.northeastern.numad22fa_team27.workout.services.RecommendationService;
 import edu.northeastern.numad22fa_team27.workout.utilities.UserUtil;
 
@@ -68,7 +62,7 @@ public class ProfileActivity extends AppCompatActivity {
         bottomNav.setOnItemSelectedListener(NavigationBar.setNavListener(this));
         FloatingActionButton fabSearch = findViewById(R.id.searchButton);
 
-        WorkoutSearchFragment search = new WorkoutSearchFragment();
+        UniversalSearchFragment search = new UniversalSearchFragment();
         getSupportFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
                 .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
@@ -89,7 +83,7 @@ public class ProfileActivity extends AppCompatActivity {
             setContentView(frame, layout);
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(CONTENT_VIEW_ID, new WorkoutSearchFragment());
+            fragmentTransaction.replace(CONTENT_VIEW_ID, new UniversalSearchFragment());
             fragmentTransaction.commit();*/
             //Intent intent = new Intent(this, SearchActivity.class);
             //this.startActivity(intent);
