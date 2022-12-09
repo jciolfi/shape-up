@@ -45,7 +45,7 @@ public class LeaderboardActivity extends AppCompatActivity {
 
         // Set up nav bar
         BottomNavigationView bottomNav = findViewById(R.id.navigation);
-        bottomNav.setSelectedItemId(R.id.nav_profile);
+        bottomNav.setSelectedItemId(R.id.nav_leaderboard);
         bottomNav.setOnItemSelectedListener(NavigationBar.setNavListener(this));
         FloatingActionButton fabSearch = findViewById(R.id.searchButton);
 
