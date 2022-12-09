@@ -202,7 +202,7 @@
             android:visibility="visible"
             app:backgroundTint="#00FFFBFE"
             app:elevation="0dp"
-            app:menu="@menu/bottom_toolbar_left" />
+            app:menu="@menu/bottom_toolbar" />
 
     </com.google.android.material.bottomappbar.BottomAppBar>
 

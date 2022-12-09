@@ -9,6 +9,7 @@ import edu.northeastern.numad22fa_team27.workout.activity.UserGroupsActivity;
 import edu.northeastern.numad22fa_team27.workout.activity.LeaderboardActivity;
 import edu.northeastern.numad22fa_team27.workout.activity.ProfileActivity;
 import edu.northeastern.numad22fa_team27.workout.activity.SearchActivity;
+import edu.northeastern.numad22fa_team27.workout.activity.SettingsActivity;
 
 public class NavigationBar {
 
@@ -21,12 +22,17 @@ public class NavigationBar {
                             context.startActivity(intent);
                             break;
                         case R.id.nav_profile:
-                            intent = new Intent(context, ProfileActivity.class);
+                            intent = new Intent(context, SettingsActivity.class);
                             context.startActivity(intent);
                             break;
                         case R.id.nav_groups:
                             intent = new Intent(context, UserGroupsActivity.class);
                             context.startActivity(intent);
+                            break;
+                        case R.id.nav_workout:
+                            intent = new Intent(context, ProfileActivity.class);
+                            context.startActivity(intent);
+                            break;
                     }
                     return false;
                 };

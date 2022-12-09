@@ -41,9 +41,9 @@ public class LeaderboardActivity extends AppCompatActivity {
         firestoreService = new FirestoreService();
 
         // Set up nav bar
-        BottomNavigationView bottomNav = findViewById(R.id.bottom_toolbar);
-        bottomNav.setSelectedItemId(R.id.nav_leaderboard);
-        bottomNav.setOnItemSelectedListener(NavigationBar.setNavListener(this));
+        //BottomNavigationView bottomNav = findViewById(R.id.bottom_toolbar);
+        //bottomNav.setSelectedItemId(R.id.nav_leaderboard);
+        //bottomNav.setOnItemSelectedListener(NavigationBar.setNavListener(this));
 
         // set up categories dropdown
         Spinner categoryDropdown = findViewById(R.id.dropdown_leaderboard_category);
