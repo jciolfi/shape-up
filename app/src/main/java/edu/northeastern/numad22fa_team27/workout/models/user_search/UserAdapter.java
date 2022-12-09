@@ -22,6 +22,7 @@ import java.util.List;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.workout.callbacks.GetUserByIDCallback;
+import edu.northeastern.numad22fa_team27.workout.callbacks.UpdateUserDialogFromSelf;
 import edu.northeastern.numad22fa_team27.workout.models.User;
 import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 
@@ -56,9 +57,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
-        User user = users.get(position);
-        holder.username.setText(user.getUsername());
-        GetProfilePic getProfilePic = new GetProfilePic(user, holder.profilePic);
+        User otherUser = users.get(position);
+        holder.username.setText(otherUser.getUsername());
+        GetProfilePic getProfilePic = new GetProfilePic(otherUser, holder.profilePic);
         new Thread(getProfilePic).start();
 
         holder.username.setOnClickListener(view -> {
@@ -69,7 +70,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
 
             // set title
             TextView usernameTitle = userInfoDialog.findViewById(R.id.title_username);
-            usernameTitle.setText(user.getUsername());
+            usernameTitle.setText(otherUser.getUsername());
 
             // set profile picture
             ImageView dialogProfilePic = userInfoDialog.findViewById(R.id.dialog_profile_pic);
@@ -78,63 +79,28 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
             // set friends count
             TextView friendCount = userInfoDialog.findViewById(R.id.txt_friend_count);
             friendCount.setText(String.format("Friends: %s",
-                    user.getFriends() == null ? 0 : user.getFriends().size()));
+                    otherUser.getFriends() == null ? 0 : otherUser.getFriends().size()));
 
             // set groups joined count
             TextView groupCount = userInfoDialog.findViewById(R.id.txt_group_count);
             groupCount.setText(String.format("Groups Joined: %s",
-                    user.getJoinedGroups() == null ? 0 : user.getJoinedGroups().size()));
+                    otherUser.getJoinedGroups() == null ? 0 : otherUser.getJoinedGroups().size()));
 
             // set up close button / dismiss listener
             Button closeButton = userInfoDialog.findViewById(R.id.btn_close_user);
             userInfoDialog.setOnDismissListener(dialogInterface -> {
                 // focus will go to search view and bring up keyboard - disable this
-                final View userView = searchView.findViewById(R.id.rv_users);
-                userView.requestFocus();
+                final TextView sortBy = searchView.findViewById(R.id.txt_user_sort);
+                sortBy.requestFocus();
             });
             closeButton.setOnClickListener(view1 -> {
                 userInfoDialog.dismiss();
             });
 
+            // query db to get the user state to update action button
             Button actionButton = userInfoDialog.findViewById(R.id.btn_friend_action);
-            actionButton.setEnabled(true);
-            actionButton.setVisibility(View.VISIBLE);
-
-            // query db to get the user state
-            firestoreService.getUserByID(user.getUserID(), new GetUserByIDCallback(user));
-            firestoreService.getUserByID(currentUser.getUserID(), new GetUserByIDCallback(currentUser));
-
-            /**
-             * Logic overview:
-             * - if self -> hide action button
-             * - if friends -> change to remove
-             * - if not friends and user has requested currentUser-> change to accept
-             * - if not friends and incoming request present -> change to add
-             */
-            if (user.getUserID().equals(currentUser.getUserID())) {
-                actionButton.setVisibility(View.INVISIBLE);
-            } else if (user.getFriends().contains(currentUser.getUserID())) {
-                actionButton.setText("Remove");
-                actionButton.setOnClickListener(removeView -> {
-                    firestoreService.removeFriend(user.getUserID());
-                    userInfoDialog.dismiss();
-                });
-            } else if (user.getIncomingFriendRequests().contains(currentUser.getUserID())) {
-                actionButton.setText("Requested");
-                actionButton.setEnabled(false);
-            } else if (currentUser.getIncomingFriendRequests().contains(user.getUserID())) {
-                actionButton.setText("Accept");
-                actionButton.setOnClickListener(addView -> {
-                    firestoreService.tryAcceptFriendRequest(user.getUserID());
-                    userInfoDialog.dismiss();
-                });
-            } else {
-                actionButton.setText("Add");
-                actionButton.setOnClickListener(addView -> {
-                    firestoreService.tryRequestFriend(user.getUserID());
-                    userInfoDialog.dismiss();
-                });
-            }
+            firestoreService.getUserByID(currentUser.getUserID(),
+                    new UpdateUserDialogFromSelf(currentUser, otherUser, actionButton, firestoreService, userInfoDialog));
 
             userInfoDialog.show();
         });
