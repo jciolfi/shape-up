@@ -71,6 +71,11 @@ public class Message {
         this.name = mDOA.title;
         this.chatHistory = mDOA.messages;
         this.chatMembers = mDOA.members;
+        if (!chatHistory.isEmpty()) {
+            this.lastMessage = chatHistory.get(chatHistory.size() - 1).get("message");
+        } else {
+            this.lastMessage = "lastMessage"; //chatHistory.get(chatHistory.size() - 1);
+        }
 
     }
 

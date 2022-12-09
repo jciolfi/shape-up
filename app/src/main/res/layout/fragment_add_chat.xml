@@ -60,6 +60,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/btn_add_chat"
             app:layout_constraintTop_toBottomOf="@+id/btn_add_friend"/>
+
         <Button
             android:id="@+id/btn_add_chat"
             android:layout_width="wrap_content"
@@ -68,9 +69,21 @@
             android:layout_marginBottom="32dp"
             android:text="@string/create"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btn_esc_chat"
+            app:layout_constraintTop_toBottomOf="@id/txt_added_friends" />
+        <Button
+            android:id="@+id/btn_esc_chat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="32dp"
+            android:text="@string/cancelBtn"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn_add_chat"
             app:layout_constraintTop_toBottomOf="@id/txt_added_friends"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

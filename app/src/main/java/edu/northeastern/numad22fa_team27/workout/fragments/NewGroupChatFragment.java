@@ -85,12 +85,16 @@ public class NewGroupChatFragment extends Fragment {
             addedFriends.setText(resultText);
 
         });
+        final Button cancelButton = newGroupChatView.findViewById(R.id.btn_esc_chat);
+        cancelButton.setOnClickListener(c -> {
+            viewModel.selectItem(new Message("null", "null"));
+
+        });
 
         //Create Chat button
 
         final Button createChatButton = newGroupChatView.findViewById(R.id.btn_add_chat);
         createChatButton.setOnClickListener(c -> {
-            // TODO: More input validation
 
             if (addedArray.length == 0) {
                 addedFriends.setError("Please add one more friend");

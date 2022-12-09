@@ -104,6 +104,10 @@ public class WorkoutMessageActivity extends AppCompatActivity {
         ChatItemViewModel viewModel = new ViewModelProvider(this). get(ChatItemViewModel.class);
         viewModel.getSelectedItem().observe(this, item -> {
             Log.v(TAG, "newChat");
+            if (item.getChatId() == "null" && item.getName() == "null") {
+                toggleSearchFragment(newChatButton);
+                return;
+            }
             newChatQuery = item;
             //create the new message
             Map<String, Object> newMessage = new HashMap<>();
