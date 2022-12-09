@@ -13,6 +13,8 @@ public class Constants {
 
     // constants for group collection
     public static final String GROUPS = "groups";
+    public static final String MEMBERS = "members";
+    public static final String JOINED_GROUPS = "joinedGroups";
 
     // constants for workout collection
     public static final String WORKOUTS = "workouts";
