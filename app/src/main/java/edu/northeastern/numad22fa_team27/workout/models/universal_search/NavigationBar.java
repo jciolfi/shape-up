@@ -1,4 +1,4 @@
-package edu.northeastern.numad22fa_team27.workout.models.workout_search;
+package edu.northeastern.numad22fa_team27.workout.models.universal_search;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,7 +8,6 @@ import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.workout.activity.UserGroupsActivity;
 import edu.northeastern.numad22fa_team27.workout.activity.LeaderboardActivity;
 import edu.northeastern.numad22fa_team27.workout.activity.ProfileActivity;
-import edu.northeastern.numad22fa_team27.workout.activity.SearchActivity;
 import edu.northeastern.numad22fa_team27.workout.activity.SettingsActivity;
 
 public class NavigationBar {

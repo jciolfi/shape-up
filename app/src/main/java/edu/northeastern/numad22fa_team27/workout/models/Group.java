@@ -6,9 +6,10 @@ import java.util.Set;
 import java.util.UUID;
 
 import edu.northeastern.numad22fa_team27.Util;
+import edu.northeastern.numad22fa_team27.workout.interfaces.Summarizeable;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.GroupDAO;
 
-public class Group {
+public class Group implements Summarizeable {
     private String groupID;
     private String groupName;
     private Set<String> members;
@@ -53,5 +54,20 @@ public class Group {
         this.members = new HashSet<>(Util.nullOrDefault(g.members, new ArrayList<>()));
         this.adminID = Util.nullOrDefault(g.adminID, "");
         this.acceptingMembers = g.acceptingMembers;
+    }
+
+    @Override
+    public String getTitle() {
+        return getGroupName();
+    }
+
+    @Override
+    public String getMisc() {
+        return members.size() + " Member(s)";
+    }
+
+    @Override
+    public String getImage() {
+        return null;
     }
 }

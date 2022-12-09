@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import edu.northeastern.numad22fa_team27.workout.interfaces.Summarizeable;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.WorkoutDAO;
 
 /**
  * Object representation of a single workout exercise
  */
-public class Workout {
+public class Workout implements Summarizeable {
     private String workoutID;
     private String workoutName;
     private List<MediaParagraph> workoutDescription;
@@ -149,4 +150,18 @@ public class Workout {
     }
 
 
+    @Override
+    public String getTitle() {
+        return this.getWorkoutName();
+    }
+
+    @Override
+    public String getMisc() {
+        return this.getBlurb();
+    }
+
+    @Override
+    public String getImage() {
+        return this.getCoverURL();
+    }
 }

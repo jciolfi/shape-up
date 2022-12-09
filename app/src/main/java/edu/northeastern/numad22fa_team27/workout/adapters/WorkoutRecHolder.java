@@ -1,6 +1,5 @@
 package edu.northeastern.numad22fa_team27.workout.adapters;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,9 +18,9 @@ public class WorkoutRecHolder extends RecyclerView.ViewHolder {
         super(view);
 
         this.listener = listener;
-        this.workoutPicture = view.findViewById(R.id.img_workout);
-        this.title = view.findViewById(R.id.txt_workout_title);
-        this.blurb  = view.findViewById(R.id.workout_blurb);
+        this.workoutPicture = view.findViewById(R.id.result_icon);
+        this.title = view.findViewById(R.id.search_item_title);
+        this.blurb  = view.findViewById(R.id.search_item_misc);
 
         view.findViewById(R.id.card_base).setOnClickListener(view1 -> {
             listener.onClick(view1, getLayoutPosition());
