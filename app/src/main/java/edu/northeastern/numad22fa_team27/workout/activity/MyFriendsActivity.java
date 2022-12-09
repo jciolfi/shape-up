@@ -1,5 +1,7 @@
 package edu.northeastern.numad22fa_team27.workout.activity;
 
+import static edu.northeastern.numad22fa_team27.Util.requestNoActivityBar;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,6 +39,7 @@ public class MyFriendsActivity extends AppCompatActivity implements IRecyclerVie
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestNoActivityBar(this);
         setContentView(R.layout.activity_my_friends);
 
         db = FirebaseFirestore.getInstance();

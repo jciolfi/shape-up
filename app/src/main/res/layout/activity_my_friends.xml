@@ -23,10 +23,12 @@
         android:id="@+id/friendsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@drawable/gradient"
+        android:background="@color/md_theme_light_background"
         app:layout_constraintBottom_toTopOf="@+id/bottom_toolbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></androidx.recyclerview.widget.RecyclerView>
+        app:layout_constraintTop_toTopOf="parent">
+
+    </androidx.recyclerview.widget.RecyclerView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
