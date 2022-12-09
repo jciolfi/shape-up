@@ -145,9 +145,15 @@ public class WorkoutMessageActivity extends AppCompatActivity {
                                         Map<String, Object> newInput = new HashMap<>();
                                         newInput.put("chats", userChats);
 
-                                        firestore.collection("user")
+                                        firestore.collection("users")
                                                 .document(s.trim())
-                                                .set(newInput, SetOptions.merge());
+                                                .set(newInput, SetOptions.merge())
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void unused) {
+
+                                                    }
+                                                });
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override

@@ -17,12 +17,14 @@ public class UserDAO {
     public Map<String, Pair<Integer, LocalDate>> currentCategoryStreaks;
     public Map <String, Integer> bestCategoryStreaks;
     public String profilePic;
+    public List<String> chats;
 
     public UserDAO() {}
 
     public UserDAO(User u) {
         this.username = u.getUsername();
         this.friends = u.getFriends();
+        this.chats = u.getChats();
         this.joinedGroups = u.getJoinedGroups().stream().map(String::valueOf).collect(Collectors.toList());
 //        this.currentCategoryStreaks = u.getCurrentCategoryStreaks();
 //        this.bestCategoryStreaks = u.getBestCategoryStreaks();
@@ -34,6 +36,7 @@ public class UserDAO {
         return "UserDAO{" +
                 "username='" + username + '\'' +
                 ", friends=" + friends +
+                ", chats=" + chats +
                 ", joinedGroups=" + joinedGroups +
                 ", currentCategoryStreaks=" + currentCategoryStreaks +
                 ", bestCategoryStreaks=" + bestCategoryStreaks +

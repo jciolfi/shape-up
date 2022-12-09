@@ -32,6 +32,9 @@ public class User {
     // Maps workout type -> # days in best streak
     private Map<WorkoutCategory, Integer> bestCategoryStreaks;
 
+    // List of chat IDs that the user is a part of
+    private List<String> chats;
+
     public User() { }
 
     /**
@@ -48,6 +51,7 @@ public class User {
         this.joinedGroups = new ArrayList<>();
         this.currentCategoryStreaks = new HashMap<>();
         this.bestCategoryStreaks = new HashMap<>();
+        this.chats = new ArrayList<>();
     }
 
 
@@ -60,7 +64,7 @@ public class User {
      * @param currentCategoryStreaks Map of streak category to current streak info
      * @param bestCategoryStreaks Map of streak category to best streak info
      */
-    public User(String username, String encryptedPassword, String profilePic, List<String> friends, List<UUID> joinedGroups, Map<WorkoutCategory, Pair<Integer, LocalDate>> currentCategoryStreaks, Map<WorkoutCategory, Integer> bestCategoryStreaks) {
+    public User(String username, String encryptedPassword, String profilePic, List<String> friends, List<UUID> joinedGroups, Map<WorkoutCategory, Pair<Integer, LocalDate>> currentCategoryStreaks, Map<WorkoutCategory, Integer> bestCategoryStreaks, List<String> chats) {
         this.username = username;
         this.friends = friends;
         this.profilePic = profilePic;
@@ -68,6 +72,7 @@ public class User {
         this.encryptedPassword = encryptedPassword;
         this.currentCategoryStreaks = currentCategoryStreaks;
         this.bestCategoryStreaks = bestCategoryStreaks;
+        this.chats = chats;
     }
 
     public User(UserDAO userDAO, String userID) {
@@ -128,6 +133,14 @@ public class User {
         this.friends = friends;
     }
 
+    public List<String> getChats() {
+        return chats;
+    }
+
+    public void setChats(List<String> chats) {
+        this.chats = chats;
+    }
+
     public List<UUID> getJoinedGroups() {
         return joinedGroups;
     }
@@ -181,6 +194,8 @@ public class User {
 
         this.username = userDAO.username == null ? "" : userDAO.username;
         this.friends = userDAO.friends == null ? new ArrayList<>() : userDAO.friends;
+
+        this.chats = userDAO.chats == null ? new ArrayList<>() : userDAO.chats;
 
         this.joinedGroups = userDAO.joinedGroups == null
                 ? new ArrayList<>()
