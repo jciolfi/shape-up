@@ -4,6 +4,7 @@ import androidx.annotation.RequiresPermission;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.content.Context;
 import android.content.Intent;
@@ -69,7 +70,7 @@ public class ReadMessageActivity extends AppCompatActivity {
         cards = new ArrayList<>();
 
         //initialize recycler
-        RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager manager = new StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.VERTICAL);
         recMessages = findViewById(R.id.rcv_message_view);
         recMessages.setHasFixedSize(false);
         recMessages.setAdapter(new ChatAdapter(cards));
