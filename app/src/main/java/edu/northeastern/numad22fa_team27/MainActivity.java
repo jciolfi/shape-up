@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void notifyUser() {
+        // Get the token from firebase according to the firebase documentation
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(new OnCompleteListener<String>() {
                     @Override
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    // Declare the launcher at the top of your Activity/Fragment:
+    // Declare the launcher at the top of your Activity/Fragment according to the documentation:
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {

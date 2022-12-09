@@ -25,6 +25,7 @@ import edu.northeastern.numad22fa_team27.R;
 
 public class PushNotificationReceiver extends FirebaseMessagingService {
 
+    // Override the method according to the firebase documentation
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         Log.d("Message source", "From: " + remoteMessage.getFrom());
@@ -48,6 +49,7 @@ public class PushNotificationReceiver extends FirebaseMessagingService {
     }
 
     private void sendNotification(String messageBody) {
+        // Below code fro the documentation can help sending notifications
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
