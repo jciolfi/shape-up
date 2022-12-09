@@ -29,5 +29,8 @@ public class ReadMessageActivity extends AppCompatActivity {
 
             title = extras.getString("title");
         }
+        //initialize recycler
+        //find the data for the message
+
     }
 }
