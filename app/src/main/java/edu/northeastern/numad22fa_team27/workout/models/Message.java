@@ -11,11 +11,6 @@ import edu.northeastern.numad22fa_team27.workout.models.DAO.MessageDOA;
 public class Message {
     private String chatId;
     private String name;
-
-    public String getLastMessage() {
-        return lastMessage;
-    }
-
     private String lastMessage;
     private List<String> chatMembers;
     private List<Map<String, String>> chatHistory;
@@ -91,6 +86,9 @@ public class Message {
 
     public List<Map<String, String>> getChatHistory() {
         return chatHistory;
+    }
+    public String getLastMessage() {
+        return lastMessage;
     }
 
     public void setChatMembers(List<String> chatMembers) {

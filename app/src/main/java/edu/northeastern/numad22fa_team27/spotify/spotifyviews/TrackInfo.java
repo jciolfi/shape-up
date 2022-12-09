@@ -26,8 +26,8 @@ public class TrackInfo extends RecyclerView.Adapter<Holder> {
 
     @Override
     public void onBindViewHolder(@NonNull Holder h, int i) {
-        Cards cards = list.get(i);
-        getInfo(h, cards);
+        Cards card = list.get(i);
+        getInfo(h, card);
     }
 
     private void getInfo(Holder h, Cards cards) {
