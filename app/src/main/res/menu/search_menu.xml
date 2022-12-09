@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:id="@+id/currencies">
+        <item
+            android:id="@+id/us"
+            android:orderInCategory="1"
+            android:title="US"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/tr"
+            android:orderInCategory="2"
+            android:title="TR"
+            app:showAsAction="never" />
+    </group>
+
+
+</menu>

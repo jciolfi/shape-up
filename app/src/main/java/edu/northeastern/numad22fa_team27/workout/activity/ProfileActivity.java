@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -57,6 +58,11 @@ public class ProfileActivity extends AppCompatActivity {
         BottomNavigationView bottomNav = findViewById(R.id.navigation);
         bottomNav.setSelectedItemId(R.id.nav_profile);
         bottomNav.setOnItemSelectedListener(NavigationBar.setNavListener(this));
+        FloatingActionButton fabSearch = findViewById(R.id.searchButton);
+        fabSearch.setOnClickListener(v -> {
+            Intent intent = new Intent(this, SearchActivity.class);
+            this.startActivity(intent);
+        });
 
         // Find all our UI elements
         user_auth = FirebaseAuth.getInstance();
