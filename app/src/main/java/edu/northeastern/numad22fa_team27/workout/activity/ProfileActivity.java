@@ -28,6 +28,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import edu.northeastern.numad22fa_team27.Constants;
 import edu.northeastern.numad22fa_team27.R;
@@ -62,6 +63,7 @@ public class ProfileActivity extends AppCompatActivity {
         bottomNav.setOnItemSelectedListener(NavigationBar.setNavListener(this));
         FloatingActionButton fabSearch = findViewById(R.id.searchButton);
 
+        AtomicBoolean searchHidden = new AtomicBoolean(true);
         UniversalSearchFragment search = new UniversalSearchFragment();
         getSupportFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
@@ -72,21 +74,12 @@ public class ProfileActivity extends AppCompatActivity {
         
         fabSearch.setOnClickListener(v -> {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.show(search).commit();
-            /**
-            FrameLayout frame = new FrameLayout(this);
-            frame.setId(CONTENT_VIEW_ID);
-
-            FrameLayout.LayoutParams layout = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
-            layout.setMargins(32, 32, 32, 32);
-            frame.setLayoutParams(layout);
-            setContentView(frame, layout);
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(CONTENT_VIEW_ID, new UniversalSearchFragment());
-            fragmentTransaction.commit();*/
-            //Intent intent = new Intent(this, SearchActivity.class);
-            //this.startActivity(intent);
+            if (searchHidden.get()) {
+                transaction.show(search).commit();
+            } else {
+                transaction.hide(search).commit();
+            }
+            searchHidden.set(!searchHidden.get());
         });
 
         // Find all our UI elements

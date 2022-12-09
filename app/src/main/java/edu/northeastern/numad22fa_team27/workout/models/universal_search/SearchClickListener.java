@@ -30,7 +30,6 @@ public class SearchClickListener {
         this.parentActivity = parentActivity;
     }
 
-
     public void onClick(View v, int index) {
         Summarizeable card = cardData.get(index);
 
