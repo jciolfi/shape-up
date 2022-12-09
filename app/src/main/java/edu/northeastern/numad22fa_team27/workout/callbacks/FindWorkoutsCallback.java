@@ -1,5 +1,6 @@
 package edu.northeastern.numad22fa_team27.workout.callbacks;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -35,6 +36,8 @@ public class FindWorkoutsCallback extends WorkoutCallback {
         displayWorkouts.addAll(snapshot.toObjects(WorkoutDAO.class).stream()
                 .map(wd -> new Workout(wd))
                 .collect(Collectors.toList()));
+
+        Log.v("XYZ", displayWorkouts.toString());
 
         Objects.requireNonNull(dataRv.getAdapter()).notifyDataSetChanged();
     }
