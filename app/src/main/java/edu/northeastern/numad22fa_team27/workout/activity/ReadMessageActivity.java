@@ -1,18 +1,26 @@
 package edu.northeastern.numad22fa_team27.workout.activity;
 
+import androidx.annotation.RequiresPermission;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
+
+import org.checkerframework.checker.units.qual.C;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,7 +71,7 @@ public class ReadMessageActivity extends AppCompatActivity {
         //initialize recycler
         RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
         recMessages = findViewById(R.id.rcv_message_view);
-        recMessages.setHasFixedSize(true);
+        recMessages.setHasFixedSize(false);
         recMessages.setAdapter(new ChatAdapter(cards));
         recMessages.setLayoutManager(manager);
 
@@ -74,6 +82,29 @@ public class ReadMessageActivity extends AppCompatActivity {
         sendButton = findViewById(R.id.btn_send_message);
         sendButton.setOnClickListener(V -> {
             //querry database and make changes
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            String currentID = user.getUid();
+            String newMessage = editText.getText().toString();
+            Map<String, String> addMap = new HashMap<>();
+            addMap.put("userId", currentID);
+            addMap.put("message", newMessage);
+            chatHistory.add(addMap);
+            Map<String, Object> newInput = new HashMap<>();
+            newInput.put("messages", chatHistory);
+            firestore.collection("messages")
+                    .document(chatId.trim())
+                    .set(newInput, SetOptions.merge())
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            cards.add(new ChatCard(users.get(currentID),  newMessage));
+                            recMessages.getAdapter().notifyDataSetChanged();
+                            editText.setText("");
+                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.showSoftInput( findViewById(R.id.txt_edit_message),InputMethodManager.SHOW_IMPLICIT);
+                        }
+                    });
+
         });
         firestore = FirebaseFirestore.getInstance();
 
