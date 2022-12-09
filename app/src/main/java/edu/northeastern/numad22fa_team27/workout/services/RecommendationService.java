@@ -83,7 +83,7 @@ public class RecommendationService {
 
                     // Convert DAO object to underlying model
                     target.addAll(ds.toObjects(WorkoutDAO.class).stream()
-                            .map(wd -> new Workout(wd.workoutID, wd.workoutName, wd.workoutDescription, wd.categoriesPresent, wd.difficulty, wd.coverURL, wd.blurb))
+                            .map(wd -> new Workout(wd))
                             .collect(Collectors.toList()));
 
                     Objects.requireNonNull(rv.getAdapter()).notifyDataSetChanged();

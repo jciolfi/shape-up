@@ -1,7 +1,6 @@
 package edu.northeastern.numad22fa_team27.workout.models.groups_search;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +8,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -19,8 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.northeastern.numad22fa_team27.R;
-import edu.northeastern.numad22fa_team27.Util;
-import edu.northeastern.numad22fa_team27.workout.callbacks.GetGroupByIDCallback;
+import edu.northeastern.numad22fa_team27.workout.callbacks.UpdateGroupDialogCallback;
 import edu.northeastern.numad22fa_team27.workout.callbacks.GetUserByIDCallback;
 import edu.northeastern.numad22fa_team27.workout.models.Group;
 import edu.northeastern.numad22fa_team27.workout.models.User;
@@ -76,17 +73,19 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupViewHolder> {
                 List<String> membersCopy = new ArrayList<>(group.getMembers());
                 membersCopy.retainAll(currentUser.getFriends());
 
-                String mutuals = "None";
-                if (membersCopy.size() > 2) {
-                    mutuals = String.format("%s, %s, and %s others",
-                            Util.limitLength(membersCopy.get(0), 8),
-                            Util.limitLength(membersCopy.get(1), 8),
-                            membersCopy.size() - 2);
-                } else if (membersCopy.size() > 0) {
-                    mutuals = String.join(" and ", membersCopy);
-                }
+                // stretch goal - logic below to get usernames for mutual friends
+                // not worth it right now to do extra lookups for usernames
+//                String mutuals = "None";
+//                if (membersCopy.size() > 2) {
+//                    mutuals = String.format("%s, %s, and %s others",
+//                            Util.limitLength(membersCopy.get(0), 8),
+//                            Util.limitLength(membersCopy.get(1), 8),
+//                            membersCopy.size() - 2);
+//                } else if (membersCopy.size() > 0) {
+//                    mutuals = String.join(" and ", membersCopy);
+//                }
 
-                mutualFriends.setText(String.format("Mutual Friends: %s", mutuals));
+                mutualFriends.setText(String.format("Mutual Friends: %s", membersCopy.size()));
             }
 
             // set up close button
@@ -100,59 +99,9 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupViewHolder> {
                 groupInfoDialog.dismiss();
             });
 
-            firestoreService.getUserByID(currentUser.getUserID(), new GetUserByIDCallback(currentUser));
-            firestoreService.getGroupByID(group.getGroupID(), new GetGroupByIDCallback(group));
-
             Button actionButton = groupInfoDialog.findViewById(R.id.btn_join_group);
-            actionButton.setEnabled(true);
-
-            /** Logic overview
-             * - if current user is in group -> change button to leave
-             *      - if user is the admin, must transfer admin before leaving -> disable button
-             * - if current user is not in group -> change button to join
-             *      - if group is not accepting members -> disable button
-             */
-
-            // if user in group, change to leave group button
-            // this is a faster lookup than the group's members
-            if (currentUser.getJoinedGroups().contains(group.getGroupID())) {
-                actionButton.setText("Leave");
-                if (group.getAdminID().equals(currentUser.getUserID())) {
-                    actionButton.setEnabled(false);
-                }
-                actionButton.setOnClickListener(v -> {
-                    AlertDialog leaveDialog = new AlertDialog.Builder(searchView.getContext())
-                            .setTitle("Are you sure you want to leave this group?")
-                            .setMessage("You may not be able to re-join in the future")
-                            .setPositiveButton("Yes", (dialogInterface, i) -> {
-                                firestoreService.leaveGroup(group.getGroupID());
-                                groupInfoDialog.dismiss();
-                            })
-                            .setNegativeButton("Cancel", null)
-                            .setCancelable(false)
-                            .create();
-                    leaveDialog.show();
-                });
-            } else {
-                actionButton.setText("Join");
-
-                if (!group.getAcceptingMembers()) {
-                    actionButton.setEnabled(false);
-                }
-
-                actionButton.setOnClickListener(v -> {
-                    AlertDialog joinDialog = new AlertDialog.Builder(searchView.getContext())
-                            .setTitle("Are you sure you want to join this group?")
-                            .setPositiveButton("Yes", (dialogInterface, i) -> {
-                                firestoreService.tryJoinGroup(group.getGroupID());
-                                groupInfoDialog.dismiss();
-                            })
-                            .setNegativeButton("Cancel", null)
-                            .setCancelable(false)
-                            .create();
-                    joinDialog.show();
-                });
-            }
+            firestoreService.getGroupByID(group.getGroupID(), new UpdateGroupDialogCallback(
+                    group, currentUser.getUserID(), actionButton, searchView, groupInfoDialog, firestoreService));
 
 
             groupInfoDialog.show();

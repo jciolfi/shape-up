@@ -1,21 +1,23 @@
 package edu.northeastern.numad22fa_team27.workout.models;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import edu.northeastern.numad22fa_team27.Util;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
+import edu.northeastern.numad22fa_team27.workout.utilities.StoreablePair;
 
 // TODO: a lot of these "lists" should really be sets
 public class User {
@@ -23,9 +25,6 @@ public class User {
     private String userID;
     private String username;
     private String profilePic;
-
-    // TODO is this even being used?
-    private String encryptedPassword;
 
     // List of the IDs of this user's friends
     private List<String> friends;
@@ -42,42 +41,46 @@ public class User {
     // Maps workout type -> # days in best streak
     private Map<WorkoutCategory, Integer> bestCategoryStreaks;
 
+    private Map<String, Integer> workoutCompletions;
+
     public User() { }
 
     /**
      * New user constructor
      * @param username Unique string identifying user
-     * @param encryptedPassword Hashed password
+     * @param profilePic Link to the user's profile picture
      */
 
-    public User(String username, String encryptedPassword, String profilePic) {
+    public User(String username, String profilePic) {
         this.username = username;
-        this.encryptedPassword = encryptedPassword;
         this.profilePic = profilePic;
         this.friends = new ArrayList<>();
         this.joinedGroups = new ArrayList<>();
+        this.incomingFriendRequests = new HashSet<>();
         this.currentCategoryStreaks = new HashMap<>();
         this.bestCategoryStreaks = new HashMap<>();
+        this.workoutCompletions = new HashMap<>();
     }
 
 
     /**
      * Complete object constructor
      * @param username Unique string identifying user
-     * @param encryptedPassword Hashed password
      * @param friends List of the unique usernames of friends
      * @param joinedGroups List of UUIDs for the groups this user has joined
      * @param currentCategoryStreaks Map of streak category to current streak info
      * @param bestCategoryStreaks Map of streak category to best streak info
+     * @param workoutCompletions Map of workouts onto number of completions
      */
-    public User(String username, String encryptedPassword, String profilePic, List<String> friends, List<String> joinedGroups, Map<WorkoutCategory, Pair<Integer, LocalDate>> currentCategoryStreaks, Map<WorkoutCategory, Integer> bestCategoryStreaks) {
+    public User(String username, String profilePic, List<String> friends, List<String> joinedGroups, Map<WorkoutCategory, Pair<Integer, LocalDate>> currentCategoryStreaks, Map<WorkoutCategory, Integer> bestCategoryStreaks, Map<String, Integer> workoutCompletions) {
         this.username = username;
-        this.friends = friends;
         this.profilePic = profilePic;
+        this.friends = friends;
         this.joinedGroups = joinedGroups;
-        this.encryptedPassword = encryptedPassword;
+        this.incomingFriendRequests = new HashSet<>();
         this.currentCategoryStreaks = currentCategoryStreaks;
         this.bestCategoryStreaks = bestCategoryStreaks;
+        this.workoutCompletions = workoutCompletions;
     }
 
     public User(UserDAO userDAO, String userID) {
@@ -90,6 +93,13 @@ public class User {
      * @param when Timestamp when the workout occurred
      */
     public void recordWorkout(@NonNull Workout workout, LocalDate when) {
+        // Keep track of the fact we finished this workout in particular
+        workoutCompletions.put(
+                workout.getWorkoutID(),
+                workoutCompletions.getOrDefault(workout.getWorkoutID(), 0) + 1
+        );
+
+        // Compute streak logic
         for (WorkoutCategory w : workout.getCategoriesPresent()) {
             this.addToStreak(w, when);
         }
@@ -136,6 +146,19 @@ public class User {
 
     public Set<String> getIncomingFriendRequests() {
         return incomingFriendRequests;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(userID, user.userID) && Objects.equals(username, user.username) && Objects.equals(profilePic, user.profilePic) && Objects.equals(friends, user.friends) && Objects.equals(incomingFriendRequests, user.incomingFriendRequests) && Objects.equals(joinedGroups, user.joinedGroups) && Objects.equals(currentCategoryStreaks, user.currentCategoryStreaks) && Objects.equals(bestCategoryStreaks, user.bestCategoryStreaks) && Objects.equals(workoutCompletions, user.workoutCompletions);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userID, username, profilePic, friends, incomingFriendRequests, joinedGroups, currentCategoryStreaks, bestCategoryStreaks, workoutCompletions);
     }
 
     public void setFriends(List<String> friends) {
@@ -199,7 +222,11 @@ public class User {
         this.currentCategoryStreaks = new HashMap<>();
         if (userDAO.currentCategoryStreaks != null) {
             for (String category : userDAO.currentCategoryStreaks.keySet()) {
-                this.currentCategoryStreaks.put(WorkoutCategory.toCategory(category), userDAO.currentCategoryStreaks.get(category));
+                StoreablePair<Integer, Long> info = userDAO.currentCategoryStreaks.get(category);
+                this.currentCategoryStreaks.put(
+                        WorkoutCategory.toCategory(category),
+                        new Pair<>(info.getFirst(), Instant.ofEpochSecond(info.getSecond()).atZone(ZoneId.systemDefault()).toLocalDate())
+                );
             }
         }
 
@@ -213,5 +240,31 @@ public class User {
         this.incomingFriendRequests = new HashSet<>(Util.nullOrDefault(userDAO.incomingFriendRequests, new ArrayList<>()));
 
         this.profilePic = Util.nullOrDefault(userDAO.profilePic, "");
+
+        this.workoutCompletions = Util.nullOrDefault(userDAO.workoutCompletions, new HashMap<>());
+    }
+
+    public Map<String, Integer> getWorkoutCompletions() {
+        return workoutCompletions;
+    }
+
+    public void setWorkoutCompletions(Map<String, Integer> workoutCompletions) {
+        this.workoutCompletions = workoutCompletions;
+    }
+
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "userID='" + userID + '\'' +
+                ", username='" + username + '\'' +
+                ", profilePic='" + profilePic + '\'' +
+                ", friends=" + friends +
+                ", incomingFriendRequests=" + incomingFriendRequests +
+                ", joinedGroups=" + joinedGroups +
+                ", currentCategoryStreaks=" + currentCategoryStreaks +
+                ", bestCategoryStreaks=" + bestCategoryStreaks +
+                ", workoutCompletions=" + workoutCompletions +
+                '}';
     }
 }
