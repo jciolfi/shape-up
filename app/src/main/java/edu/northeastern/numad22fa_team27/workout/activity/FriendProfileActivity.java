@@ -1,5 +1,7 @@
 package edu.northeastern.numad22fa_team27.workout.activity;
 
+import static edu.northeastern.numad22fa_team27.Util.requestNoActivityBar;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -40,6 +42,7 @@ public class FriendProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestNoActivityBar(this);
         setContentView(R.layout.activity_friend_profile);
 
         friend_email = findViewById(R.id.friendUsername);
@@ -55,6 +58,9 @@ public class FriendProfileActivity extends AppCompatActivity {
                 Util.openActivity(FriendProfileActivity.this, ProfileActivity.class);
             }
         });
+
+        // TODO
+        // Fetch the friends workouts from the DB
     }
 
     private void extractInformation() {

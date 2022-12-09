@@ -3,12 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:backgroundTint="@color/md_theme_light_background"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackground" >
+        android:backgroundTint="@color/md_theme_light_background" >
          
         <androidx.cardview.widget.CardView
             android:id="@+id/friend_card_iv"
