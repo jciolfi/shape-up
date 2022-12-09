@@ -22,4 +22,7 @@ public class Constants {
     public static final String WORKOUT_NAME = "workoutName";
     public static final String DIFFICULTY = "difficulty";
 
+    // Generic messages
+    public static final String MESSAGES = "messages";
+
 }

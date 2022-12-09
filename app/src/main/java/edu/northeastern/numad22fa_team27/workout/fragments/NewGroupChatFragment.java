@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.spotify.SearchItemViewModel;
@@ -32,7 +33,7 @@ public class NewGroupChatFragment extends Fragment {
     private String userId;
 
     public NewGroupChatFragment(String userId, String[][] listOfFriends) {
-        //requrired empty public constructor
+        //required empty public constructor
         //add here list of friends of users?
         this.listOfFriends = listOfFriends;
         this.userId = userId;
@@ -56,6 +57,7 @@ public class NewGroupChatFragment extends Fragment {
 
         //Friends spinner
         Spinner friends = newGroupChatView.findViewById(R.id.spn_friends);
+
         ArrayAdapter<String> adapter = new ArrayAdapter<>(newGroupChatView.getContext(),
                 android.R.layout.simple_spinner_item, listOfFriends[1]);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -91,11 +93,9 @@ public class NewGroupChatFragment extends Fragment {
 
         });
 
-        //Create Chat button
-
+        // Create Chat button
         final Button createChatButton = newGroupChatView.findViewById(R.id.btn_add_chat);
         createChatButton.setOnClickListener(c -> {
-
             if (addedArray.length == 0) {
                 addedFriends.setError("Please add one more friend");
                 return;
@@ -106,19 +106,11 @@ public class NewGroupChatFragment extends Fragment {
                 chatUserids.add(s);
             }
 
-            Message message = new Message("unknown", nameChat.getText().toString(), chatUserids);
+            Message message = new Message(UUID.randomUUID().toString(), nameChat.getText().toString(), chatUserids);
 
             friends.setSelection(0);
             addedFriends.setText("Add Friends");
             viewModel.selectItem(message);
-
-
-
-
-            //
-            /*InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            Editable
-            imm.hideSoftInputFromWindow(, 0);*/
         });
         return newGroupChatView;
     }

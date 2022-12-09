@@ -6,16 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import edu.northeastern.numad22fa_team27.workout.models.DAO.MessageDOA;
+import edu.northeastern.numad22fa_team27.workout.models.DAO.ChatDAO;
 
 public class Message {
     private String chatId;
     private String name;
-
-    public String getLastMessage() {
-        return lastMessage;
-    }
-
     private String lastMessage;
     private List<String> chatMembers;
     private List<Map<String, String>> chatHistory;
@@ -66,7 +61,7 @@ public class Message {
             this.lastMessage = "lastMessage"; //chatHistory.get(chatHistory.size() - 1);
         }
     }
-    public Message(MessageDOA mDOA, String chatId){
+    public Message(ChatDAO mDOA, String chatId){
         this.chatId = chatId;
         this.name = mDOA.title;
         this.chatHistory = mDOA.messages;
@@ -91,6 +86,9 @@ public class Message {
 
     public List<Map<String, String>> getChatHistory() {
         return chatHistory;
+    }
+    public String getLastMessage() {
+        return lastMessage;
     }
 
     public void setChatMembers(List<String> chatMembers) {

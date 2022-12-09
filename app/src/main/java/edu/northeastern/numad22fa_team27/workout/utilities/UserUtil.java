@@ -40,6 +40,7 @@ public class UserUtil {
     }
 
     public void startWatchingUserChanges() {
+        // Update on changes
         userListener = db.collection(Constants.USERS)
                 .document(user_auth.getUid())
                 .addSnapshotListener((EventListener<DocumentSnapshot>) (snapshot, e) -> {

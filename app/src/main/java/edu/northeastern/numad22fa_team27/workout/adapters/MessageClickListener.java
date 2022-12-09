@@ -34,7 +34,7 @@ public class MessageClickListener {
         //fix the intent so that it goes to a message activity
         //look at the workout click listener to see where it goes and how the intent gets the information
         Intent intent = new Intent(source, ReadMessageActivity.class);
-
+        intent.putStringArrayListExtra("chatMembers", (ArrayList<String>) m.getChatMembers());
         intent.putExtra("chatId", m.getChatId());
         intent.putExtra("title", m.getName());
 
