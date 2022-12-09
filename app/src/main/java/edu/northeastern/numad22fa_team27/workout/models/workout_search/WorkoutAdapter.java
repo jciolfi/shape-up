@@ -67,8 +67,8 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutViewHolder> {
             Button closeButton = workoutInfoDialog.findViewById(R.id.btn_close_workout);
             workoutInfoDialog.setOnDismissListener(dialogInterface -> {
                 // focus will go to search view and bring up keyboard - disable this
-                final View workoutView = searchView.findViewById(R.id.rv_workout);
-                workoutView.requestFocus();
+                //final View workoutView = searchView.findViewById(R.id.rv_workout);
+                //workoutView.requestFocus();
             });
             closeButton.setOnClickListener(view1 -> {
                 workoutInfoDialog.dismiss();

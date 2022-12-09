@@ -52,11 +52,11 @@ public class FindWorkoutsCallback extends WorkoutCallback {
         }
 
         // display message when no results returned
-        if (displayWorkouts.size() == 0) {
-            noResults.setVisibility(View.VISIBLE);
-        } else {
-            noResults.setVisibility(View.INVISIBLE);
-        }
+        //if (displayWorkouts.size() == 0) {
+        //    noResults.setVisibility(View.VISIBLE);
+        //} else {
+        //    noResults.setVisibility(View.INVISIBLE);
+        //}
 
         Objects.requireNonNull(workoutRV.getAdapter()).notifyDataSetChanged();
     }

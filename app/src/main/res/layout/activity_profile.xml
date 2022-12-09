@@ -218,6 +218,6 @@
         app:elevation="0dp"
         app:layout_anchor="@id/bottomAppBar"
         app:layout_insetEdge="none"
-        app:srcCompat="@drawable/search_icon" />
+        app:srcCompat="@android:drawable/ic_menu_search" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

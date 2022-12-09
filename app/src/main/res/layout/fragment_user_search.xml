@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:background="@color/md_theme_light_background">
 
-<!--    <TextView-->
-<!--        android:id="@+id/title_search"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="16dp"-->
-<!--        android:text="@string/friends_search"-->
-<!--        android:textSize="22sp"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.1" />-->
+    <!--    <TextView-->
+    <!--        android:id="@+id/title_search"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginTop="16dp"-->
+    <!--        android:text="@string/friends_search"-->
+    <!--        android:textSize="22sp"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintTop_toTopOf="parent"-->
+    <!--        app:layout_constraintHorizontal_bias="0.1" />-->
 
     <androidx.appcompat.widget.SearchView
         android:id="@+id/sv_users"
@@ -59,6 +60,7 @@
         android:layout_marginTop="30dp"
         android:layout_marginEnd="16dp"
         android:text="@string/sort_by"
+        android:textColor="#8D6E63"
         app:layout_constraintEnd_toStartOf="@+id/dropdown_user_sort"
         app:layout_constraintTop_toBottomOf="@+id/sv_users" />
 
