@@ -1,5 +1,7 @@
 package edu.northeastern.numad22fa_team27.workout.activity;
 
+import static edu.northeastern.numad22fa_team27.Util.requestNoActivityBar;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -37,13 +39,14 @@ import edu.northeastern.numad22fa_team27.workout.models.User;
 public class RegisterActivity extends AppCompatActivity {
     private static final String TAG = "RegisterActivity";
     private TextView usr_email, usr_pass, usr_pass_confirm;
-    private Button sign_up_btn;
+    private Button sign_up_btn, have_acc_btn;
     private ProgressBar pb;
     private FirebaseAuth user_auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestNoActivityBar(this);
         setContentView(R.layout.activity_register);
 
         usr_email = findViewById(R.id.register_EmailAddress);
@@ -52,27 +55,10 @@ public class RegisterActivity extends AppCompatActivity {
         sign_up_btn = findViewById(R.id.btn_signup);
         pb = findViewById(R.id.progressbar_register);
         user_auth = FirebaseAuth.getInstance();
-
+        have_acc_btn = findViewById(R.id.already_have_account);
+        have_acc_btn.setOnClickListener(v -> Util.openActivity(RegisterActivity.this, LoginActivity.class));
         registerButtonClicked();
 
-        // Specify the part of the test where user can click to register an account
-        TextView tv = findViewById(R.id.already_have_account);
-        String txt = "Already have an account? Sign in here";
-        SpannableString ss = new SpannableString(txt);
-        ClickableSpan cs = new ClickableSpan() {
-            @Override
-            public void onClick(@NonNull View widget) {
-                Util.openActivity(RegisterActivity.this, LoginActivity.class);
-            }
-            @Override
-            public void updateDrawState(@NonNull TextPaint ds) {
-                super.updateDrawState(ds);
-                ds.setColor(Color.BLUE);
-            }
-        };
-        ss.setSpan(cs, 25, 37, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        tv.setText(ss);
-        tv.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     private void registerButtonClicked() {
