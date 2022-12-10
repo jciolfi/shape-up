@@ -44,6 +44,7 @@ public class User implements Summarizeable {
 
     private Map<String, Integer> workoutCompletions;
 
+    // List of chat IDs that the user is a part of
     private List<String> chats;
 
     public User() { }
@@ -169,6 +170,14 @@ public class User implements Summarizeable {
         this.friends = friends;
     }
 
+    public List<String> getChats() {
+        return chats;
+    }
+
+    public void setChats(List<String> chats) {
+        this.chats = chats;
+    }
+
     public List<String> getJoinedGroups() {
         return joinedGroups;
     }
@@ -217,11 +226,10 @@ public class User implements Summarizeable {
 
     public void setUserFromDAO(UserDAO userDAO, String userID) {
         this.userID = userID;
-
-        this.username = userDAO.username == null ? "" : userDAO.username;
-        this.friends = userDAO.friends == null ? new ArrayList<>() : userDAO.friends;
-
+        this.username = Util.nullOrDefault(userDAO.username, "");
+        this.friends = Util.nullOrDefault(userDAO.friends, new ArrayList<>());
         this.joinedGroups = Util.nullOrDefault(userDAO.joinedGroups, new ArrayList<>());
+        this.chats = Util.nullOrDefault(userDAO.chats, new ArrayList<>());
 
         this.currentCategoryStreaks = new HashMap<>();
         if (userDAO.currentCategoryStreaks != null) {
@@ -242,9 +250,7 @@ public class User implements Summarizeable {
         }
 
         this.incomingFriendRequests = new HashSet<>(Util.nullOrDefault(userDAO.incomingFriendRequests, new ArrayList<>()));
-
         this.profilePic = Util.nullOrDefault(userDAO.profilePic, "");
-
         this.workoutCompletions = Util.nullOrDefault(userDAO.workoutCompletions, new HashMap<>());
 
         this.chats = userDAO.chats;
@@ -256,10 +262,6 @@ public class User implements Summarizeable {
 
     public void setWorkoutCompletions(Map<String, Integer> workoutCompletions) {
         this.workoutCompletions = workoutCompletions;
-    }
-
-    public List<String> getChats() {
-        return chats;
     }
 
     @Override

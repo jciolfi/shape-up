@@ -124,7 +124,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // We know that the auth is set up and the user is valid
         UserUtil.getInstance().startWatchingUserChanges();
-        Util.openActivity(LoginActivity.this, ProfileActivity.class);
+        Util.openActivity(LoginActivity.this, WorkoutMessageActivity.class);
     }
 
     /**

@@ -44,7 +44,7 @@ public class UserDAO {
                 .collect(Collectors.toMap((entry) -> entry.getKey().name(), (entry) -> entry.getValue()));
         this.workoutCompletions = u.getWorkoutCompletions();
         this.profilePic = Util.nullOrDefault(u.getProfilePic(), "");
-        this.chats = u.getChats();
+        this.chats = Util.nullOrDefault(u.getChats(), new ArrayList<>());
     }
 
     @NonNull
@@ -54,6 +54,7 @@ public class UserDAO {
                 "username='" + username + '\'' +
                 ", friends=" + friends +
                 ", incomingFriendRequests=" + incomingFriendRequests +
+                ", chats=" + chats +
                 ", joinedGroups=" + joinedGroups +
                 ", currentCategoryStreaks=" + currentCategoryStreaks +
                 ", bestCategoryStreaks=" + bestCategoryStreaks +
