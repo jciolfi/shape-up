@@ -156,7 +156,7 @@ public class ProfileActivity extends AppCompatActivity {
                     }
                 });
 
-        WorkoutClickListener clickListener = new WorkoutClickListener(dataset, activityLauncher);
+        WorkoutClickListener clickListener = new WorkoutClickListener(this, dataset, activityLauncher);
 
         int orientation = isVertical ? LinearLayoutManager.VERTICAL : LinearLayoutManager.HORIZONTAL;
         @SuppressLint("WrongConstant") RecyclerView.LayoutManager manager = new LinearLayoutManager(this, orientation, false);

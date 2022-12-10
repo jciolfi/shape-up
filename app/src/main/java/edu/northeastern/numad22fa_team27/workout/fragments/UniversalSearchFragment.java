@@ -68,6 +68,8 @@ public class UniversalSearchFragment extends DialogFragment {
         // Find our searchbar + searchview and set up its filtering menu
         SearchBar search = fragmentView.findViewById(R.id.search_bar);
         SearchView searchView  = fragmentView.findViewById(R.id.search_view);
+        search.requestFocusFromTouch();
+        search.performClick();
         search.inflateMenu(R.menu.search_menu);
 
         // Set up search result recycler view

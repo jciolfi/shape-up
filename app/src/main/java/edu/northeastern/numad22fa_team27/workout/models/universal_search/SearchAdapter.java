@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
@@ -48,6 +49,8 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchHolder> {
                     .centerCrop(Gravity.CENTER)
                     .noFade()
                     .into(h.searchResultIcon);
+        } else {
+            h.searchResultIcon.setImageDrawable(ResourcesCompat.getDrawable(listener.parentActivity.getResources(), R.drawable.x_in_circle, null));
         }
     }
 

@@ -17,18 +17,16 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/md_theme_light_background"
+        android:backgroundTint="#00FFFBFE"
+        android:minHeight="56dp"
+        android:visibility="visible"
         app:elevation="0dp">
 
         <com.google.android.material.search.SearchBar
             android:id="@+id/search_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            app:hideNavigationIcon="true"
-            app:navigationIcon="@android:drawable/ic_menu_sort_by_size"
-            app:navigationIconTint="@color/md_theme_light_primary"
-            app:tintNavigationIcon="true" />
+            android:minHeight="56dp" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <com.google.android.material.search.SearchView
