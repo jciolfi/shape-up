@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
-import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,12 +23,9 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
-import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -59,7 +55,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         // Set up a subset of the nav bar
         BottomNavigationView bottomNav = findViewById(R.id.navigation);
-        bottomNav.setSelectedItemId(R.id.nav_profile);
+        bottomNav.setSelectedItemId(R.id.nav_messaging);
         bottomNav.setOnItemSelectedListener(NavigationBar.setNavListener(this));
 
         imageView = findViewById(R.id.profilePic);

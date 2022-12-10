@@ -103,7 +103,7 @@ public class WorkoutMessageActivity extends AppCompatActivity {
         //New chat fragment
 
         //floating action button
-        newChatButton = findViewById(R.id.fab_new_chat);
+        newChatButton = findViewById(R.id.new_chat_button);
         newChatButton.setOnClickListener(v -> {
             toggleSearchFragment();
         });

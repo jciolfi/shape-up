@@ -9,6 +9,7 @@ import edu.northeastern.numad22fa_team27.workout.activity.UserGroupsActivity;
 import edu.northeastern.numad22fa_team27.workout.activity.LeaderboardActivity;
 import edu.northeastern.numad22fa_team27.workout.activity.ProfileActivity;
 import edu.northeastern.numad22fa_team27.workout.activity.SettingsActivity;
+import edu.northeastern.numad22fa_team27.workout.activity.WorkoutMessageActivity;
 
 public class NavigationBar {
 
@@ -20,8 +21,8 @@ public class NavigationBar {
                             Intent intent = new Intent(context, LeaderboardActivity.class);
                             context.startActivity(intent);
                             break;
-                        case R.id.nav_profile:
-                            intent = new Intent(context, SettingsActivity.class);
+                        case R.id.nav_messaging:
+                            intent = new Intent(context, WorkoutMessageActivity.class);
                             context.startActivity(intent);
                             break;
                         case R.id.nav_groups:
