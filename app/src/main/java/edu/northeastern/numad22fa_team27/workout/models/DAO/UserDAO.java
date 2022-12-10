@@ -25,6 +25,7 @@ public class UserDAO {
     public Map<String, Integer> bestCategoryStreaks;
     public Map<String, Integer> workoutCompletions;
     public String profilePic;
+    public List<String> chats;
 
     public UserDAO() {}
 
@@ -43,6 +44,7 @@ public class UserDAO {
                 .collect(Collectors.toMap((entry) -> entry.getKey().name(), (entry) -> entry.getValue()));
         this.workoutCompletions = u.getWorkoutCompletions();
         this.profilePic = Util.nullOrDefault(u.getProfilePic(), "");
+        this.chats = u.getChats();
     }
 
     @NonNull

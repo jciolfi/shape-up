@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.Util;
+import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 import edu.northeastern.numad22fa_team27.workout.utilities.UserUtil;
 
 public class LoginActivity extends AppCompatActivity {
@@ -48,6 +49,8 @@ public class LoginActivity extends AppCompatActivity {
         loginButtonClicked();
 
         user_auth = FirebaseAuth.getInstance();
+
+        new FirestoreService().johntest();
     }
 
     @Override

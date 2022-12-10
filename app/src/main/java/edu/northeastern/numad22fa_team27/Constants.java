@@ -15,6 +15,7 @@ public class Constants {
     public static final String GROUPS = "groups";
     public static final String MEMBERS = "members";
     public static final String JOINED_GROUPS = "joinedGroups";
+    public static final String ACCEPTING_MEMBERS = "acceptingMembers";
 
     // constants for workout collection
     public static final String WORKOUTS = "workouts";
