@@ -2,11 +2,18 @@ package edu.northeastern.numad22fa_team27.workout.models;
 
 import android.util.ArrayMap;
 
+import androidx.core.util.Pair;
+
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import edu.northeastern.numad22fa_team27.Util;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.ChatDAO;
+import edu.northeastern.numad22fa_team27.workout.utilities.StoreablePair;
 
 public class Message {
     private String chatId;
@@ -14,6 +21,10 @@ public class Message {
     private String lastMessage;
     private List<String> chatMembers;
     private List<Map<String, String>> chatHistory;
+
+    public Message(){
+
+    }
 
     public Message(String chatId, String name) {
         this.chatId = chatId;
@@ -71,6 +82,7 @@ public class Message {
         } else {
             this.lastMessage = "lastMessage"; //chatHistory.get(chatHistory.size() - 1);
         }
+        //setFromChatDAO
 
     }
 
@@ -110,5 +122,13 @@ public class Message {
         newMessage.put("message", message);
         chatHistory.add(newMessage);
         this.lastMessage = chatHistory.get(chatHistory.size() - 1).get("message");
+    }
+
+    public void setChatFromDAO(ChatDAO chatDAO, String chatId) {
+
+        this.chatId = chatId;
+        this.name = Util.nullOrDefault(chatDAO.title, "");
+        this.chatMembers = Util.nullOrDefault(chatDAO.members, new ArrayList<>());
+        this.chatHistory = Util.nullOrDefault(chatDAO.messages, new ArrayList<>());
     }
 }

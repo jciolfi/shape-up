@@ -30,8 +30,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -66,6 +68,8 @@ public class WorkoutMessageActivity extends AppCompatActivity {
     private List<String> chats = new ArrayList<>();
     private List<Message> cards;
     private boolean showingSearch = false;
+
+    private Message chatUpdate;
 
     //Activity elements
     private RecyclerView chatsRecycler;
@@ -109,7 +113,55 @@ public class WorkoutMessageActivity extends AppCompatActivity {
         //RecyclerView
         chatsRecycler = findViewById(R.id.rcv_chats);
         setupRecView(chatsRecycler, cards);
+        progressBar.setVisibility(View.INVISIBLE);
     }
+
+    /*if (e != null) {
+        Log.w(TAG, "Listen failed.", e);
+        return;
+    }
+
+        if (snapshot != null && snapshot.exists()) {
+        Log.d(TAG, "Current data: " + snapshot.getData());
+        synchronized(currUserData) {
+            currUserData = new User(snapshot.toObject(UserDAO.class), user_auth.getUid());
+        }
+    } else {
+        Log.d(TAG, "Current data: null");
+    }*/
+
+    /*userListener = db.collection(Constants.MESSAGES)
+            .document(user_auth.getUid())
+            .addSnapshotListener((EventListener<DocumentSnapshot>) (snapshot, e) -> {
+    });*/
+
+    private void setChatListener(String chatId) {
+        ListenerRegistration chatListener = firestore.collection(Constants.MESSAGES)
+                .document(chatId)
+                .addSnapshotListener((EventListener<DocumentSnapshot>) (snapshot, e) -> {
+                    if (e != null) {
+                        Log.w(TAG, "Listen failed.", e);
+                        return;
+                    }
+
+                    int index = chats.indexOf(chatId);
+                    chatUpdate = cards.get(index);
+                    if (snapshot != null && snapshot.exists()) {
+                        Log.d(TAG, "Current data: " + snapshot.getData());
+                        synchronized(chatUpdate) {
+                            chatUpdate = new Message(snapshot.toObject(ChatDAO.class), chatId);
+                        }
+                        cards.set(index, new Message(snapshot.toObject(ChatDAO.class), chatId));
+                        chatsRecycler.getAdapter().notifyDataSetChanged();
+
+                    } else {
+                        Log.d(TAG, "Current data: null");
+                    }
+                });
+
+    }
+
+
 
     private void incomingInfo() {
         ChatItemViewModel viewModel = new ViewModelProvider(this).get(ChatItemViewModel.class);
@@ -132,7 +184,7 @@ public class WorkoutMessageActivity extends AppCompatActivity {
                     .set(cd)
                     .addOnSuccessListener(documentReference -> {
                         chats.add(item.getChatId());
-
+                        progressBar.setVisibility(View.VISIBLE);
                         for (String s : item.getChatMembers()) {
                             FirebaseFirestore
                                     .getInstance()
@@ -140,6 +192,7 @@ public class WorkoutMessageActivity extends AppCompatActivity {
                                     .document(s.trim())
                                     .get()
                                     .addOnSuccessListener(documentSnapshot -> {
+                                        progressBar.setVisibility(View.VISIBLE);
                                         UserDAO ud = documentSnapshot.toObject(UserDAO.class);
                                         if (ud.chats == null) {
                                             ud.chats = new ArrayList<>();
@@ -152,9 +205,11 @@ public class WorkoutMessageActivity extends AppCompatActivity {
                                                 .addOnSuccessListener(unused -> {
                                                     // TODO: Success condition here
                                                 });
+                                        progressBar.setVisibility(View.INVISIBLE);
                                     }).addOnFailureListener(e -> Log.w(TAG, "Error writing document", e));;
                         }
                         progressBar.setVisibility(View.INVISIBLE);
+
                     });
             cards.add(new Message(item.getChatId(), item.getName(), item.getChatMembers(), item.getChatHistory()));
             chatsRecycler.getAdapter().notifyDataSetChanged();
@@ -226,6 +281,7 @@ public class WorkoutMessageActivity extends AppCompatActivity {
                     if (chat.messages != null && chat.members != null && chat.title != null) {
                         cards.add(new Message(messageKey, chat.title, chat.members, chat.messages));
                         chatsRecycler.getAdapter().notifyDataSetChanged();
+                        setChatListener(messageKey.trim());
                     }
                 });
     }

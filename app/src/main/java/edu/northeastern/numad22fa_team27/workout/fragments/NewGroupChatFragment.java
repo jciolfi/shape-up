@@ -107,6 +107,9 @@ public class NewGroupChatFragment extends Fragment {
                 addedFriends.setError("Please add one more friend");
                 return;
             }
+            if (nameChat.getText().equals("")) {
+                nameChat.setError("Please name your chat");
+            }
             List<String> chatUserids = new ArrayList<>();
             chatUserids.add(userId);
             for (String s: listOfFriends[0]) {

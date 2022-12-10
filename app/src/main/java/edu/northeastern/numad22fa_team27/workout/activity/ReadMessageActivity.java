@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Context;
 import android.content.Intent;
@@ -49,11 +50,14 @@ public class ReadMessageActivity extends AppCompatActivity {
     private Map<String, String> users;
     private List<Map<String, String>> chatHistory;
     private RecyclerView recMessages;
+    private ViewPager2 vpMessages;
     private EditText editText;
     private ImageButton sendButton;
     private List<ChatCard> cards;
     private ProgressBar progressBar;
     FirebaseFirestore firestore;
+    private boolean isNotReady = true;
+    private RecyclerView.Adapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,10 +82,17 @@ public class ReadMessageActivity extends AppCompatActivity {
 
         //initialize recycler
         RecyclerView.LayoutManager manager = new StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.VERTICAL);
+        adapter =  new ChatAdapter(cards);
         recMessages = findViewById(R.id.rcv_message_view);
         recMessages.setHasFixedSize(false);
-        recMessages.setAdapter(new ChatAdapter(cards));
+        recMessages.setAdapter(adapter);
         recMessages.setLayoutManager(manager);
+
+        /*vpMessages = new ViewPager2(this);
+        vpMessages.setAdapter(new ChatAdapter(cards));
+        val wMeasureSpec = View.MeasureSpec.makeMeasureSpec(view.width, View.MeasureSpec.EXACTLY);
+        val hMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        vpMessages.measure();*/
 
         //initialize Edit text
         editText = findViewById(R.id.txt_edit_message);
@@ -139,16 +150,20 @@ public class ReadMessageActivity extends AppCompatActivity {
                                 //don't need to do anything will create a new chat
                             }
                             try {
-                                Thread.sleep(1);
+                                Thread.sleep(5);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
-                            users.put(s.trim(), username);
+                            users.put(s, username);
+                            if(users.size() == chatMembers.size()) {
+                                addCards();
+                            }
                         }
                     });
         }
+    }
 
-
+    private void addCards() {
         firestore.collection("messages")
                 .document(chatId.trim())
                 .get()
@@ -164,12 +179,13 @@ public class ReadMessageActivity extends AppCompatActivity {
                             //don't need to do anything will create a new chat
                         }
                         for (Map<String, String> map: chatHistory) {
+
                             cards.add(new ChatCard(users.get(map.get("userId")), map.get("message")));
                         }
                         recMessages.getAdapter().notifyDataSetChanged();
+                        recMessages.scrollToPosition(adapter.getItemCount()-1);
                         progressBar.setVisibility(View.INVISIBLE);
                     }
                 });
-
     }
 }
