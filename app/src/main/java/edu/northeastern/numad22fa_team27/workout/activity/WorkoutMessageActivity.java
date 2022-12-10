@@ -58,6 +58,7 @@ import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.WorkoutDAO;
 import edu.northeastern.numad22fa_team27.workout.models.Message;
 import edu.northeastern.numad22fa_team27.workout.models.User;
+import edu.northeastern.numad22fa_team27.workout.utilities.ChatUtil;
 import edu.northeastern.numad22fa_team27.workout.utilities.UserUtil;
 
 public class WorkoutMessageActivity extends AppCompatActivity {
@@ -67,6 +68,7 @@ public class WorkoutMessageActivity extends AppCompatActivity {
     private List<String> usernames = new ArrayList<>();
     private List<String> chats = new ArrayList<>();
     private List<Message> cards;
+    private List<ChatUtil> messagelisteners;
     private boolean showingSearch = false;
 
     private Message chatUpdate;
@@ -76,6 +78,7 @@ public class WorkoutMessageActivity extends AppCompatActivity {
     private FloatingActionButton newChatButton;
     ProgressBar progressBar;
     NewGroupChatFragment chatFragment;
+
 
     //other variables
     private final String TAG = "WorkoutMessageActivity__";
@@ -105,38 +108,26 @@ public class WorkoutMessageActivity extends AppCompatActivity {
             toggleSearchFragment();
         });
 
-
         // for the fragment i think
         incomingInfo();
 
-
-        //RecyclerView
+        // RecyclerView
         chatsRecycler = findViewById(R.id.rcv_chats);
         setupRecView(chatsRecycler, cards);
         progressBar.setVisibility(View.INVISIBLE);
+
+        //
+        messagelisteners = new ArrayList<>();
     }
 
-    /*if (e != null) {
-        Log.w(TAG, "Listen failed.", e);
-        return;
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
     }
 
-        if (snapshot != null && snapshot.exists()) {
-        Log.d(TAG, "Current data: " + snapshot.getData());
-        synchronized(currUserData) {
-            currUserData = new User(snapshot.toObject(UserDAO.class), user_auth.getUid());
-        }
-    } else {
-        Log.d(TAG, "Current data: null");
-    }*/
-
-    /*userListener = db.collection(Constants.MESSAGES)
-            .document(user_auth.getUid())
-            .addSnapshotListener((EventListener<DocumentSnapshot>) (snapshot, e) -> {
-    });*/
-
-    private void setChatListener(String chatId) {
-        ListenerRegistration chatListener = firestore.collection(Constants.MESSAGES)
+    private ListenerRegistration createChatListener(String chatId, RecyclerView rvToUpdate) {
+        return firestore.collection(Constants.MESSAGES)
                 .document(chatId)
                 .addSnapshotListener((EventListener<DocumentSnapshot>) (snapshot, e) -> {
                     if (e != null) {
@@ -152,16 +143,12 @@ public class WorkoutMessageActivity extends AppCompatActivity {
                             chatUpdate = new Message(snapshot.toObject(ChatDAO.class), chatId);
                         }
                         cards.set(index, new Message(snapshot.toObject(ChatDAO.class), chatId));
-                        chatsRecycler.getAdapter().notifyDataSetChanged();
-
+                        rvToUpdate.getAdapter().notifyDataSetChanged();
                     } else {
                         Log.d(TAG, "Current data: null");
                     }
                 });
-
     }
-
-
 
     private void incomingInfo() {
         ChatItemViewModel viewModel = new ViewModelProvider(this).get(ChatItemViewModel.class);
@@ -223,49 +210,16 @@ public class WorkoutMessageActivity extends AppCompatActivity {
         String currentID = user.getUid();
         firestore = FirebaseFirestore.getInstance();
 
-        DocumentReference reference = firestore.collection("users").document(currentID);
+        DocumentReference reference = firestore.collection(Constants.USERS).document(currentID);
 
         reference.get().addOnSuccessListener(documentSnapshot -> {
-
             User currentUser = UserUtil.getInstance().getUser();
             chats = currentUser.getChats();
             for (int i = 0; i < currentUser.getChats().size(); i++) {
                 findChatInfo(i);
             }
         });
-        //if (currentUser.getChats() != null && !currentUser.getChats().isEmpty()) {}
-
-
-        //get information on the user
-
-
     }
-
-//    //stored data variables
-//    private String[][] friends;
-//    private List<String> usernames = new ArrayList<>();
-//    private List<String> chats = new ArrayList<>();
-//    private List<Message> cards;
-//    private boolean showingSearch = false;
-//
-//    //Activity elements
-//    private RecyclerView chatsRecycler;
-//    private FloatingActionButton newChatButton;
-//    ProgressBar progressBar;
-//    NewGroupChatFragment chatFragment;
-//
-//    //other variables
-//    private final String TAG = "WorkoutMessageActivity__";
-//    FirebaseFirestore firestore;
-
-//    @Override
-//    public void onSaveInstanceState(Bundle savedInstanceState) {
-//        super.onSaveInstanceState(savedInstanceState);
-//        savedInstanceState.putIntArray(VAR_KEY_1, friends);
-//        savedInstanceState.putBoolean(VAR_KEY_2, usernames);
-//        savedInstanceState.putSerializable(VAR_KEY_3, ...);
-//        savedInstanceState.putParcelable(VAR_KEY_4, ...);
-//    }
 
     private void findChatInfo(int index) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -281,7 +235,7 @@ public class WorkoutMessageActivity extends AppCompatActivity {
                     if (chat.messages != null && chat.members != null && chat.title != null) {
                         cards.add(new Message(messageKey, chat.title, chat.members, chat.messages));
                         chatsRecycler.getAdapter().notifyDataSetChanged();
-                        setChatListener(messageKey.trim());
+                        createChatListener(messageKey.trim(), chatsRecycler);
                     }
                 });
     }

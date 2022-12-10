@@ -6,8 +6,8 @@ package edu.northeastern.numad22fa_team27.workout.adapters;
  * where the body of the text is needed.
  */
 public class ChatCard {
-    private final String userName;
     private final String body;
+    private String userName;
 
     public ChatCard(String userName, String message) {
         this.userName = userName;
@@ -17,8 +17,19 @@ public class ChatCard {
     public String getUserName() {
         return userName;
     }
+    public void setUserName(String username) {
+        this.userName = username;
+    }
 
     public String getBody() {
         return body;
+    }
+
+    @Override
+    public String toString() {
+        return "ChatCard{" +
+                "body='" + body + '\'' +
+                ", userName='" + userName + '\'' +
+                '}';
     }
 }

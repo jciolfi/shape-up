@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import edu.northeastern.numad22fa_team27.Util;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.ChatDAO;
@@ -50,9 +51,21 @@ public class Message {
         //added new chat history from the creator
         addChatHistory(chatMembers.get(0), "GroupChat " + name + " was created");
         this.lastMessage = chatHistory.get(chatHistory.size() - 1).get("message");
-
     }
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Message message = (Message) o;
+        return Objects.equals(getChatId(), message.getChatId()) && Objects.equals(getName(), message.getName()) && Objects.equals(getLastMessage(), message.getLastMessage()) && Objects.equals(getChatMembers(), message.getChatMembers()) && Objects.equals(getChatHistory(), message.getChatHistory());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getChatId(), getName(), getLastMessage(), getChatMembers(), getChatHistory());
+    }
 
     /**
      * constructor for a card
@@ -65,27 +78,16 @@ public class Message {
         this.chatId = chatId;
         this.name = name;
         this.chatMembers = chatMembers;
-        this.chatHistory = new ArrayList<>();
-        if (!chatHistory.isEmpty()) {
+        this.chatHistory = chatHistory;
+        if (chatHistory != null && !chatHistory.isEmpty()) {
             this.lastMessage = chatHistory.get(chatHistory.size() - 1).get("message");
         } else {
             this.lastMessage = "lastMessage"; //chatHistory.get(chatHistory.size() - 1);
         }
     }
     public Message(ChatDAO mDOA, String chatId){
-        this.chatId = chatId;
-        this.name = mDOA.title;
-        this.chatHistory = mDOA.messages;
-        this.chatMembers = mDOA.members;
-        if (!chatHistory.isEmpty()) {
-            this.lastMessage = chatHistory.get(chatHistory.size() - 1).get("message");
-        } else {
-            this.lastMessage = "lastMessage"; //chatHistory.get(chatHistory.size() - 1);
-        }
-        //setFromChatDAO
-
+        this(chatId, mDOA.title, mDOA.members, mDOA.messages);
     }
-
 
     public String getChatId() {
         return chatId;
@@ -109,7 +111,9 @@ public class Message {
 
     public void setChatHistory(List<Map<String, String>> chatHistory) {
         this.chatHistory = chatHistory;
-        //this.lastMessage = chatHistory.get(chatHistory.size() - 1);
+        if (chatHistory != null && !chatHistory.isEmpty()) {
+            this.lastMessage = chatHistory.get(chatHistory.size() - 1).get("message");
+        }
     }
 
     public void addChatMembers(String member) {
@@ -125,7 +129,6 @@ public class Message {
     }
 
     public void setChatFromDAO(ChatDAO chatDAO, String chatId) {
-
         this.chatId = chatId;
         this.name = Util.nullOrDefault(chatDAO.title, "");
         this.chatMembers = Util.nullOrDefault(chatDAO.members, new ArrayList<>());
