@@ -90,7 +90,7 @@ public class UniversalSearchFragment extends DialogFragment {
 
         // Hackish, but this is literally a library in alpha.
         for (int i = 0; i < search.getMenu().size(); i++) {
-            setMenuItemColor(search.getMenu().getItem(i));
+            Util.setMenuItemColor(search.getMenu().getItem(i));
         }
 
         search.setOnMenuItemClickListener(
@@ -126,7 +126,7 @@ public class UniversalSearchFragment extends DialogFragment {
                                 } else {
                                     menuItem.setTitle("Name ↑");
                                 }
-                                setMenuItemColor(menuItem);
+                                Util.setMenuItemColor(menuItem);
                                 break;
                             default:
                                 break;
@@ -169,12 +169,5 @@ public class UniversalSearchFragment extends DialogFragment {
         });
 
         return fragmentView;
-    }
-
-    @SuppressLint("ResourceAsColor")
-    private void setMenuItemColor(MenuItem item){
-        SpannableString coloredTitle = new SpannableString(item.getTitle());
-        coloredTitle.setSpan(new ForegroundColorSpan(R.color.md_theme_light_onBackground), 0, coloredTitle.length(), 0);
-        item.setTitle(coloredTitle);
     }
 }
