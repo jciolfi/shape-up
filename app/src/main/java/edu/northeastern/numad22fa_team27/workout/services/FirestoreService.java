@@ -2,8 +2,10 @@ package edu.northeastern.numad22fa_team27.workout.services;
 
 import android.util.Log;
 
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -248,10 +250,13 @@ public class FirestoreService implements IFirestoreService {
 
     @Override
     public boolean tryJoinGroup(String groupID) {
-        if (Util.stringIsNullOrEmpty(groupID) || !tryFetchUserDetails()) {
+        if (Util.stringIsNullOrEmpty(groupID)) {
             warnBadParam("tryJoinGroup");
             return false;
-        } else if (currentUser.joinedGroups.size() >= 10) {
+        } else if (!tryFetchUserDetails()) {
+            warnBadParam("tryFetchUserDetails");
+            return false;
+        }else if (currentUser.joinedGroups.size() >= 10) {
             // not in same line as above to avoid race condition with getting currentUser
             return false;
         }
@@ -335,7 +340,7 @@ public class FirestoreService implements IFirestoreService {
                 .document(userID)
                 .get()
                 .addOnSuccessListener(callback::processDocument)
-                .addOnFailureListener(e -> logFailure("tryJoinGroup", e.getMessage()));
+                .addOnFailureListener(e -> logFailure("getUserByID", e.getMessage()));
     }
 
     @Override
@@ -516,7 +521,7 @@ public class FirestoreService implements IFirestoreService {
         String userID = user.getUid();
 
         AtomicBoolean success = new AtomicBoolean(true);
-        firestoreDB.collection(USERS)
+        Task<DocumentSnapshot> getter = firestoreDB.collection(USERS)
                 .document(userID)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {

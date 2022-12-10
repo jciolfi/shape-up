@@ -25,6 +25,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -61,6 +62,7 @@ import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.WorkoutDAO;
 import edu.northeastern.numad22fa_team27.workout.models.Message;
 import edu.northeastern.numad22fa_team27.workout.models.User;
+import edu.northeastern.numad22fa_team27.workout.models.universal_search.NavigationBar;
 import edu.northeastern.numad22fa_team27.workout.utilities.ChatUtil;
 import edu.northeastern.numad22fa_team27.workout.utilities.UserUtil;
 
@@ -91,6 +93,11 @@ public class WorkoutMessageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workout_message);
+
+        // Set up nav bar
+        BottomNavigationView bottomNav = findViewById(R.id.navigation);
+        bottomNav.setSelectedItemId(R.id.nav_messaging);
+        bottomNav.setOnItemSelectedListener(NavigationBar.setNavListener(this));
 
         cards = new ArrayList<>();
 
