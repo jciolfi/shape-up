@@ -14,10 +14,12 @@ import java.util.Objects;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.workout.models.Group;
+import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 
 public class UserGroupsAdapter extends RecyclerView.Adapter<UserGroupsViewHolder> {
     private final String TAG = "UserGroupsAdapter";
     private final List<Group> userGroups;
+    private final FirestoreService firestoreService = new FirestoreService();
 
     public UserGroupsAdapter(List<Group> userGroups) {
         this.userGroups = userGroups;
@@ -39,14 +41,27 @@ public class UserGroupsAdapter extends RecyclerView.Adapter<UserGroupsViewHolder
 
         // set public/private switch if admin
         if (group.getAdminID().equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())) {
+            holder.leaveButton.setEnabled(false);
+
             if (group.getAcceptingMembers()) {
                 holder.publicSwitch.setChecked(true);
             } else {
                 holder.publicSwitch.setChecked(false);
             }
             holder.publicSwitch.setVisibility(View.VISIBLE);
+
+            holder.publicSwitch.setOnCheckedChangeListener((compoundButton, b) -> {
+                firestoreService.tryChangeGroupPrivacy(group.getGroupID(), compoundButton.isChecked());
+            });
         } else {
             holder.publicSwitch.setVisibility(View.INVISIBLE);
+            holder.leaveButton.setEnabled(true);
+
+            holder.leaveButton.setOnClickListener(view -> {
+                firestoreService.leaveGroup(group.getGroupID());
+                userGroups.remove(position);
+                this.notifyItemRemoved(position);
+            });
         }
     }
 

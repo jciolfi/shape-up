@@ -12,6 +12,8 @@ public interface IFirestoreService {
      */
     boolean tryCreateGroup(String groupName, WorkoutCallback callback);
 
+    boolean tryChangeGroupPrivacy(String groupID, boolean isPublic);
+
     /**
      * Find workout by workoutName and/or workoutCategory
      * @param workoutName the name of the workout, matches on case-sensitive prefix
@@ -98,4 +100,6 @@ public interface IFirestoreService {
      * @param friendID the ID of friend to remove
      */
     void removeFriend(String friendID);
+
+    void johntest();
 }

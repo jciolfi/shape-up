@@ -4,7 +4,6 @@ import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -84,6 +83,28 @@ public class FirestoreService implements IFirestoreService {
     }
 
     @Override
+    public boolean tryChangeGroupPrivacy(String groupID, boolean isPublic) {
+        if (Util.stringIsNullOrEmpty(groupID)) {
+            warnBadParam("tryChangeGroupPrivacy");
+            return false;
+        } else if (!tryFetchUserDetails()) {
+            return false;
+        }
+
+        AtomicBoolean success = new AtomicBoolean(true);
+
+        firestoreDB.collection(GROUPS)
+                .document(groupID)
+                .update(ACCEPTING_MEMBERS, isPublic)
+                .addOnFailureListener(e -> {
+                    success.set(false);
+                    logFailure("tryChangeGroupPrivacy", e.getMessage());
+                });
+
+        return success.get();
+    }
+
+    @Override
     public void findWorkoutsByCriteria(String workoutName, WorkoutCategory workoutCategory, double maxDifficulty, double minDifficulty, WorkoutCallback callback, int resultLimit) {
         Query collectionQuery = firestoreDB.collection(WORKOUTS);
         boolean didFiltering = false;
@@ -152,6 +173,11 @@ public class FirestoreService implements IFirestoreService {
 
     @Override
     public void findUserGroups(WorkoutCallback callback) {
+        //  for some reason, this breaks everything
+//        if (!tryFetchUserDetails()) {
+//            return;
+//        }
+
         String userID = Objects.requireNonNull(userAuth.getCurrentUser()).getUid();
 
         firestoreDB.collection(USERS)
@@ -465,6 +491,19 @@ public class FirestoreService implements IFirestoreService {
                 .addOnFailureListener(e -> logFailure("tryRemoveFriend", e.getMessage()));
     }
 
+    @Override
+    public void johntest() {
+        firestoreDB.collection(USERS)
+                .document("RR5HSyOk2Zbhh6p7ZtnxNbSjeeC3")
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    Log.d("JOHNTEST", snapshot.toString());
+                })
+                .addOnFailureListener(e -> {
+                    Log.d("JOHNTEST", e.toString());
+                });
+    }
+
     // ---------- Helpers ----------
     private boolean tryFetchUserDetails() {
         FirebaseUser user = userAuth.getCurrentUser();
@@ -480,10 +519,16 @@ public class FirestoreService implements IFirestoreService {
                 .document(userID)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
+                    Log.d(TAG, "hit success!" + documentSnapshot.toObject(UserDAO.class));
                     currentUser = documentSnapshot.toObject(UserDAO.class);
                 })
-                .addOnFailureListener(e -> success.set(false));
+                .addOnFailureListener(e -> {
+                    Log.d(TAG, "hit fail!");
+                    success.set(false);
+                    logFailure("tryFetchUserDetails", e.getMessage());
+                });
 
+        Log.d(TAG, "returning: " + success.get() + " and " + (currentUser != null));
         return success.get() && currentUser != null;
     }
 

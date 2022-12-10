@@ -43,6 +43,8 @@ public class User {
 
     private Map<String, Integer> workoutCompletions;
 
+    private List<String> chats;
+
     public User() { }
 
     /**
@@ -60,8 +62,8 @@ public class User {
         this.currentCategoryStreaks = new HashMap<>();
         this.bestCategoryStreaks = new HashMap<>();
         this.workoutCompletions = new HashMap<>();
+        this.chats = new ArrayList<>();
     }
-
 
     /**
      * Complete object constructor
@@ -72,15 +74,16 @@ public class User {
      * @param bestCategoryStreaks Map of streak category to best streak info
      * @param workoutCompletions Map of workouts onto number of completions
      */
-    public User(String username, String profilePic, List<String> friends, List<String> joinedGroups, Map<WorkoutCategory, Pair<Integer, LocalDate>> currentCategoryStreaks, Map<WorkoutCategory, Integer> bestCategoryStreaks, Map<String, Integer> workoutCompletions) {
+    public User(String username, String profilePic, List<String> friends, Set<String> incomingFriendRequests, List<String> joinedGroups, Map<WorkoutCategory, Pair<Integer, LocalDate>> currentCategoryStreaks, Map<WorkoutCategory, Integer> bestCategoryStreaks, Map<String, Integer> workoutCompletions, List<String> chats) {
         this.username = username;
         this.profilePic = profilePic;
         this.friends = friends;
+        this.incomingFriendRequests = incomingFriendRequests;
         this.joinedGroups = joinedGroups;
-        this.incomingFriendRequests = new HashSet<>();
         this.currentCategoryStreaks = currentCategoryStreaks;
         this.bestCategoryStreaks = bestCategoryStreaks;
         this.workoutCompletions = workoutCompletions;
+        this.chats = chats;
     }
 
     public User(UserDAO userDAO, String userID) {
@@ -242,6 +245,8 @@ public class User {
         this.profilePic = Util.nullOrDefault(userDAO.profilePic, "");
 
         this.workoutCompletions = Util.nullOrDefault(userDAO.workoutCompletions, new HashMap<>());
+
+        this.chats = userDAO.chats;
     }
 
     public Map<String, Integer> getWorkoutCompletions() {
@@ -252,6 +257,9 @@ public class User {
         this.workoutCompletions = workoutCompletions;
     }
 
+    public List<String> getChats() {
+        return chats;
+    }
 
     @Override
     public String toString() {
