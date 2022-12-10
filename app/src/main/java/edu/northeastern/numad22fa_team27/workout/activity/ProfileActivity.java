@@ -1,5 +1,7 @@
 package edu.northeastern.numad22fa_team27.workout.activity;
 
+import static com.google.android.material.internal.ContextUtils.getActivity;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,9 +11,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -73,13 +78,15 @@ public class ProfileActivity extends AppCompatActivity {
                 .commit();
         
         fabSearch.setOnClickListener(v -> {
+            searchHidden.set(!searchHidden.get());
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             if (searchHidden.get()) {
-                transaction.show(search).commit();
-            } else {
                 transaction.hide(search).commit();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
+            } else {
+                transaction.show(search).commit();
             }
-            searchHidden.set(!searchHidden.get());
         });
         // End setup nav bar
 
