@@ -90,7 +90,7 @@ public class ReadMessageActivity extends AppCompatActivity {
                 editText.setError("Please add a message");
                 return;
             }
-            currMessages.get().getChatHistory().add(new HashMap<>() {{ put("userId", currentID); put("message", newMessage); }});
+            currMessages.get().addChatHistory(currentID, newMessage);
             ChatDAO cd = new ChatDAO(currMessages.get());
             firestore.collection(Constants.MESSAGES)
                     .document(chatId)
@@ -99,6 +99,8 @@ public class ReadMessageActivity extends AppCompatActivity {
                         editText.setText("");
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.showSoftInput( findViewById(R.id.txt_edit_message),InputMethodManager.SHOW_IMPLICIT);
+                        
+                        recMessages.getAdapter().notifyDataSetChanged();
                     }).addOnFailureListener(e -> {
                         editText.setText("");
                         editText.setError("Could not send!");

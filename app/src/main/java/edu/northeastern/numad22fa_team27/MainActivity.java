@@ -21,7 +21,6 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import edu.northeastern.numad22fa_team27.spotify.SpotifyActivity;
 import edu.northeastern.numad22fa_team27.sticker_messenger.FirebaseActivity;
 import edu.northeastern.numad22fa_team27.workout.activity.LoginActivity;
-import edu.northeastern.numad22fa_team27.workout.activity.WorkoutMessageActivity;
 
 public class MainActivity extends AppCompatActivity {
 
