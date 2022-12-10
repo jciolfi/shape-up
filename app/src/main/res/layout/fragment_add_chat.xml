@@ -30,9 +30,11 @@
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="16dp"
             android:minHeight="48dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            android:popupTheme="@style/PopupMenu"
+            android:theme="@style/Widget.AppCompat.Spinner.DropDown"
             app:layout_constraintEnd_toStartOf="@+id/btn_add_friend"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txt_name_chat" />
         <Button
             android:id="@+id/btn_add_friend"
