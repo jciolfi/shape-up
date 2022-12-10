@@ -16,6 +16,7 @@
         android:layout_marginEnd="16dp"
         android:fontFamily="@font/poppins_black"
         android:text="The Greatest Workout Ever"
+        android:textColor="@color/md_theme_light_onBackground"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/detail_workout_category"
         app:layout_constraintEnd_toEndOf="parent"
@@ -44,6 +45,7 @@
         android:layout_marginBottom="8dp"
         android:fontFamily="@font/poppins_regular"
         android:text="Category, Focus, Another Focus"
+        android:textColor="@color/md_theme_light_onBackground"
         app:layout_constraintBottom_toTopOf="@+id/workout_steps_recycler"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/detail_workout_name" />
@@ -58,6 +60,7 @@
         android:layout_marginBottom="8dp"
         android:fontFamily="@font/poppins_regular_italic"
         android:text="3.5/5.0"
+        android:textColor="@color/md_theme_light_onBackground"
         app:layout_constraintBottom_toTopOf="@+id/workout_steps_recycler"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"

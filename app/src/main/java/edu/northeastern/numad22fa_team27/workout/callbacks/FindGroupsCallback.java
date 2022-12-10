@@ -13,18 +13,17 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import java.util.List;
 import java.util.Objects;
 
+import edu.northeastern.numad22fa_team27.workout.interfaces.Summarizeable;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.GroupDAO;
 import edu.northeastern.numad22fa_team27.workout.models.Group;
 
 public class FindGroupsCallback extends WorkoutCallback {
-    private final List<Group> displayGroups;
+    private final List<Summarizeable> displayGroups;
     private final RecyclerView groupRV;
-    private final TextView noResults;
 
-    public FindGroupsCallback(List<Group> displayGroups, RecyclerView groupRV, TextView noResults) {
+    public FindGroupsCallback(List<Summarizeable> displayGroups, RecyclerView groupRV) {
         this.displayGroups = displayGroups;
         this.groupRV = groupRV;
-        this.noResults = noResults;
     }
 
     @Override
@@ -35,13 +34,6 @@ public class FindGroupsCallback extends WorkoutCallback {
             if (groupDAO != null) {
                 displayGroups.add(new Group(groupDAO, ds.getId()));
             }
-        }
-
-        // display message when no results returned
-        if (displayGroups.size() == 0) {
-            noResults.setVisibility(View.VISIBLE);
-        } else {
-            noResults.setVisibility(View.INVISIBLE);
         }
 
         Objects.requireNonNull(groupRV.getAdapter()).notifyDataSetChanged();

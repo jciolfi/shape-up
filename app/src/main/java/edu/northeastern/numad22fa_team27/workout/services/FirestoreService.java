@@ -105,7 +105,7 @@ public class FirestoreService implements IFirestoreService {
     }
 
     @Override
-    public void findWorkoutsByCriteria(String workoutName, WorkoutCategory workoutCategory, double maxDifficulty, double minDifficulty, WorkoutCallback callback, int resultLimit) {
+    public void findWorkoutsByCriteria(String workoutName, WorkoutCategory workoutCategory, double maxDifficulty, double minDifficulty, WorkoutCallback callback, int resultLimit, boolean reverseOrder) {
         Query collectionQuery = firestoreDB.collection(WORKOUTS);
         boolean didFiltering = false;
 
@@ -113,10 +113,9 @@ public class FirestoreService implements IFirestoreService {
             // Add workout name filtering
             didFiltering = true;
             collectionQuery = collectionQuery
-                    .orderBy(WORKOUT_NAME)
-                    .startAt(workoutName)
-                    .endAt(workoutName + "\uf8ff");
-
+                    .orderBy(WORKOUT_NAME, reverseOrder ? Query.Direction.DESCENDING : Query.Direction.ASCENDING)
+                    .startAt(reverseOrder ? workoutName + "\uf8ff" : workoutName)
+                    .endAt(reverseOrder ? workoutName : workoutName + "\uf8ff");
         }
         if (workoutCategory != null) {
             // Add workout category filtering
@@ -156,16 +155,16 @@ public class FirestoreService implements IFirestoreService {
     }
 
     @Override
-    public void findUsersByUsername(String username, WorkoutCallback callback) {
+    public void findUsersByUsername(String username, WorkoutCallback callback, boolean reverseOrder) {
         if (Util.stringIsNullOrEmpty(username)) {
             warnBadParam("findUserByUsername");
             return;
         }
 
         firestoreDB.collection(USERS)
-                .orderBy(USERNAME)
-                .startAt(username)
-                .endAt(username + "\uf8ff")
+                .orderBy(USERNAME, reverseOrder ? Query.Direction.DESCENDING : Query.Direction.ASCENDING)
+                .startAt(reverseOrder ? username + "\uf8ff" : username)
+                .endAt(reverseOrder ? username : username + "\uf8ff")
                 .get()
                 .addOnSuccessListener(callback::processQuery)
                 .addOnFailureListener(e -> logFailure("findUserByUsername", e.getMessage()));
@@ -201,16 +200,16 @@ public class FirestoreService implements IFirestoreService {
     }
 
     @Override
-    public void findGroupsByName(String groupName, WorkoutCallback callback) {
+    public void findGroupsByName(String groupName, WorkoutCallback callback, boolean reverseOrder) {
         if (Util.stringIsNullOrEmpty(groupName)) {
             warnBadParam("findGroupsByName");
             return;
         }
 
         firestoreDB.collection(GROUPS)
-                .orderBy("groupName")
-                .startAt(groupName)
-                .endAt(groupName + "\uf8ff")
+                .orderBy("groupName", reverseOrder ? Query.Direction.DESCENDING : Query.Direction.ASCENDING)
+                .startAt(reverseOrder ? groupName + "\uf8ff" : groupName)
+                .endAt(reverseOrder ? groupName : groupName + "\uf8ff")
                 .get()
                 .addOnSuccessListener(callback::processQuery)
                 .addOnFailureListener(e -> logFailure("findGroupsByName", e.getMessage()));

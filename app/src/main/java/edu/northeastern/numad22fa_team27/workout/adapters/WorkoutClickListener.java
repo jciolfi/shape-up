@@ -17,18 +17,18 @@ import edu.northeastern.numad22fa_team27.workout.models.Workout;
 public class WorkoutClickListener {
     private final ActivityResultLauncher<Intent> launcher;
     List<Workout> cardData;
+    Activity parentActivity;
 
-    public WorkoutClickListener(List<Workout> originalData, ActivityResultLauncher<Intent> activityLauncher) {
+    public WorkoutClickListener(Activity parentActivity, List<Workout> originalData, ActivityResultLauncher<Intent> activityLauncher) {
         this.launcher = activityLauncher;
         this.cardData = originalData;
+        this.parentActivity = parentActivity;
     }
-
 
     public void onClick(View v, int index) {
         Workout w = cardData.get(index);
 
-        Activity source = (Activity) v.getContext();
-        Intent intent = new Intent(source, WorkoutDisplay.class);
+        Intent intent = new Intent(this.parentActivity, WorkoutDisplay.class);
         intent.putParcelableArrayListExtra("Text", (ArrayList<MediaParagraph>) w.getWorkoutDescription());
         intent.putExtra("WorkoutId", w.getWorkoutID());
         intent.putExtra("Difficulty", w.getDifficulty());

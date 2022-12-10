@@ -1,6 +1,6 @@
 
 <resources>
-    <style name="Theme.NUMAD22Fa_Team27" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.NUMAD22Fa_Team27"  parent="Theme.MaterialComponents.Bridge">
         <item name="android:windowEnterAnimation">@anim/slide_from_left</item>
         <item name="android:windowExitAnimation">@anim/slide_to_left</item>
 

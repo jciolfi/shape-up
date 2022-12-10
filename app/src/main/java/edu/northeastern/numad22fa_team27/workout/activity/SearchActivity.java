@@ -6,22 +6,15 @@ import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
 import edu.northeastern.numad22fa_team27.R;
-import edu.northeastern.numad22fa_team27.workout.fragments.GroupSearchFragment;
 import edu.northeastern.numad22fa_team27.workout.fragments.SearchType;
-import edu.northeastern.numad22fa_team27.workout.fragments.UserSearchFragment;
-import edu.northeastern.numad22fa_team27.workout.fragments.WorkoutSearchFragment;
-import edu.northeastern.numad22fa_team27.workout.models.workout_search.NavigationBar;
+import edu.northeastern.numad22fa_team27.workout.fragments.UniversalSearchFragment;
 
 public class SearchActivity extends AppCompatActivity {
     private static final float selectAlpha = 1.0f;
     private static final float deselectAlpha = 0.3f;
     private SearchType selectedSearch;
-    private GroupSearchFragment groupSearchFragment;
-    private UserSearchFragment userSearchFragment;
-    private WorkoutSearchFragment workoutSearchFragment;
+    private UniversalSearchFragment workoutSearchFragment;
     private ImageView workoutImg;
     private ImageView userImg;
     private ImageView groupImg;
@@ -32,14 +25,12 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search);
 
         // Set up nav bar
-        BottomNavigationView bottomNav = findViewById(R.id.bottom_toolbar);
-        bottomNav.setSelectedItemId(R.id.nav_search);
-        bottomNav.setOnItemSelectedListener(NavigationBar.setNavListener(this));
+        //BottomNavigationView bottomNav = findViewById(R.id.bottom_toolbar);
+        //bottomNav.setSelectedItemId(R.id.nav_search);
+        //bottomNav.setOnItemSelectedListener(NavigationBar.setNavListener(this));
 
         // initialize search instances
-        groupSearchFragment = new GroupSearchFragment();
-        userSearchFragment = new UserSearchFragment();
-        workoutSearchFragment = new WorkoutSearchFragment();
+        workoutSearchFragment = new UniversalSearchFragment();
 
         // set on click listeners for each search type
         workoutImg = findViewById(R.id.icon_workout);
@@ -86,12 +77,12 @@ public class SearchActivity extends AppCompatActivity {
             workoutImg.setAlpha(deselectAlpha);
             userImg.setAlpha(selectAlpha);
             groupImg.setAlpha(deselectAlpha);
-            return userSearchFragment;
+            return workoutSearchFragment;
         } else if (searchType.equals(SearchType.GROUP)) {
             workoutImg.setAlpha(deselectAlpha);
             userImg.setAlpha(deselectAlpha);
             groupImg.setAlpha(selectAlpha);
-            return groupSearchFragment;
+            return workoutSearchFragment;
         }
 
         // default to workouts

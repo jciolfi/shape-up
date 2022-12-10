@@ -1,162 +1,187 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:fillViewport="true">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/md_theme_light_background"
-        android:gravity="center"
-        android:orientation="vertical"
-        tools:context=".workout.activity.ProfileActivity">
+        android:layout_height="match_parent">
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottom_toolbar"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:backgroundTint="@color/md_theme_light_onBackground"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:menu="@menu/bottom_toolbar"
-            tools:ignore="MissingConstraints" />
+            android:background="@color/md_theme_light_background"
+            android:gravity="center"
+            android:orientation="vertical"
+            tools:context=".workout.activity.ProfileActivity">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardViewSetting"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_marginTop="50dp"
-            app:cardCornerRadius="60dp"
-            app:cardPreventCornerOverlap="false"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardViewSetting"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="50dp"
+                app:cardCornerRadius="60dp"
+                app:cardPreventCornerOverlap="false"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                android:id="@+id/profilePic"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/account"
-                android:contentDescription="@string/profilepic"
-                android:scaleType="fitCenter" />
+                <ImageView
+                    android:id="@+id/profilePic"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/account"
+                    android:contentDescription="@string/profilepic"
+                    android:scaleType="fitCenter" />
 
-        </androidx.cardview.widget.CardView>
+            </androidx.cardview.widget.CardView>
 
-        <Button
-            android:id="@+id/cancelButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="55dp"
-            android:backgroundTint="@color/md_theme_light_primary"
-            android:text="@string/cancelBtn"
-            app:layout_constraintEnd_toStartOf="@+id/saveButton"
-            app:layout_constraintStart_toStartOf="@+id/editTextNewPass"
-            app:layout_constraintTop_toBottomOf="@+id/editTextNewPass" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/cancelButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="55dp"
+                android:backgroundTint="@color/md_theme_light_primary"
+                android:text="@string/cancelBtn"
+                app:cornerRadius="8dp"
+                app:layout_constraintEnd_toStartOf="@+id/saveButton"
+                app:layout_constraintStart_toStartOf="@+id/editTextNewPass"
+                app:layout_constraintTop_toBottomOf="@+id/editTextNewPass" />
 
-        <Button
-            android:id="@+id/saveButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="55dp"
-            android:backgroundTint="@color/md_theme_light_primary"
-            android:text="@string/saveBtn"
-            app:layout_constraintEnd_toEndOf="@+id/editTextNewPass"
-            app:layout_constraintStart_toEndOf="@+id/cancelButton"
-            app:layout_constraintTop_toBottomOf="@+id/editTextNewPass" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/saveButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="55dp"
+                android:backgroundTint="@color/md_theme_light_primary"
+                android:text="@string/saveBtn"
+                app:cornerRadius="8dp"
+                app:layout_constraintEnd_toEndOf="@+id/editTextNewPass"
+                app:layout_constraintStart_toEndOf="@+id/cancelButton"
+                app:layout_constraintTop_toBottomOf="@+id/editTextNewPass" />
 
-        <ProgressBar
-            android:id="@+id/save_progressbar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:backgroundTint="@color/md_theme_light_primary"
-            android:foregroundTint="@color/md_theme_light_primary"
-            android:indeterminateOnly="true"
-            android:progressBackgroundTint="@color/md_theme_light_primary"
-            android:progressTint="@color/md_theme_light_primary"
-            android:visibility="invisible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardViewSetting" />
+            <ProgressBar
+                android:id="@+id/save_progressbar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:backgroundTint="@color/md_theme_light_primary"
+                android:foregroundTint="@color/md_theme_light_primary"
+                android:indeterminateOnly="true"
+                android:progressBackgroundTint="@color/md_theme_light_primary"
+                android:progressTint="@color/md_theme_light_primary"
+                android:visibility="invisible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cardViewSetting" />
 
-        <EditText
-            android:id="@+id/editTextEmail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:backgroundTint="@color/md_theme_light_primary"
-            android:drawableStart="@drawable/email"
-            android:drawablePadding="5dp"
-            android:ems="10"
-            android:inputType="textEmailAddress"
-            android:minHeight="48dp"
-            android:textColor="@color/md_theme_light_onBackground"
-            android:textColorHint="@color/md_theme_light_onBackground"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.497"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/save_progressbar"
-            tools:ignore="SpeakableTextPresentCheck" />
+            <EditText
+                android:id="@+id/editTextEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:backgroundTint="@color/md_theme_light_primary"
+                android:drawableStart="@drawable/email"
+                android:drawablePadding="5dp"
+                android:ems="10"
+                android:inputType="textEmailAddress"
+                android:minHeight="48dp"
+                android:textColor="@color/md_theme_light_onBackground"
+                android:textColorHint="@color/md_theme_light_onBackground"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.497"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/save_progressbar"
+                tools:ignore="SpeakableTextPresentCheck" />
 
-        <EditText
-            android:id="@+id/editTextNewPass"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:backgroundTint="@color/md_theme_light_primary"
-            android:drawableStart="@drawable/password"
-            android:drawablePadding="5dp"
-            android:ems="10"
-            android:inputType="textPassword"
-            android:minHeight="48dp"
-            android:textColor="@color/md_theme_light_onBackground"
-            android:textColorHint="@color/md_theme_light_onBackground"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.497"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextOldPass"
-            tools:ignore="SpeakableTextPresentCheck" />
+            <EditText
+                android:id="@+id/editTextNewPass"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:backgroundTint="@color/md_theme_light_primary"
+                android:drawableStart="@drawable/password"
+                android:drawablePadding="5dp"
+                android:ems="10"
+                android:inputType="textPassword"
+                android:minHeight="48dp"
+                android:textColor="@color/md_theme_light_onBackground"
+                android:textColorHint="@color/md_theme_light_onBackground"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.497"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/editTextOldPass"
+                tools:ignore="SpeakableTextPresentCheck" />
 
-        <EditText
-            android:id="@+id/editTextOldPass"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:backgroundTint="@color/md_theme_light_primary"
-            android:drawableStart="@drawable/password"
-            android:drawablePadding="5dp"
-            android:ems="10"
-            android:inputType="textPassword"
-            android:minHeight="48dp"
-            android:textColor="@color/md_theme_light_onPrimary"
-            android:textColorHint="@color/md_theme_light_onBackground"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.497"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextEmail"
-            tools:ignore="SpeakableTextPresentCheck" />
+            <EditText
+                android:id="@+id/editTextOldPass"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:backgroundTint="@color/md_theme_light_primary"
+                android:drawableStart="@drawable/password"
+                android:drawablePadding="5dp"
+                android:ems="10"
+                android:inputType="textPassword"
+                android:minHeight="48dp"
+                android:textColor="@color/md_theme_light_onPrimary"
+                android:textColorHint="@color/md_theme_light_onBackground"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.497"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/editTextEmail"
+                tools:ignore="SpeakableTextPresentCheck" />
 
-        <Button
-            android:id="@+id/sign_out"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/md_theme_light_background"
-            android:text="@string/sign_out"
-            android:textColor="#F44336"
-            app:layout_constraintBottom_toTopOf="@+id/bottom_toolbar"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cancelButton" />
+            <Button
+                android:id="@+id/sign_out"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/md_theme_light_background"
+                android:text="@string/sign_out"
+                android:textColor="#F44336"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cancelButton" />
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+    <!-- Begin nav-only snippet -->
+
+    <com.google.android.material.bottomappbar.BottomAppBar
+    android:id="@+id/bottomAppBar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:gravity="bottom"
+    android:visibility="visible"
+    app:elevation="8dp"
+    app:fabAlignmentMode="center"
+    app:fabAnchorMode="cradle"
+    app:fabAnimationMode="scale"
+    app:hideOnScroll="true"
+    app:layout_scrollFlags="scroll|enterAlways"
+    app:removeEmbeddedFabElevation="false">
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/navigation"
+        style="@style/Widget.MaterialComponents.BottomNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="16dp"
+        android:visibility="visible"
+        app:backgroundTint="#00FFFBFE"
+        app:elevation="0dp"
+        app:menu="@menu/bottom_toolbar" />
+    </com.google.android.material.bottomappbar.BottomAppBar>
+
+    <!-- End nav and search bar snippet -->
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="#3F51B5"
     android:orientation="vertical">
 
     <androidx.core.widget.NestedScrollView
@@ -25,9 +26,9 @@
                 android:text="@string/search"
                 android:textSize="22sp"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.1"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintHorizontal_bias="0.1" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/icon_group"
@@ -37,10 +38,10 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 android:alpha="0.3"
+                android:contentDescription="@string/search_for_groups"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/group_icon"
-                android:contentDescription="@string/search_for_groups" />
+                app:srcCompat="@drawable/groups_icon" />
 
             <ImageView
                 android:id="@+id/icon_user"
@@ -49,10 +50,10 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="32dp"
                 android:alpha="0.3"
+                android:contentDescription="@string/friends_search"
                 app:layout_constraintEnd_toStartOf="@id/icon_group"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/user_icon"
-                android:contentDescription="@string/friends_search" />
+                app:srcCompat="@drawable/user_icon" />
 
             <ImageView
                 android:id="@+id/icon_workout"
@@ -61,10 +62,10 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="32dp"
                 android:alpha="1"
+                android:contentDescription="@string/workout_search"
                 app:layout_constraintEnd_toStartOf="@+id/icon_user"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/workout_icon"
-                android:contentDescription="@string/workout_search" />
+                app:srcCompat="@drawable/workout_icon" />
 
             <View
                 android:id="@+id/divider"
@@ -76,26 +77,21 @@
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/fragment_workout_searches"
+                android:name="edu.northeastern.numad22fa_team27.workout.fragments.UniversalSearchFragment"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/divider"
+                android:layout_height="0dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="32dp"
+                android:layout_marginBottom="32dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                android:name="edu.northeastern.numad22fa_team27.workout.fragments.UserSearchFragment"
+                app:layout_constraintTop_toBottomOf="@id/divider"
                 tools:layout="@layout/fragment_user_search" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.core.widget.NestedScrollView>
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/md_theme_light_onBackground"
-        android:visibility="visible"
-        app:menu="@menu/bottom_toolbar">
-
-    </com.google.android.material.bottomnavigation.BottomNavigationView>
 
 </LinearLayout>

@@ -42,7 +42,6 @@ public class FriendProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestNoActivityBar(this);
         setContentView(R.layout.activity_friend_profile);
 
         friend_email = findViewById(R.id.friendUsername);
@@ -67,10 +66,12 @@ public class FriendProfileActivity extends AppCompatActivity {
         String username = getIntent().getStringExtra("USERNAME");
         String url = getIntent().getStringExtra("PROFILEPIC");
         friend_email.setText(username);
-        Picasso.get()
-                .load(url)
-                .resize(120, 120)
-                .into(friend_profilePic);
+        if (url != null && !url.isEmpty()) {
+            Picasso.get()
+                    .load(url)
+                    .resize(120, 120)
+                    .into(friend_profilePic);
+        }
     }
 
     private void removeFriend() {

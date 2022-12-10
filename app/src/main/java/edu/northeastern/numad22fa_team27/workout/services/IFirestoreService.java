@@ -20,14 +20,14 @@ public interface IFirestoreService {
      * @param workoutCategory the category for the workout
      * @param callback executed on the entries returned by the query
      */
-    void findWorkoutsByCriteria(String workoutName, WorkoutCategory workoutCategory, double maxDifficulty, double minDifficulty, WorkoutCallback callback, int resultLimit);
+    void findWorkoutsByCriteria(String workoutName, WorkoutCategory workoutCategory, double maxDifficulty, double minDifficulty, WorkoutCallback callback, int resultLimit, boolean reverseOrder);
 
     /**
      * Find users with a given username, matches on case-sensitive prefix
      * @param username entered username to query on
      * @param callback executed on the entries returned by the query
      */
-    void findUsersByUsername(String username, WorkoutCallback callback);
+    void findUsersByUsername(String username, WorkoutCallback callback, boolean reverseOrder);
 
     /**
      * Find groups the current user is a part of
@@ -40,7 +40,7 @@ public interface IFirestoreService {
      * @param groupName entered group name to query on
      * @param callback executed on the entries returned by the query
      */
-    void findGroupsByName(String groupName, WorkoutCallback callback);
+    void findGroupsByName(String groupName, WorkoutCallback callback, boolean reverseOrder);
 
     /**
      * Get the global leaderboard by category sorted by best streak, limited to 100
