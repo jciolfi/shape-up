@@ -5,9 +5,10 @@
     android:layout_height="wrap_content">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:background="@color/cardview_dark_background"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/md_theme_light_secondary"
+        android:elevation="4dp">
 
         <EditText
             android:id="@+id/txt_name_chat"
@@ -16,12 +17,14 @@
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="32dp"
             android:hint="@string/name_chat"
+            android:textColor="@color/md_theme_light_onSecondary"
+            android:textColorHint="@color/md_theme_light_onSecondary"
             android:textSize="20sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/spn_friends"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Spinner
             android:id="@+id/spn_friends"
@@ -30,25 +33,26 @@
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="16dp"
             android:minHeight="48dp"
-            android:popupTheme="@style/PopupMenu"
-            android:theme="@style/Widget.AppCompat.Spinner.DropDown"
             app:layout_constraintEnd_toStartOf="@+id/btn_add_friend"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txt_name_chat" />
+
         <Button
             android:id="@+id/btn_add_friend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
-            android:layout_marginHorizontal="16dp"
+            android:background="@color/md_theme_light_primary"
             android:text="@string/add"
             app:layout_constraintBottom_toTopOf="@+id/txt_added_friends"
-            app:layout_constraintTop_toBottomOf="@+id/txt_name_chat"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/spn_friends"
+            app:layout_constraintTop_toBottomOf="@+id/txt_name_chat"
             app:layout_constraintVertical_bias="1.0" />
+
         <TextView
             android:id="@+id/txt_added_friends"
             android:layout_width="match_parent"
@@ -56,12 +60,13 @@
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="32dp"
             android:text="@string/add_friends"
+            android:textColor="@color/md_theme_light_onSecondary"
             android:textSize="20sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/btn_add_chat"
-            app:layout_constraintTop_toBottomOf="@+id/btn_add_friend"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_add_friend" />
 
         <Button
             android:id="@+id/btn_add_chat"
@@ -69,22 +74,25 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:layout_marginBottom="32dp"
+            android:background="@color/md_theme_light_primary"
             android:text="@string/create"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/btn_esc_chat"
             app:layout_constraintTop_toBottomOf="@id/txt_added_friends" />
+
         <Button
             android:id="@+id/btn_esc_chat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:layout_marginBottom="32dp"
+            android:background="@color/md_theme_light_primary"
             android:text="@string/cancelBtn"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/btn_add_chat"
-            app:layout_constraintTop_toBottomOf="@id/txt_added_friends"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txt_added_friends" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

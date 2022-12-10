@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -85,6 +86,18 @@ public class NewGroupChatFragment extends Fragment {
             friends.setSelection(0);
         }
 
+        friends.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView adapter, View v, int i, long lng) {
+                Log.v("XYZ", "Selected item " + i);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                Log.v("XYZ", "Nothing selected");
+            }
+        });
+
         //Friends on list Text
         TextView addedFriends = newGroupChatView.findViewById(R.id.txt_added_friends);
 
@@ -121,8 +134,9 @@ public class NewGroupChatFragment extends Fragment {
                 addedFriends.setError("Please add one more friend");
                 return;
             }
-            if (nameChat.getText().equals("")) {
+            if (nameChat.getText().toString().isEmpty() || nameChat.getText().equals("")) {
                 nameChat.setError("Please name your chat");
+                return;
             }
             List<String> chatUserids = new ArrayList<>();
             chatUserids.add(userId);
