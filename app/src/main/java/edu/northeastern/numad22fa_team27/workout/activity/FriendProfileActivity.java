@@ -42,7 +42,6 @@ public class FriendProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestNoActivityBar(this);
         setContentView(R.layout.activity_friend_profile);
 
         friend_email = findViewById(R.id.friendUsername);

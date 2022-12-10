@@ -39,7 +39,6 @@ public class MyFriendsActivity extends AppCompatActivity implements IRecyclerVie
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestNoActivityBar(this);
         setContentView(R.layout.activity_my_friends);
 
         db = FirebaseFirestore.getInstance();
