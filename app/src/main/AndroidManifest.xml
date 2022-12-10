@@ -69,13 +69,6 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".workout.activities.ui.main.viewpager.WorkoutListActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
             android:name=".workout.activity.ProfileActivity"
             android:exported="false">
             <meta-data
@@ -125,7 +118,9 @@
         <activity
             android:name=".workout.activity.LeaderboardActivity"
             android:screenOrientation="portrait" />
-
+        <activity
+            android:name=".workout.activity.UserGroupsActivity"
+            android:screenOrientation="portrait" />
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

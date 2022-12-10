@@ -7,8 +7,10 @@ public interface IFirestoreService {
     /**
      * Create a group with the given groupName and userID
      * @param groupName name for the new group
+     * @param callback executed on the new group returned by the query
+     * @return true if group could be created, false otherwise
      */
-    void createGroup(String groupName);
+    boolean tryCreateGroup(String groupName, WorkoutCallback callback);
 
     /**
      * Find workout by workoutName and/or workoutCategory

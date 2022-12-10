@@ -5,6 +5,7 @@ import android.content.Intent;
 import com.google.android.material.navigation.NavigationBarView;
 
 import edu.northeastern.numad22fa_team27.R;
+import edu.northeastern.numad22fa_team27.workout.activity.UserGroupsActivity;
 import edu.northeastern.numad22fa_team27.workout.activity.LeaderboardActivity;
 import edu.northeastern.numad22fa_team27.workout.activity.ProfileActivity;
 import edu.northeastern.numad22fa_team27.workout.activity.SearchActivity;
@@ -27,6 +28,9 @@ public class NavigationBar {
                             intent = new Intent(context, SearchActivity.class);
                             context.startActivity(intent);
                             break;
+                        case R.id.nav_groups:
+                            intent = new Intent(context, UserGroupsActivity.class);
+                            context.startActivity(intent);
                     }
                     return false;
                 };

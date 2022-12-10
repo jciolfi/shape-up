@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -33,13 +34,18 @@ public class FirestoreService implements IFirestoreService {
     }
 
     @Override
-    public void createGroup(String groupName) {
+    public boolean tryCreateGroup(String groupName, WorkoutCallback callback) {
         if (Util.stringIsNullOrEmpty(groupName)) {
-            warnBadParam("createGroup");
-            return;
+            warnBadParam("tryCreateGroup");
+            return false;
         } else if (!tryFetchUserDetails()) {
-            return;
+            return false;
+        } else if (currentUser.joinedGroups.size() >= 10) {
+            // can't have more than 10 groups
+            return false;
         }
+
+        AtomicBoolean success = new AtomicBoolean(true);
 
         // we already check if we can get the current user from tryFetchUserDetails, so it shouldn't be null
         String userID = Objects.requireNonNull(userAuth.getCurrentUser()).getUid();
@@ -53,13 +59,28 @@ public class FirestoreService implements IFirestoreService {
                             .document(userID)
                             .update(JOINED_GROUPS, FieldValue.arrayUnion(newGroup.getGroupID()))
                             .addOnSuccessListener(unused2 -> {
-                                // TODO
-                                Log.d(TAG, String.format("Successfully created group %s", groupName));
+                                // overkill maybe, but query db to make sure it's actually in there
+                                firestoreDB.collection(GROUPS)
+                                        .document(newGroup.getGroupID())
+                                        .get()
+                                        .addOnSuccessListener(callback::processDocument)
+                                        .addOnFailureListener(e -> {
+                                            success.set(false);
+                                            logFailure("tryCreateGroup", e.getMessage());
+                                        });
                             })
-                            .addOnFailureListener(e -> logFailure("createGroup", e.getMessage()));
+                            .addOnFailureListener(e -> {
+                                success.set(false);
+                                logFailure("tryCreateGroup", e.getMessage());
+                            });
 
                 })
-                .addOnFailureListener(e -> logFailure("createGroup", e.getMessage()));
+                .addOnFailureListener(e -> {
+                    success.set(false);
+                    logFailure("tryCreateGroup", e.getMessage());
+                });
+
+        return success.get();
     }
 
     @Override
