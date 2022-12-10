@@ -157,7 +157,7 @@ public class Workout implements Summarizeable {
 
     @Override
     public String getMisc() {
-        return this.getBlurb();
+        return String.format("Difficulty: %.2f/5. %s", this.getDifficulty(), this.getBlurb());
     }
 
     @Override

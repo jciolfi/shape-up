@@ -1,7 +1,9 @@
 package edu.northeastern.numad22fa_team27.workout.activity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -45,7 +47,7 @@ public class LeaderboardActivity extends AppCompatActivity {
 
         // Set up nav bar
         BottomNavigationView bottomNav = findViewById(R.id.navigation);
-        bottomNav.setSelectedItemId(R.id.nav_leaderboard);
+        bottomNav.setSelectedItemId(R.id.nav_profile);
         bottomNav.setOnItemSelectedListener(NavigationBar.setNavListener(this));
         FloatingActionButton fabSearch = findViewById(R.id.searchButton);
 
@@ -59,13 +61,15 @@ public class LeaderboardActivity extends AppCompatActivity {
                 .commit();
 
         fabSearch.setOnClickListener(v -> {
+            searchHidden.set(!searchHidden.get());
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             if (searchHidden.get()) {
-                transaction.show(search).commit();
-            } else {
                 transaction.hide(search).commit();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
+            } else {
+                transaction.show(search).commit();
             }
-            searchHidden.set(!searchHidden.get());
         });
         // End setup nav bar
 
