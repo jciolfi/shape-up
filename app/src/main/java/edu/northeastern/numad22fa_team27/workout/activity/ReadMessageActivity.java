@@ -9,10 +9,12 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -50,12 +52,16 @@ public class ReadMessageActivity extends AppCompatActivity {
     private EditText editText;
     private ImageButton sendButton;
     private List<ChatCard> cards;
+    private ProgressBar progressBar;
     FirebaseFirestore firestore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_read_meassage);
+
+        progressBar = findViewById(R.id.pb_loading);
+        progressBar.setVisibility(View.VISIBLE);
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
@@ -68,6 +74,7 @@ public class ReadMessageActivity extends AppCompatActivity {
             chatMembers = extras.getStringArrayList("chatMembers");
         }
         cards = new ArrayList<>();
+        //chat id
 
         //initialize recycler
         RecyclerView.LayoutManager manager = new StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.VERTICAL);
@@ -83,9 +90,14 @@ public class ReadMessageActivity extends AppCompatActivity {
         sendButton = findViewById(R.id.btn_send_message);
         sendButton.setOnClickListener(V -> {
             //querry database and make changes
+
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             String currentID = user.getUid();
             String newMessage = editText.getText().toString();
+            if (newMessage.equals("")){
+                editText.setError("please add a message");
+                return;
+            }
             Map<String, String> addMap = new HashMap<>();
             addMap.put("userId", currentID);
             addMap.put("message", newMessage);
@@ -126,6 +138,11 @@ public class ReadMessageActivity extends AppCompatActivity {
                             } catch (NullPointerException e) {
                                 //don't need to do anything will create a new chat
                             }
+                            try {
+                                Thread.sleep(1);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                             users.put(s.trim(), username);
                         }
                     });
@@ -150,6 +167,7 @@ public class ReadMessageActivity extends AppCompatActivity {
                             cards.add(new ChatCard(users.get(map.get("userId")), map.get("message")));
                         }
                         recMessages.getAdapter().notifyDataSetChanged();
+                        progressBar.setVisibility(View.INVISIBLE);
                     }
                 });
 

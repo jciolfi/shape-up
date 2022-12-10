@@ -32,6 +32,10 @@ public class NewGroupChatFragment extends Fragment {
     private ChatItemViewModel viewModel;
     private String userId;
 
+    public NewGroupChatFragment() {
+
+    }
+
     public NewGroupChatFragment(String userId, String[][] listOfFriends) {
         //required empty public constructor
         //add here list of friends of users?
@@ -58,11 +62,14 @@ public class NewGroupChatFragment extends Fragment {
         //Friends spinner
         Spinner friends = newGroupChatView.findViewById(R.id.spn_friends);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(newGroupChatView.getContext(),
-                android.R.layout.simple_spinner_item, listOfFriends[1]);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        friends.setAdapter(adapter);
-        friends.setSelection(0);
+        if(listOfFriends != null) {
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(newGroupChatView.getContext(),
+                    android.R.layout.simple_spinner_item, listOfFriends[1]);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            friends.setAdapter(adapter);
+            friends.setSelection(0);
+        }
+
 
         //Friends on list Text
         TextView addedFriends = newGroupChatView.findViewById(R.id.txt_added_friends);

@@ -91,7 +91,7 @@ public class WorkoutMessageActivity extends AppCompatActivity {
 
         //Loading icon
         progressBar = findViewById(R.id.pb_loading);
-        progressBar.setVisibility(View.INVISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
 
         //New chat fragment
 
@@ -154,6 +154,7 @@ public class WorkoutMessageActivity extends AppCompatActivity {
                                                 });
                                     }).addOnFailureListener(e -> Log.w(TAG, "Error writing document", e));;
                         }
+                        progressBar.setVisibility(View.INVISIBLE);
                     });
             cards.add(new Message(item.getChatId(), item.getName(), item.getChatMembers(), item.getChatHistory()));
             chatsRecycler.getAdapter().notifyDataSetChanged();
@@ -163,14 +164,53 @@ public class WorkoutMessageActivity extends AppCompatActivity {
     }
 
     private void setChats() {
-        //get information on the user
-        User currentUser = UserUtil.getInstance().getUser();
-        if (currentUser.getChats() != null && !currentUser.getChats().isEmpty()) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String currentID = user.getUid();
+        firestore = FirebaseFirestore.getInstance();
+
+        DocumentReference reference = firestore.collection("users").document(currentID);
+
+        reference.get().addOnSuccessListener(documentSnapshot -> {
+
+            User currentUser = UserUtil.getInstance().getUser();
+            chats = currentUser.getChats();
             for (int i = 0; i < currentUser.getChats().size(); i++) {
                 findChatInfo(i);
             }
-        }
+        });
+        //if (currentUser.getChats() != null && !currentUser.getChats().isEmpty()) {}
+
+
+        //get information on the user
+
+
     }
+
+//    //stored data variables
+//    private String[][] friends;
+//    private List<String> usernames = new ArrayList<>();
+//    private List<String> chats = new ArrayList<>();
+//    private List<Message> cards;
+//    private boolean showingSearch = false;
+//
+//    //Activity elements
+//    private RecyclerView chatsRecycler;
+//    private FloatingActionButton newChatButton;
+//    ProgressBar progressBar;
+//    NewGroupChatFragment chatFragment;
+//
+//    //other variables
+//    private final String TAG = "WorkoutMessageActivity__";
+//    FirebaseFirestore firestore;
+
+//    @Override
+//    public void onSaveInstanceState(Bundle savedInstanceState) {
+//        super.onSaveInstanceState(savedInstanceState);
+//        savedInstanceState.putIntArray(VAR_KEY_1, friends);
+//        savedInstanceState.putBoolean(VAR_KEY_2, usernames);
+//        savedInstanceState.putSerializable(VAR_KEY_3, ...);
+//        savedInstanceState.putParcelable(VAR_KEY_4, ...);
+//    }
 
     private void findChatInfo(int index) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
