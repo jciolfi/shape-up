@@ -19,9 +19,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import edu.northeastern.numad22fa_team27.Constants;
 import edu.northeastern.numad22fa_team27.R;
@@ -90,17 +92,19 @@ public class ReadMessageActivity extends AppCompatActivity {
                 editText.setError("Please add a message");
                 return;
             }
-            currMessages.get().addChatHistory(currentID, newMessage);
+
+            // If we add the update to the message object directly, or differential callback won't think there has been a change.
             ChatDAO cd = new ChatDAO(currMessages.get());
+            cd.messages = new ArrayList<>();
+            cd.messages.addAll(currMessages.get().getChatHistory());
+            cd.messages.add(new HashMap<>() {{ put("userId", currentID); put("message", newMessage); }});
             firestore.collection(Constants.MESSAGES)
                     .document(chatId)
                     .set(cd)
                     .addOnSuccessListener(unused -> {
                         editText.setText("");
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.showSoftInput( findViewById(R.id.txt_edit_message),InputMethodManager.SHOW_IMPLICIT);
-                        
-                        recMessages.getAdapter().notifyDataSetChanged();
+                        imm.showSoftInput(findViewById(R.id.txt_edit_message),InputMethodManager.SHOW_IMPLICIT);
                     }).addOnFailureListener(e -> {
                         editText.setText("");
                         editText.setError("Could not send!");

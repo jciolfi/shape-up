@@ -24,16 +24,14 @@ import edu.northeastern.numad22fa_team27.workout.models.User;
 public class ChatUtil {
 
     private static final String TAG = "ChatUtil";
-    private FirebaseAuth user_auth;
     private FirebaseFirestore db;
     private Message currChatData;
     private ListenerRegistration chatListener;
     private RecyclerView rvToUpdate;
     private AsyncChatAdapter asyncAdapter;
 
-    public ChatUtil(Message originalMessages, AsyncChatAdapter asyncAdapter, RecyclerView rvToUpdate) {
+    public ChatUtil(final Message originalMessages, AsyncChatAdapter asyncAdapter, RecyclerView rvToUpdate) {
         this.db = FirebaseFirestore.getInstance();
-        this.user_auth = FirebaseAuth.getInstance();
         this.asyncAdapter = asyncAdapter;
         this.rvToUpdate = rvToUpdate;
         this.currChatData = originalMessages;
@@ -55,14 +53,14 @@ public class ChatUtil {
 
                     if (snapshot != null && snapshot.exists()) {
                         Log.d(TAG, "Current data: " + snapshot.getData());
-                        synchronized(currChatData) {
-                            Message newMessages = new Message(snapshot.toObject(ChatDAO.class), user_auth.getUid());
-                            if (currChatData.getChatHistory().size() == newMessages.getChatHistory().size()) {
-                                // It's the same, no need to do anything
-                                return;
-                            }
-                            currChatData = newMessages;
+                        Message newMessages = new Message(snapshot.toObject(ChatDAO.class), currChatData.getChatId());
+                        if (currChatData.getChatHistory().size() == newMessages.getChatHistory().size()) {
+                            // It's the same, no need to do anything
+                            Log.d(TAG, "Got an update, but it's the same as what we have.");
+                            return;
                         }
+                        Log.d(TAG, "Got an update, and it's new data");
+                        currChatData = newMessages;
 
                         // Get the last field
                         Map<String, String> lastUpdate = currChatData.getChatHistory().get(currChatData.getChatHistory().size() - 1);
@@ -70,6 +68,7 @@ public class ChatUtil {
                         asyncAdapter.setCardAtPosition(asyncAdapter.getItemCount(), newCard);
                         asyncAdapter.notifyDataSetChanged();
                         rvToUpdate.scrollToPosition(asyncAdapter.getItemCount() - 1);
+                        Log.d(TAG, "Passively updated chat list");
                     } else {
                         Log.d(TAG, "Current data: null");
                     }
