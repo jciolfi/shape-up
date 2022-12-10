@@ -1,8 +1,12 @@
 package edu.northeastern.numad22fa_team27;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -20,6 +24,13 @@ public class Util {
     public static void openActivity(Activity origin, Class<?> target) {
         Intent intent = new Intent(origin, target);
         origin.startActivity(intent);
+    }
+
+    @SuppressLint("ResourceAsColor")
+    public static void setMenuItemColor(MenuItem item){
+        SpannableString coloredTitle = new SpannableString(item.getTitle());
+        coloredTitle.setSpan(new ForegroundColorSpan(R.color.md_theme_light_onBackground), 0, coloredTitle.length(), 0);
+        item.setTitle(coloredTitle);
     }
 
     public static void requestNoActivityBar(AppCompatActivity origin) {

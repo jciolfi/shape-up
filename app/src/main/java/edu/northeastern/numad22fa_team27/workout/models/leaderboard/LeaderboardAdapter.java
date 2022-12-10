@@ -34,7 +34,7 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardViewHold
     public LeaderboardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new LeaderboardViewHolder(LayoutInflater
                 .from(parent.getContext())
-                .inflate(R.layout.item_leaderboard_user, null));
+                .inflate(R.layout.item_leaderboard_user, parent, false));
     }
 
     @Override
@@ -44,7 +44,7 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardViewHold
         holder.userEntry.setText(user.username);
         holder.userStreak.setText(String.format("Streak: %s days",
                 user.bestCategoryStreaks.get(category[0].toUpperCase())));
-        holder.userEntry.setOnClickListener(view -> {
+        holder.background.setOnClickListener(view -> {
             // build custom popup
             final Dialog userInfoDialog = new Dialog(view.getContext());
             userInfoDialog.setContentView(LayoutInflater.from(view.getContext())
