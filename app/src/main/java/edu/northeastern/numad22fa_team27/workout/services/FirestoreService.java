@@ -173,9 +173,6 @@ public class FirestoreService implements IFirestoreService {
     @Override
     public void findUserGroups(WorkoutCallback callback) {
         //  for some reason, this breaks everything
-//        if (!tryFetchUserDetails()) {
-//            return;
-//        }
 
         String userID = Objects.requireNonNull(userAuth.getCurrentUser()).getUid();
 
@@ -186,6 +183,11 @@ public class FirestoreService implements IFirestoreService {
                     UserDAO user = documentSnapshot.toObject(UserDAO.class);
                     if (user == null) {
                         logFailure("findUserGroups", String.format("%s doesn't exist", userID));
+                        return;
+                    }
+
+                    if (user.joinedGroups.isEmpty()) {
+                        Log.v(TAG, "User is not part of any groups");
                         return;
                     }
 

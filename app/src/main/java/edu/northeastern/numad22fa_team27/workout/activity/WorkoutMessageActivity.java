@@ -24,6 +24,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -40,10 +41,12 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import edu.northeastern.numad22fa_team27.Constants;
 import edu.northeastern.numad22fa_team27.R;
@@ -103,7 +106,7 @@ public class WorkoutMessageActivity extends AppCompatActivity {
         //New chat fragment
 
         //floating action button
-        newChatButton = findViewById(R.id.fab_new_chat);
+        newChatButton = findViewById(R.id.new_chat_button);
         newChatButton.setOnClickListener(v -> {
             toggleSearchFragment();
         });
@@ -251,38 +254,29 @@ public class WorkoutMessageActivity extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(snapshot -> {
                     User currUser = new User(snapshot.toObject(UserDAO.class), user_auth.getUid());
+                    Map<String, String> lookupMap = new HashMap<>();
 
-                    boolean runRecur = false;
-                    friends = new String[2][currUser.getFriends().size()];
-                    //make sure the id and username are matched up
-                    if (currUser.getFriends().isEmpty()) {
-                        friends[0] = new String[] {"Blank"};
-                        friends[1] = new String[] {"Blank"};
-                    } else {
-                        friends[0] = currUser.getFriends().toArray(friends[0]);
-                        String[] friends1 = new String[currUser.getFriends().size()];
-                        for (int i = 0; i < currUser.getFriends().size(); i++) {
-                            friends1[i] = "blank";
+                    List<Task<DocumentSnapshot>> lookups = currUser.getFriends().stream()
+                            .map(friendId -> firestore.collection(Constants.USERS)
+                                    .document(friendId)
+                                    .get())
+                            .collect(Collectors.toList());
+
+                    Tasks.whenAll(lookups).addOnSuccessListener(v -> {
+                        for (int i = 0; i < lookups.size(); i++) {
+                            Task<DocumentSnapshot> completedTask = lookups.get(i);
+                            DocumentSnapshot result = completedTask.getResult();
+                            lookupMap.put(currUser.getFriends().get(i), result.toObject(UserDAO.class).username);
                         }
-                        friends[1] =  friends1;
-                        runRecur = true;
-                    }
 
-                    chatFragment = new NewGroupChatFragment(user_auth.getUid(), friends);
-                    getSupportFragmentManager().beginTransaction()
-                            .setReorderingAllowed(true)
-                            .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
-                            .add(R.id.newMessageFragment, chatFragment, "newChat")
-                            .hide(chatFragment)
-                            .commit();
-
-                    // find the username for each userid
-                    if (runRecur){
-                        for (int i = 0; i < friends[0].length; i++) {
-                            findUserName(i);
-                        }
-                    }
-
+                        chatFragment = new NewGroupChatFragment(user_auth.getUid(), lookupMap);
+                        getSupportFragmentManager().beginTransaction()
+                                .setReorderingAllowed(true)
+                                .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                                .add(R.id.newMessageFragment, chatFragment, "newChat")
+                                .hide(chatFragment)
+                                .commit();
+                    });
                 });
     }
 

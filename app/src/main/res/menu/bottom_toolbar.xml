@@ -17,12 +17,12 @@
         app:showAsAction="always" />
     <item android:title="HIDDEN"/>
     <item
-        android:id="@+id/nav_profile"
+        android:id="@+id/nav_messaging"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:icon="@drawable/user_icon"
+        android:icon="@drawable/chat_icon"
         android:iconTint="@color/md_theme_light_onPrimary"
-        android:title="@string/profile"
+        android:title="Messaging"
         app:showAsAction="always" />
     <item
         android:id="@+id/nav_leaderboard"

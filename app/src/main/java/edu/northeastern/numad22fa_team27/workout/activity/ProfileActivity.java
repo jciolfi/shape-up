@@ -1,7 +1,5 @@
 package edu.northeastern.numad22fa_team27.workout.activity;
 
-import static com.google.android.material.internal.ContextUtils.getActivity;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,7 +13,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -64,7 +61,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         // Set up nav bar
         BottomNavigationView bottomNav = findViewById(R.id.navigation);
-        bottomNav.setSelectedItemId(R.id.nav_profile);
+        bottomNav.setSelectedItemId(R.id.nav_workout);
         bottomNav.setOnItemSelectedListener(NavigationBar.setNavListener(this));
         FloatingActionButton fabSearch = findViewById(R.id.searchButton);
 
