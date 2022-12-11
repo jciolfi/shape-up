@@ -157,7 +157,6 @@ public class ProfileActivity extends AppCompatActivity {
 
         int orientation = isVertical ? LinearLayoutManager.VERTICAL : LinearLayoutManager.HORIZONTAL;
         @SuppressLint("WrongConstant") RecyclerView.LayoutManager manager = new LinearLayoutManager(this, orientation, false);
-        rv.setHasFixedSize(true);
         rv.setAdapter(new WorkoutRecAdapter(dataset, clickListener, isVertical));
         rv.setLayoutManager(manager);
 
