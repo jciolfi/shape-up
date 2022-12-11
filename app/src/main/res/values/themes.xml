@@ -53,5 +53,10 @@
     <style name="PopupMenu" parent="Widget.AppCompat.PopupMenu.Overflow">
         <item name="android:popupBackground">@color/md_theme_light_onPrimary</item>
     </style>
+    <style name="SwitchOnLightBackground" parent="Theme.AppCompat.Light">
+        <item name="colorControlActivated">@color/md_theme_light_primary</item>
+        <item name="colorSwitchThumbNormal">@color/md_theme_light_outline</item>
+        <item name="android:colorForeground">@color/md_theme_light_inverseSurface</item>
+    </style>
 
 </resources>

@@ -96,7 +96,7 @@
     <string name="categories">Categories:</string>
     <string name="close">close</string>
     <string name="group_name">Group Name</string>
-    <string name="members">Members:</string>
+    <string name="members">MEMBERS:</string>
     <string name="join">Join</string>
     <string name="friends">Friends:</string>
     <string name="groups_joined">Groups Joined:</string>
@@ -120,4 +120,7 @@
     <string name="create">Create</string>
     <string name="name_chat">Name Chat</string>
     <string name="new_message">New Message</string>
+    <string name="group_public">ACCEPTING MEMBERS: </string>
+    <string name="placeholder_groupname">PLACEHOLDER GROUPNAME</string>
+    <string name="admin_for_group">YOU ARE AN ADMIN FOR THIS GROUP!</string>
 </resources>
