@@ -1,5 +1,7 @@
 package edu.northeastern.numad22fa_team27.workout.models;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -46,7 +48,7 @@ public class Group implements Summarizeable {
 
     @Override
     public String getMisc() {
-        return members.size() + " Member(s)";
+        return "";
     }
 
     @Override
@@ -82,6 +84,7 @@ public class Group implements Summarizeable {
         this.groupChatId = groupChatId;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "Group{" +
