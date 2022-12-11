@@ -222,7 +222,9 @@ public class WorkoutMessageActivity extends AppCompatActivity {
             if (chats.isEmpty()) {
                 noChats.setVisibility(View.VISIBLE);
             }
-            for (int i = 0; i < currentUser.getChats().size(); i++) {
+
+            Log.e("XYZ", "MessageKey is" + chats);
+            for (int i = 0; i < chats.size(); i++) {
                 findChatInfo(i);
             }
         });
@@ -231,6 +233,10 @@ public class WorkoutMessageActivity extends AppCompatActivity {
     private void findChatInfo(int index) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String messageKey = chats.get(index);
+
+        if (messageKey == null || messageKey.isEmpty()) {
+            return;
+        }
 
         FirebaseFirestore.getInstance()
                 .collection(Constants.MESSAGES)
