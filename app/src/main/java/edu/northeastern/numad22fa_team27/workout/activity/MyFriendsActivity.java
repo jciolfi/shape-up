@@ -10,6 +10,8 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,7 +34,7 @@ public class MyFriendsActivity extends AppCompatActivity implements IRecyclerVie
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
-
+    private TextView noFriendsWarning;
     private List<FriendsCard> list;
     FriendsAdapter adapter;
 
@@ -40,6 +42,8 @@ public class MyFriendsActivity extends AppCompatActivity implements IRecyclerVie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_friends);
+        noFriendsWarning = findViewById(R.id.no_friends);
+        noFriendsWarning.setVisibility(View.INVISIBLE);
 
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
@@ -57,6 +61,11 @@ public class MyFriendsActivity extends AppCompatActivity implements IRecyclerVie
             .get()
             .addOnSuccessListener(documentSnapshot -> {
                 List<String> friendsUIDList = (List<String>) documentSnapshot.getData().get("friends");
+                if (friendsUIDList == null) {
+                    noFriendsWarning.setVisibility(View.VISIBLE);
+                    return;
+                }
+
                 for (String id : friendsUIDList) {
                     db.collection("users")
                         .document(id)
@@ -66,6 +75,10 @@ public class MyFriendsActivity extends AppCompatActivity implements IRecyclerVie
                             list.add(new FriendsCard(url, id, username));
                             adapter.notifyDataSetChanged();
                         });
+                }
+
+                if (friendsUIDList.isEmpty()) {
+                    noFriendsWarning.setVisibility(View.VISIBLE);
                 }
             });
     }

@@ -11,6 +11,10 @@
         android:id="@+id/friendsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
         android:background="@color/md_theme_light_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -18,5 +22,23 @@
         app:layout_constraintTop_toTopOf="parent">
 
     </androidx.recyclerview.widget.RecyclerView>
+
+    <TextView
+        android:id="@+id/no_friends"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:lines="3"
+        android:text="No friends - ask someone to be your friend from the Universal Search!"
+        android:textColor="@color/md_theme_light_onBackground"
+        android:textSize="20sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/friendsRecyclerView"
+        app:layout_constraintEnd_toEndOf="@+id/friendsRecyclerView"
+        app:layout_constraintStart_toStartOf="@+id/friendsRecyclerView"
+        app:layout_constraintTop_toTopOf="@+id/friendsRecyclerView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
