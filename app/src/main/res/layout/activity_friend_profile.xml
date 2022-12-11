@@ -58,18 +58,18 @@
             android:backgroundTint="@color/md_theme_light_primary"
             android:text="@string/friend_workouts"
             android:textColor="@color/md_theme_light_onPrimary"
-            app:layout_constraintBottom_toTopOf="@+id/friendRemoveBtn"
+            app:layout_constraintBottom_toTopOf="@+id/friendActionBtn"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/friendUsername" />
 
         <Button
-            android:id="@+id/friendRemoveBtn"
+            android:id="@+id/friendActionBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:backgroundTint="@color/md_theme_light_primary"
-            android:text="@string/remove_friend"
+            android:visibility="invisible"
             android:textColor="@color/md_theme_light_onPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -8,10 +8,12 @@ import com.squareup.picasso.Picasso;
 
 public class FriendsCard {
     private String url;
+    private String userId;
     private String username;
 
-    public FriendsCard(String url, String username) {
+    public FriendsCard(String url, String userId, String username) {
          this.url = url;
+         this.userId = userId;
          this.username = username;
     }
 
@@ -19,6 +21,10 @@ public class FriendsCard {
 
     public String getImageView() {
         return url;
+    }
+
+    public String getUserId() {
+        return userId;
     }
 
     public String getUsername() {
