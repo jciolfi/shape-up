@@ -4,35 +4,37 @@ import android.util.Log;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import edu.northeastern.numad22fa_team27.Constants;
-import edu.northeastern.numad22fa_team27.workout.adapters.AsyncChatAdapter;
 import edu.northeastern.numad22fa_team27.workout.adapters.ChatCard;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.ChatDAO;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
 import edu.northeastern.numad22fa_team27.workout.models.Message;
-import edu.northeastern.numad22fa_team27.workout.models.User;
 
 public class ChatUtil {
 
     private static final String TAG = "ChatUtil";
     private FirebaseFirestore db;
-    private Message currChatData;
+    private AtomicReference<Message> currChatData;
     private ListenerRegistration chatListener;
     private RecyclerView rvToUpdate;
-    private AsyncChatAdapter asyncAdapter;
+    private List<ChatCard> rvCards;
 
-    public ChatUtil(final Message originalMessages, AsyncChatAdapter asyncAdapter, RecyclerView rvToUpdate) {
+    public ChatUtil(AtomicReference<Message> originalMessages, List<ChatCard> rvCards, RecyclerView rvToUpdate) {
         this.db = FirebaseFirestore.getInstance();
-        this.asyncAdapter = asyncAdapter;
+        this.rvCards = rvCards;
         this.rvToUpdate = rvToUpdate;
         this.currChatData = originalMessages;
     }
@@ -44,56 +46,54 @@ public class ChatUtil {
     public void watchConversationChanges(Map<String, String> usernameTranslationMap) {
         // Update on changes
         this.chatListener = db.collection(Constants.MESSAGES)
-                .document(currChatData.getChatId())
+                .document(currChatData.get().getChatId())
                 .addSnapshotListener((EventListener<DocumentSnapshot>) (snapshot, e) -> {
                     if (e != null) {
                         Log.w(TAG, "Listen failed.", e);
                         return;
                     }
-
-                    if (snapshot != null && snapshot.exists()) {
-                        Log.d(TAG, "Current data: " + snapshot.getData());
-                        Message newMessages = new Message(snapshot.toObject(ChatDAO.class), currChatData.getChatId());
-                        if (currChatData.getChatHistory().size() == newMessages.getChatHistory().size()) {
-                            // It's the same, no need to do anything
-                            Log.d(TAG, "Got an update, but it's the same as what we have.");
-                            return;
-                        }
-                        Log.d(TAG, "Got an update, and it's new data");
-                        currChatData = newMessages;
-
-                        // Get the last field
-                        Map<String, String> lastUpdate = currChatData.getChatHistory().get(currChatData.getChatHistory().size() - 1);
-                        ChatCard newCard = new ChatCard(usernameTranslationMap.get(lastUpdate.get("userId")), lastUpdate.get("message"));
-                        asyncAdapter.setCardAtPosition(asyncAdapter.getItemCount(), newCard);
-                        asyncAdapter.notifyDataSetChanged();
-                        rvToUpdate.scrollToPosition(asyncAdapter.getItemCount() - 1);
-                        Log.d(TAG, "Passively updated chat list");
-                    } else {
+                    if (snapshot == null || !snapshot.exists()) {
                         Log.d(TAG, "Current data: null");
+                        return;
                     }
-                });
-    }
 
-    public void ayncFindUsernameFromId(Map<String, String> usernameTranslationMap, String unknownId) {
-        db.collection(Constants.USERS)
-                .document(unknownId)
-                .get()
-                .addOnSuccessListener(snapshot -> {
-                    UserDAO ud = snapshot.toObject(UserDAO.class);
-                    usernameTranslationMap.put(unknownId, ud.username);
+                    ChatDAO newChat = snapshot.toObject(ChatDAO.class);
+                    Map<String, String> lookupMap = new HashMap<>();
 
-                    for (int i = 0; i < asyncAdapter.getCards().size(); i++) {
-                        ChatCard c = asyncAdapter.getCards().get(i);
-                        Log.v("XYZ", "Looking at card " + c.toString());
-                        if (c.getUserName() != null && c.getUserName().equals(unknownId)){
-                            c.setUserName(usernameTranslationMap.get(unknownId));
-                            asyncAdapter.setCardAtPosition(i, c);
+                    // First, look up chat members
+                    List<Task<DocumentSnapshot>> lookups = newChat.members.stream()
+                            .map(friendId -> db.collection(Constants.USERS)
+                                    .document(friendId)
+                                    .get())
+                            .collect(Collectors.toList());
+
+                    Tasks.whenAll(lookups).addOnSuccessListener(v -> {
+                        for (int i = 0; i < lookups.size(); i++) {
+                            Task<DocumentSnapshot> completedTask = lookups.get(i);
+                            DocumentSnapshot result = completedTask.getResult();
+                            UserDAO ud = result.toObject(UserDAO.class);
+                            if (ud == null) {
+                                continue;
+                            }
+                            lookupMap.put(
+                                    newChat.members.get(i),
+                                    ud.username
+                            );
                         }
-                    }
-                    asyncAdapter.notifyDataSetChanged();
-                }).addOnFailureListener(e -> {
 
+                        // Now that we have a lookup table, display the chat
+                        rvCards.clear();
+                        for (Map<String, String> kv: newChat.messages) {
+                            String username = (lookupMap.containsKey(kv.get("userId")))
+                                    ? lookupMap.get(kv.get("userId"))
+                                    : "???";
+                            rvCards.add(new ChatCard(username, kv.get("message")));
+                        }
+                        currChatData.set(new Message(currChatData.get().getChatId(), newChat.title, newChat.members, newChat.messages));
+                        rvToUpdate.getAdapter().notifyDataSetChanged();
+                        rvToUpdate.scrollToPosition(rvToUpdate.getAdapter().getItemCount() - 1);
+                    });
                 });
     }
+
 }
