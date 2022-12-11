@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 import edu.northeastern.numad22fa_team27.Util;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.ChatDAO;
@@ -23,8 +24,8 @@ public class Message {
     private List<String> chatMembers;
     private List<Map<String, String>> chatHistory;
 
-    public Message(){
-
+    public Message(String name){
+        this(UUID.randomUUID().toString(), name);
     }
 
     public Message(String chatId, String name) {

@@ -14,6 +14,7 @@ public class Group implements Summarizeable {
     private String groupName;
     private Set<String> members;
     private String adminID;
+    public String groupChatId;
     private boolean acceptingMembers;
 
     public Group(String groupName, String creatorID) {
@@ -26,6 +27,30 @@ public class Group implements Summarizeable {
 
     public Group(GroupDAO g, String groupID) {
         setFromGroupDAO(g, groupID);
+    }
+
+    public void setFromGroupDAO(GroupDAO g, String groupID) {
+        this.groupID = groupID;
+        this.groupName = Util.nullOrDefault(g.groupName, "");
+        this.members = new HashSet<>(Util.nullOrDefault(g.members, new ArrayList<>()));
+        this.adminID = Util.nullOrDefault(g.adminID, "");
+        this.acceptingMembers = g.acceptingMembers;
+        this.groupChatId = g.groupChatId;
+    }
+
+    @Override
+    public String getTitle() {
+        return getGroupName();
+    }
+
+    @Override
+    public String getMisc() {
+        return members.size() + " Member(s)";
+    }
+
+    @Override
+    public String getImage() {
+        return null;
     }
 
     public String getGroupID() {
@@ -48,27 +73,11 @@ public class Group implements Summarizeable {
         return acceptingMembers;
     }
 
-    public void setFromGroupDAO(GroupDAO g, String groupID) {
-        this.groupID = groupID;
-        this.groupName = Util.nullOrDefault(g.groupName, "");
-        this.members = new HashSet<>(Util.nullOrDefault(g.members, new ArrayList<>()));
-        this.adminID = Util.nullOrDefault(g.adminID, "");
-        this.acceptingMembers = g.acceptingMembers;
+    public String getGroupChatId() {
+        return groupChatId;
     }
 
-    @Override
-    public String getTitle() {
-        return getGroupName();
-    }
-
-    @Override
-    public String getMisc() {
-        // so when user searches and joins a group, inconsistent state isn't shown
-        return members.size() > 5 ? "Popular!" : "";
-    }
-
-    @Override
-    public String getImage() {
-        return null;
+    public void setGroupChatId(String groupChatId) {
+        this.groupChatId = groupChatId;
     }
 }

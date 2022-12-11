@@ -9,6 +9,7 @@ public class GroupDAO {
     public String groupName;
     public List<String> members;
     public String adminID;
+    public String groupChatId;
     public boolean acceptingMembers;
 
     public GroupDAO() {}

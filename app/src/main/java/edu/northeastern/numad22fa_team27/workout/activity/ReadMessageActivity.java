@@ -55,7 +55,7 @@ public class ReadMessageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_read_meassage);
         firestore = FirebaseFirestore.getInstance();
-        AtomicReference<Message> currMessages = new AtomicReference(new Message());
+        AtomicReference<Message> currMessages = new AtomicReference(new Message(""));
         idToUsernameMap = new HashMap<>();
 
         progressBar = findViewById(R.id.pb_loading);
