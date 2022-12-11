@@ -10,6 +10,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -22,11 +24,14 @@ import edu.northeastern.numad22fa_team27.workout.models.WorkoutCategory;
 public class FindWorkoutsCallback extends WorkoutCallback {
     private final List<Summarizeable> displayWorkouts;
     private final RecyclerView dataRv;
+    private final boolean reverseDifficultySort;
 
     public FindWorkoutsCallback(List<Summarizeable> displayWorkouts,
-                                RecyclerView rv) {
+                                RecyclerView rv,
+                                boolean reverseDifficultySort) {
         this.displayWorkouts = displayWorkouts;
         this.dataRv = rv;
+        this.reverseDifficultySort = reverseDifficultySort;
     }
 
     @Override
@@ -37,7 +42,11 @@ public class FindWorkoutsCallback extends WorkoutCallback {
                 .map(wd -> new Workout(wd))
                 .collect(Collectors.toList()));
 
-        Log.v("XYZ", displayWorkouts.toString());
+        // We know by this point the type must be Workout
+        Comparator<Summarizeable> sortOrder = reverseDifficultySort
+                ? (wd1, wd2) -> (Float.compare(((Workout)wd1).getDifficulty(), ((Workout)wd2).getDifficulty()))
+                : (wd1, wd2) -> (Float.compare(((Workout)wd2).getDifficulty(), ((Workout)wd1).getDifficulty()));
+        Collections.sort(displayWorkouts, sortOrder);
 
         Objects.requireNonNull(dataRv.getAdapter()).notifyDataSetChanged();
     }

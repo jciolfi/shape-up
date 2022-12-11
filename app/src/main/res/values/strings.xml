@@ -60,6 +60,8 @@
     <string name="user_workout_card_name">WORKOUT NAME</string>
     <string name="user_workout_card_badge_text">x#</string>
     <string name="search_hint">Search…</string>
+    <string name="search_hint_case_sensitive">Search (Case Sensitive)…</string>
+
 
     <string name="tab_text_1">Tab 1</string>
     <string name="leader_board">Leaderboard</string>
