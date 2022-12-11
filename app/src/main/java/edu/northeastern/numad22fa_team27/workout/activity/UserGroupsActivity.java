@@ -53,8 +53,6 @@ public class UserGroupsActivity extends AppCompatActivity {
         // set up recycler view
         userGroupsRV = findViewById(R.id.rv_user_groups);
         userGroupsRV.setLayoutManager(new LinearLayoutManager(this));
-
-        // this will set adapter.
         firestoreService.findUserGroups(new FindUserGroupsCallback(userGroups, userGroupsRV));
     }
 

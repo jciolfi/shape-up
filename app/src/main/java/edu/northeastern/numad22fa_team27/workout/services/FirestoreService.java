@@ -53,6 +53,11 @@ public class FirestoreService implements IFirestoreService {
         // we already check if we can get the current user from tryFetchUserDetails, so it shouldn't be null
         String userID = Objects.requireNonNull(userAuth.getCurrentUser()).getUid();
         Group newGroup = new Group(groupName, userID);
+        Message m = new Message(groupName);
+        m.addChatMembers(userID);
+        newGroup.setGroupChatId(m.getChatId());
+        Log.v("XYZ", "Group to store " + newGroup.toString());
+        Log.v("XYZ", "Message to store " + m.toString());
 
         firestoreDB.collection(GROUPS)
                 .document(newGroup.getGroupID())
@@ -80,8 +85,6 @@ public class FirestoreService implements IFirestoreService {
                             });
 
                     // Create an associated chat group, with us in it
-                    Message m = new Message(newGroup.getGroupName());
-                    m.addChatMembers(userID);
                     firestoreDB.collection(MESSAGES)
                             .document(m.getChatId())
                             .set(new ChatDAO(m))

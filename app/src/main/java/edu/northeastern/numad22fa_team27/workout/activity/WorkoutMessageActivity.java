@@ -273,7 +273,14 @@ public class WorkoutMessageActivity extends AppCompatActivity {
                         for (int i = 0; i < lookups.size(); i++) {
                             Task<DocumentSnapshot> completedTask = lookups.get(i);
                             DocumentSnapshot result = completedTask.getResult();
-                            lookupMap.put(currUser.getFriends().get(i), result.toObject(UserDAO.class).username);
+                            UserDAO ud = result.toObject(UserDAO.class);
+                            if (ud == null) {
+                                continue;
+                            }
+                            lookupMap.put(
+                                    currUser.getFriends().get(i),
+                                    ud.username
+                            );
                         }
 
                         chatFragment = new NewGroupChatFragment(user_auth.getUid(), lookupMap);

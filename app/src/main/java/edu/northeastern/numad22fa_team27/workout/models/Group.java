@@ -20,9 +20,10 @@ public class Group implements Summarizeable {
     public Group(String groupName, String creatorID) {
         this.groupID = String.valueOf(UUID.randomUUID());
         this.groupName = groupName;
-        members = new HashSet<>(){{ add(creatorID); }};
+        this.members = new HashSet<>(){{ add(creatorID); }};
         this.adminID = creatorID;
         this.acceptingMembers = true;
+        this.groupChatId = "";
     }
 
     public Group(GroupDAO g, String groupID) {
@@ -79,5 +80,17 @@ public class Group implements Summarizeable {
 
     public void setGroupChatId(String groupChatId) {
         this.groupChatId = groupChatId;
+    }
+
+    @Override
+    public String toString() {
+        return "Group{" +
+                "groupID='" + groupID + '\'' +
+                ", groupName='" + groupName + '\'' +
+                ", members=" + members +
+                ", adminID='" + adminID + '\'' +
+                ", groupChatId='" + groupChatId + '\'' +
+                ", acceptingMembers=" + acceptingMembers +
+                '}';
     }
 }

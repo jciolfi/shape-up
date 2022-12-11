@@ -54,20 +54,6 @@ public class Message {
         this.lastMessage = chatHistory.get(chatHistory.size() - 1).get("message");
     }
 
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Message message = (Message) o;
-        return Objects.equals(getChatId(), message.getChatId()) && Objects.equals(getName(), message.getName()) && Objects.equals(getLastMessage(), message.getLastMessage()) && Objects.equals(getChatMembers(), message.getChatMembers()) && Objects.equals(getChatHistory(), message.getChatHistory());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getChatId(), getName(), getLastMessage(), getChatMembers(), getChatHistory());
-    }
-
     /**
      * constructor for a card
      * @param chatId the id of the chat
@@ -86,6 +72,7 @@ public class Message {
             this.lastMessage = "lastMessage"; //chatHistory.get(chatHistory.size() - 1);
         }
     }
+
     public Message(ChatDAO mDOA, String chatId){
         this(chatId, mDOA.title, mDOA.members, mDOA.messages);
     }
@@ -134,5 +121,29 @@ public class Message {
         this.name = Util.nullOrDefault(chatDAO.title, "");
         this.chatMembers = Util.nullOrDefault(chatDAO.members, new ArrayList<>());
         this.chatHistory = Util.nullOrDefault(chatDAO.messages, new ArrayList<>());
+    }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "chatId='" + chatId + '\'' +
+                ", name='" + name + '\'' +
+                ", lastMessage='" + lastMessage + '\'' +
+                ", chatMembers=" + chatMembers +
+                ", chatHistory=" + chatHistory +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Message message = (Message) o;
+        return Objects.equals(getChatId(), message.getChatId()) && Objects.equals(getName(), message.getName()) && Objects.equals(getLastMessage(), message.getLastMessage()) && Objects.equals(getChatMembers(), message.getChatMembers()) && Objects.equals(getChatHistory(), message.getChatHistory());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getChatId(), getName(), getLastMessage(), getChatMembers(), getChatHistory());
     }
 }

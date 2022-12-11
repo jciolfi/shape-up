@@ -33,4 +33,14 @@ public class ChatDAO {
         this.members = m.getChatMembers();
         this.messages = m.getChatHistory();
     }
+
+    @Override
+    public String toString() {
+        return "ChatDAO{" +
+                "chatId='" + chatId + '\'' +
+                ", title='" + title + '\'' +
+                ", members=" + members +
+                ", messages=" + messages +
+                '}';
+    }
 }

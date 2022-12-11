@@ -19,6 +19,7 @@ public class GroupDAO {
         this.members = new ArrayList<>(g.getMembers());
         this.adminID = g.getAdminID();
         this.acceptingMembers = g.getAcceptingMembers();
+        this.groupChatId = g.getGroupChatId();
     }
 
     @Override
@@ -27,6 +28,8 @@ public class GroupDAO {
                 "groupName='" + groupName + '\'' +
                 ", members=" + members +
                 ", adminID='" + adminID + '\'' +
+                ", groupChatId='" + groupChatId + '\'' +
+                ", acceptingMembers=" + acceptingMembers +
                 '}';
     }
 }
