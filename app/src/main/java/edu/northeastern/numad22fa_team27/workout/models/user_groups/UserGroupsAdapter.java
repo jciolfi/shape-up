@@ -39,22 +39,18 @@ public class UserGroupsAdapter extends RecyclerView.Adapter<UserGroupsViewHolder
         holder.groupName.setText(group.getGroupName());
         holder.numMembers.setText(String.format("Members: %s", group.getMembers().size()));
 
+        holder.publicSwitch.setChecked(group.getAcceptingMembers());
+
         // set public/private switch if admin
         if (group.getAdminID().equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())) {
             holder.leaveButton.setEnabled(false);
-
-            if (group.getAcceptingMembers()) {
-                holder.publicSwitch.setChecked(true);
-            } else {
-                holder.publicSwitch.setChecked(false);
-            }
-            holder.publicSwitch.setVisibility(View.VISIBLE);
+            holder.publicSwitch.setEnabled(true);
 
             holder.publicSwitch.setOnCheckedChangeListener((compoundButton, b) -> {
                 firestoreService.tryChangeGroupPrivacy(group.getGroupID(), compoundButton.isChecked());
             });
         } else {
-            holder.publicSwitch.setVisibility(View.INVISIBLE);
+            holder.publicSwitch.setEnabled(false);
             holder.leaveButton.setEnabled(true);
 
             holder.leaveButton.setOnClickListener(view -> {
