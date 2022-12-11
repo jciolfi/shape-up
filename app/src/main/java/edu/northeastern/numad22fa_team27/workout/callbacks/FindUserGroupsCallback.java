@@ -32,9 +32,6 @@ public class FindUserGroupsCallback extends WorkoutCallback {
                 userGroups.add(new Group(groupDAO, ds.getId()));
             }
         }
-
-        // IMPORTANT: only call once to set up adapter. If the callback for querying for a user
-        // groups needs to happen again, create another callback.
-        userGroupsRV.setAdapter(new UserGroupsAdapter(userGroups));
+        userGroupsRV.getAdapter().notifyDataSetChanged();
     }
 }

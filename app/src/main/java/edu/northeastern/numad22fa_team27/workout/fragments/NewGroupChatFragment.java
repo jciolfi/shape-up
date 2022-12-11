@@ -110,6 +110,7 @@ public class NewGroupChatFragment extends Fragment {
                 return;
             }
 
+            friendsAlreadyAdded.add(selectedFriend);
             addedFriends.setText(String.join(", ", friendsAlreadyAdded));
 
         });
