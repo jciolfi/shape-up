@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
@@ -33,6 +34,7 @@ import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 public class UserGroupsActivity extends AppCompatActivity {
     private final static String TAG = "LeaderboardActivity";
     private FirestoreService firestoreService;
+    private TextView noGroupsText;
     private RecyclerView userGroupsRV;
     private final List<Group> userGroups = new ArrayList<>();
 
@@ -51,11 +53,13 @@ public class UserGroupsActivity extends AppCompatActivity {
         fabSearch.setOnClickListener(v -> createGroup());
         // End setup nav bar
 
+        noGroupsText = findViewById(R.id.groups_no_group);
+
         // set up recycler view
         userGroupsRV = findViewById(R.id.rv_user_groups);
         userGroupsRV.setLayoutManager(new LinearLayoutManager(this));
         userGroupsRV.setAdapter(new UserGroupsAdapter(userGroups));
-        firestoreService.findUserGroups(new FindUserGroupsCallback(userGroups, userGroupsRV));
+        firestoreService.findUserGroups(new FindUserGroupsCallback(userGroups, userGroupsRV), noGroupsText);
     }
 
     private void createGroup() {

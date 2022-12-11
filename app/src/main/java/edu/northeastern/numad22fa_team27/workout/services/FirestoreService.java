@@ -1,6 +1,8 @@
 package edu.northeastern.numad22fa_team27.workout.services;
 
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -190,7 +192,7 @@ public class FirestoreService implements IFirestoreService {
     }
 
     @Override
-    public void findUserGroups(WorkoutCallback callback) {
+    public void findUserGroups(WorkoutCallback callback, TextView noGroupsText) {
         //  for some reason, this breaks everything
 
         String userID = Objects.requireNonNull(userAuth.getCurrentUser()).getUid();
@@ -201,11 +203,13 @@ public class FirestoreService implements IFirestoreService {
                 .addOnSuccessListener(documentSnapshot -> {
                     UserDAO user = documentSnapshot.toObject(UserDAO.class);
                     if (user == null) {
+                        noGroupsText.setVisibility(View.VISIBLE);
                         logFailure("findUserGroups", String.format("%s doesn't exist", userID));
                         return;
                     }
 
                     if (user.joinedGroups.isEmpty()) {
+                        noGroupsText.setVisibility(View.VISIBLE);
                         Log.v(TAG, "User is not part of any groups");
                         return;
                     }

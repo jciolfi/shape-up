@@ -1,5 +1,6 @@
 package edu.northeastern.numad22fa_team27.workout.models.user_groups;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,6 +46,16 @@ public class UserGroupsAdapter extends RecyclerView.Adapter<UserGroupsViewHolder
 
         holder.cardBase.setOnClickListener(
                 v -> {
+                    if (group.getGroupChatId() == null || group.getGroupChatId().isEmpty()) {
+                        new AlertDialog.Builder(v.getContext())
+                                .setTitle("No Associated Group Chat")
+                                .setMessage("This is an older group that doesn't have an associated group chat.")
+                                .setNeutralButton("Ok", null)
+                                .create()
+                                .show();
+
+                        return;
+                    }
                     Intent newIntent = new Intent(v.getContext(), ReadMessageActivity.class);
                     newIntent.putExtra("chatId", group.getGroupChatId());
                     v.getContext().startActivity(newIntent);

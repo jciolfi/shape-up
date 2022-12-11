@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -61,8 +62,8 @@ public class WorkoutMessageActivity extends AppCompatActivity {
     private RecyclerView chatsRecycler;
     private FloatingActionButton newChatButton;
     ProgressBar progressBar;
+    TextView noChats;
     NewGroupChatFragment chatFragment;
-
 
     //other variables
     private final String TAG = "WorkoutMessageActivity__";
@@ -99,6 +100,9 @@ public class WorkoutMessageActivity extends AppCompatActivity {
 
         // for the fragment i think
         incomingInfo();
+
+        // No chats warning
+        noChats = findViewById(R.id.messages_no_messages);
 
         // RecyclerView
         chatsRecycler = findViewById(R.id.rcv_chats);
@@ -198,6 +202,7 @@ public class WorkoutMessageActivity extends AppCompatActivity {
 
                     });
             cards.add(new Message(item.getChatId(), item.getName(), item.getChatMembers(), item.getChatHistory()));
+            noChats.setVisibility(View.INVISIBLE);
             chatsRecycler.getAdapter().notifyDataSetChanged();
 
             toggleSearchFragment();
@@ -214,6 +219,9 @@ public class WorkoutMessageActivity extends AppCompatActivity {
         reference.get().addOnSuccessListener(documentSnapshot -> {
             User currentUser = UserUtil.getInstance().getUser();
             chats = currentUser.getChats();
+            if (chats.isEmpty()) {
+                noChats.setVisibility(View.VISIBLE);
+            }
             for (int i = 0; i < currentUser.getChats().size(); i++) {
                 findChatInfo(i);
             }
