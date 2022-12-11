@@ -1,5 +1,7 @@
 package edu.northeastern.numad22fa_team27.workout.services;
 
+import android.widget.TextView;
+
 import edu.northeastern.numad22fa_team27.workout.callbacks.WorkoutCallback;
 import edu.northeastern.numad22fa_team27.workout.models.WorkoutCategory;
 
@@ -33,7 +35,7 @@ public interface IFirestoreService {
      * Find groups the current user is a part of
      * @param callback executed on the entries returned by the query
      */
-    void findUserGroups(WorkoutCallback callback);
+    void findUserGroups(WorkoutCallback callback, TextView noGroupsText);
 
     /**
      * Find groups with a given groupName
