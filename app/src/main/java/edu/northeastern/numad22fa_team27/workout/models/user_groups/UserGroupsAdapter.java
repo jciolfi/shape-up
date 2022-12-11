@@ -42,6 +42,7 @@ public class UserGroupsAdapter extends RecyclerView.Adapter<UserGroupsViewHolder
         holder.groupName.setText(group.getGroupName());
         holder.numMembers.setText(String.format("Members: %s", group.getMembers().size()));
 
+        holder.publicSwitch.setVisibility(View.INVISIBLE);
         holder.publicSwitch.setChecked(group.getAcceptingMembers());
 
         holder.cardBase.setOnClickListener(
@@ -80,6 +81,8 @@ public class UserGroupsAdapter extends RecyclerView.Adapter<UserGroupsViewHolder
                 this.notifyItemRemoved(position);
             });
         }
+
+        holder.publicSwitch.setVisibility(View.VISIBLE);
     }
 
     @Override
