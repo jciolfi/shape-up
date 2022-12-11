@@ -61,6 +61,7 @@ public class UniversalSearchFragment extends DialogFragment {
         AtomicBoolean includeGroups = new AtomicBoolean(false);
         AtomicBoolean includeUsers = new AtomicBoolean(false);
         AtomicBoolean reverseSort = new AtomicBoolean(false);
+        AtomicBoolean reverseDifficultySort = new AtomicBoolean(false);
 
         // Inflate out actual view
         View fragmentView = inflater.inflate(R.layout.fragment_universal_search, container, false);
@@ -130,6 +131,15 @@ public class UniversalSearchFragment extends DialogFragment {
                                 }
                                 Util.setMenuItemColor(menuItem);
                                 break;
+                            case R.id.search_menu_sort_difficulty:
+                                reverseDifficultySort.set(!reverseDifficultySort.get());
+                                if (reverseDifficultySort.get()) {
+                                    menuItem.setTitle("Difficulty ↓");
+                                } else {
+                                    menuItem.setTitle("Difficulty ↑");
+                                }
+                                Util.setMenuItemColor(menuItem);
+                                break;
                             default:
                                 break;
                         }
@@ -155,7 +165,7 @@ public class UniversalSearchFragment extends DialogFragment {
                 // Trigger a search based on the category we selected.
                 if (includeWorkouts.get()) {
                     firestoreService.findWorkoutsByCriteria(s.toString(), null, -1, -1,
-                            new FindWorkoutsCallback(displayedResults, searchRV), 100, reverseSort.get());
+                            new FindWorkoutsCallback(displayedResults, searchRV, reverseDifficultySort.get()), 100, reverseSort.get());
                 } else if (includeGroups.get()) {
                     firestoreService.findGroupsByName(s.toString(), new FindGroupsCallback(displayedResults, searchRV), reverseSort.get());
                 } else if (includeUsers.get()) {

@@ -40,14 +40,11 @@
         android:id="@+id/searchMenuWorkoutDifficultySortGroup"
         android:title="Sort">
         <item
-            android:id="@+id/search_menu_sort_diff_0_5"
+            android:id="@+id/search_menu_sort_difficulty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:checkable="false"
             android:title="Difficulty ↑"
-            app:showAsAction="never" />
-        <item
-            android:id="@+id/search_menu_sort_diff_5_0"
-            android:checkable="false"
-            android:title="Difficulty ↓"
             app:showAsAction="never" />
     </group>
 </menu>
