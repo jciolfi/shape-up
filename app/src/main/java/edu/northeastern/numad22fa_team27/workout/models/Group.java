@@ -63,7 +63,8 @@ public class Group implements Summarizeable {
 
     @Override
     public String getMisc() {
-        return members.size() + " Member(s)";
+        // so when user searches and joins a group, inconsistent state isn't shown
+        return members.size() > 5 ? "Popular!" : "";
     }
 
     @Override

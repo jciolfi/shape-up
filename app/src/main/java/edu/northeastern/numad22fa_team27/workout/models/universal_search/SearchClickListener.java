@@ -1,27 +1,19 @@
 package edu.northeastern.numad22fa_team27.workout.models.universal_search;
 
-import static edu.northeastern.numad22fa_team27.Constants.GROUPS;
-import static edu.northeastern.numad22fa_team27.Constants.USERS;
-
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
-
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import edu.northeastern.numad22fa_team27.workout.activity.FriendProfileActivity;
+import edu.northeastern.numad22fa_team27.workout.activity.GroupDisplay;
 import edu.northeastern.numad22fa_team27.workout.activity.WorkoutDisplay;
 import edu.northeastern.numad22fa_team27.workout.interfaces.Summarizeable;
-import edu.northeastern.numad22fa_team27.workout.models.DAO.GroupDAO;
-import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
 import edu.northeastern.numad22fa_team27.workout.models.Group;
 import edu.northeastern.numad22fa_team27.workout.models.MediaParagraph;
 import edu.northeastern.numad22fa_team27.workout.models.User;
@@ -59,36 +51,10 @@ public class SearchClickListener {
             launcher.launch(intent);
         } else if (card instanceof Group) {
             Group g  = (Group) card;
-            String Message = String.format("Would you like to join the group %s?\nMembers: %d", g.getGroupName(), g.getMembers().size());
-            AlertDialog.Builder joinGroupBuilder = new AlertDialog.Builder(parentActivity)
-                    .setTitle("Join group " + g.getGroupName() + "?")
-                    .setMessage(Message)
-                    .setCancelable(true)
-                    .setPositiveButton("Yes", (dialog, which) -> {
-                        // TODO: Ugly. Clean this up.
-                        FirebaseFirestore firestoreDB = FirebaseFirestore.getInstance();
-                        FirebaseAuth userAuth = FirebaseAuth.getInstance();
-                        firestoreDB.collection(USERS)
-                                .document(userAuth.getUid())
-                                .get()
-                                .addOnSuccessListener(snapshot -> {
-                                    UserDAO self = snapshot.toObject(UserDAO.class);
-                                    g.getMembers().add(userAuth.getUid());
-                                    self.joinedGroups.add(g.getGroupID());
-
-                                    // Store
-                                    firestoreDB.collection(USERS)
-                                            .document(userAuth.getUid())
-                                            .set(self);
-                                    firestoreDB.collection(GROUPS)
-                                            .document(g.getGroupID())
-                                            .set(new GroupDAO(g));
-                                });
-                    }).setNegativeButton(
-                    "No", (dialog, id) -> dialog.cancel());
-
-            joinGroupBuilder.create().show();
-            //
+            Intent intent = new Intent(this.parentActivity, GroupDisplay.class);
+            intent.putExtra("GROUP_ID", g.getGroupID());
+            intent.putExtra("GROUP_NAME", g.getGroupName());
+            launcher.launch(intent);
         }
     }
 }
