@@ -127,9 +127,9 @@ public class ProfileActivity extends AppCompatActivity {
                         String workoutId = extras.getString("WorkoutId");
                         Boolean completedWorkout = extras.getBoolean("Success");
                         if (completedWorkout) {
-                            Toast.makeText(this, String.format("Congrats on completing workout %s", workoutId), Toast.LENGTH_LONG).show();
+                            Toast.makeText(this, String.format("Congrats on completing your workout!"), Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(this, "Okay, maybe next time.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(this, "Okay, maybe next time.", Toast.LENGTH_SHORT).show();
                         }
 
                         FirebaseFirestore db = FirebaseFirestore.getInstance();

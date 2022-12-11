@@ -68,10 +68,8 @@ public class NewGroupChatFragment extends Fragment {
         if(idToNameMap != null) {
             List<SpannableString> friendsList = new ArrayList<>();
             for (String friendName : idToNameMap.values()) {
-                Log.v("XYZ", friendName);
                 SpannableString coloredTitle = new SpannableString(friendName);
                 coloredTitle.setSpan(new ForegroundColorSpan(R.color.md_theme_light_onBackground), 0, coloredTitle.length(), 0);
-                Log.v("XYZ", coloredTitle.toString());
                 friendsList.add(coloredTitle);
             }
 

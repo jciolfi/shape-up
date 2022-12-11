@@ -322,22 +322,7 @@ public class WorkoutMessageActivity extends AppCompatActivity {
     private MessageClickListener setUpMClickListener(List<Message> dataset) {
         // this is passed to the click listener that is  created
         ActivityResultLauncher<Intent> activityLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        Intent data = result.getData();
-                        Bundle extras = data.getExtras();
-                        String workoutId = extras.getString("WorkoutId");
-                        Boolean completedWorkout = extras.getBoolean("Success");
-                        if (completedWorkout) {
-                            Toast.makeText(this, String.format("Congrats on completing workout %s", workoutId), Toast.LENGTH_LONG).show();
-                        } else {
-                            Toast.makeText(this, "Okay, maybe next time.", Toast.LENGTH_LONG).show();
-                        }
-
-                        // TODO: Update user
-                    }
-                });
+                new ActivityResultContracts.StartActivityForResult(), result -> {});
 
         MessageClickListener clickListener = new MessageClickListener(dataset, activityLauncher);
         return clickListener;
