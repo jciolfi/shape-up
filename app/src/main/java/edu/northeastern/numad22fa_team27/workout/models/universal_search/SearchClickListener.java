@@ -5,9 +5,7 @@ import static edu.northeastern.numad22fa_team27.Constants.USERS;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.util.Log;
 import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -19,9 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import edu.northeastern.numad22fa_team27.Constants;
 import edu.northeastern.numad22fa_team27.workout.activity.FriendProfileActivity;
-import edu.northeastern.numad22fa_team27.workout.activity.MyFriendsActivity;
 import edu.northeastern.numad22fa_team27.workout.activity.WorkoutDisplay;
 import edu.northeastern.numad22fa_team27.workout.interfaces.Summarizeable;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.GroupDAO;
@@ -30,7 +26,6 @@ import edu.northeastern.numad22fa_team27.workout.models.Group;
 import edu.northeastern.numad22fa_team27.workout.models.MediaParagraph;
 import edu.northeastern.numad22fa_team27.workout.models.User;
 import edu.northeastern.numad22fa_team27.workout.models.Workout;
-import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 
 public class SearchClickListener {
     private final ActivityResultLauncher<Intent> launcher;
@@ -58,6 +53,7 @@ public class SearchClickListener {
         } else if (card instanceof User) {
             User u  = (User) card;
             Intent intent = new Intent(this.parentActivity, FriendProfileActivity.class);
+            intent.putExtra("USERID", u.getUserID());
             intent.putExtra("USERNAME", u.getUsername());
             intent.putExtra("PROFILEPIC", u.getProfilePic());
             launcher.launch(intent);

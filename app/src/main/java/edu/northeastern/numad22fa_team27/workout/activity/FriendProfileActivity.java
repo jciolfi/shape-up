@@ -1,43 +1,34 @@
 package edu.northeastern.numad22fa_team27.workout.activity;
 
-import static edu.northeastern.numad22fa_team27.Util.requestNoActivityBar;
+import static edu.northeastern.numad22fa_team27.Constants.USERS;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.Util;
+import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
+import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 
 public class FriendProfileActivity extends AppCompatActivity {
 
     private TextView friend_email;
     private ImageView friend_profilePic;
-    private Button removeBtn;
+    private Button actionButton;
+    private final FirebaseFirestore firestoreDB = FirebaseFirestore.getInstance();
+    private final FirestoreService firestoreService = new FirestoreService();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,17 +37,10 @@ public class FriendProfileActivity extends AppCompatActivity {
 
         friend_email = findViewById(R.id.friendUsername);
         friend_profilePic = findViewById(R.id.friendProfilePic);
-        removeBtn = findViewById(R.id.friendRemoveBtn);
+        actionButton = findViewById(R.id.friendActionBtn);
 
         extractInformation();
-
-        removeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                removeFriend();
-                Util.openActivity(FriendProfileActivity.this, ProfileActivity.class);
-            }
-        });
+        setActionButton();
 
         // TODO
         // Fetch the friends workouts from the DB
@@ -74,33 +58,81 @@ public class FriendProfileActivity extends AppCompatActivity {
         }
     }
 
-    private void removeFriend() {
-        String username = getIntent().getStringExtra("USERNAME");
+    private void setActionButton() {
+        FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (fbUser == null) {
+            return;
+        }
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        CollectionReference colRef = db.collection("users");
-        DocumentReference docRef = colRef.document(user.getUid());
+        /*
+        Logic Overview:
+        - If currentUser is selectedUser: hide/disable action button
+        - If currentUser is friends with selectedUser: change to remove
+        - If selectedUser has requested currentUser as friend: change to accept
+        - If currentUser has requested selectedUser as friend: change to requested + disable
+        - If currentUser & selectedUser aren't friends, no requests: change to request
+         */
 
-        docRef.get()
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        List<String> friendsUIDList = (List<String>) documentSnapshot.getData().get("friends");
-                        Query nameQuery = colRef.whereEqualTo("username", username);
-                        nameQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    for (QueryDocumentSnapshot document : task.getResult()) {
-                                        String friendId = document.getId();
-                                        Log.d("user", friendId);
-                                        docRef.update("friends", FieldValue.arrayRemove(friendId));
-                                    }
-                                }
-                            }
+        String currentUserID = fbUser.getUid();
+        String selectedUserID = getIntent().getStringExtra("USERID");
+
+
+        // hide button for now so user doesn't see changing button state
+        actionButton.setVisibility(View.INVISIBLE);
+        actionButton.setEnabled(false);
+        if (currentUserID.equals(selectedUserID)) {
+            return;
+        }
+
+        firestoreDB.collection(USERS)
+                .document(currentUserID)
+                .get()
+                .addOnSuccessListener(currUserSnapshot -> {
+                    UserDAO currentUser = currUserSnapshot.toObject(UserDAO.class);
+                    if (currentUser == null) {
+                        return;
+                    }
+
+                    if (currentUser.friends.contains(selectedUserID)) {
+                        actionButton.setText("Remove");
+                        actionButton.setVisibility(View.VISIBLE);
+                        actionButton.setEnabled(true);
+                        actionButton.setOnClickListener(v -> {
+                            firestoreService.removeFriend(selectedUserID);
+                            onBackPressed();
                         });
+                    } else if (currentUser.incomingFriendRequests.contains(selectedUserID)) {
+                        actionButton.setText("Accept");
+                        actionButton.setVisibility(View.VISIBLE);
+                        actionButton.setEnabled(true);
+                        actionButton.setOnClickListener(v -> {
+                            firestoreService.tryAcceptFriendRequest(selectedUserID);
+                            onBackPressed();
+                        });
+                    } else {
+                        firestoreDB.collection(USERS)
+                                .document(selectedUserID)
+                                .get()
+                                .addOnSuccessListener(selectedUserSnapshot -> {
+                                    UserDAO selectedUser = selectedUserSnapshot.toObject(UserDAO.class);
+                                    if (selectedUser == null) {
+                                        return;
+                                    }
 
+                                    if (selectedUser.incomingFriendRequests.contains(currentUserID)) {
+                                        actionButton.setText("Requested");
+                                        actionButton.setVisibility(View.VISIBLE);
+                                        actionButton.setEnabled(false);
+                                    } else {
+                                        actionButton.setText("Request");
+                                        actionButton.setVisibility(View.VISIBLE);
+                                        actionButton.setEnabled(true);
+                                        actionButton.setOnClickListener(v -> {
+                                            firestoreService.tryRequestFriend(selectedUserID);
+                                            onBackPressed();
+                                        });
+                                    }
+                                });
                     }
                 });
     }
