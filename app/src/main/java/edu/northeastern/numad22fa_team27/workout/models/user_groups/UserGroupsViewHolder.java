@@ -6,6 +6,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import edu.northeastern.numad22fa_team27.R;
@@ -15,6 +17,7 @@ public class UserGroupsViewHolder extends RecyclerView.ViewHolder {
     public TextView numMembers;
     public Switch publicSwitch;
     public Button leaveButton;
+    public ConstraintLayout cardBase;
 
     public UserGroupsViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -22,5 +25,6 @@ public class UserGroupsViewHolder extends RecyclerView.ViewHolder {
         this.numMembers = itemView.findViewById(R.id.user_group_member_count);
         this.publicSwitch = itemView.findViewById(R.id.user_group_public);
         this.leaveButton = itemView.findViewById(R.id.btn_leave_group);
+        this.cardBase = itemView.findViewById(R.id.group_card_layout);
     }
 }

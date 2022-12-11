@@ -16,9 +16,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import edu.northeastern.numad22fa_team27.Util;
 import edu.northeastern.numad22fa_team27.workout.callbacks.WorkoutCallback;
+import edu.northeastern.numad22fa_team27.workout.models.DAO.ChatDAO;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.GroupDAO;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
 import edu.northeastern.numad22fa_team27.workout.models.Group;
+import edu.northeastern.numad22fa_team27.workout.models.Message;
 import edu.northeastern.numad22fa_team27.workout.models.WorkoutCategory;
 import static edu.northeastern.numad22fa_team27.Constants.*;
 
@@ -51,11 +53,18 @@ public class FirestoreService implements IFirestoreService {
         // we already check if we can get the current user from tryFetchUserDetails, so it shouldn't be null
         String userID = Objects.requireNonNull(userAuth.getCurrentUser()).getUid();
         Group newGroup = new Group(groupName, userID);
+        Message m = new Message(groupName);
+        m.addChatMembers(userID);
+        newGroup.setGroupChatId(m.getChatId());
+        Log.v("XYZ", "Group to store " + newGroup.toString());
+        Log.v("XYZ", "Message to store " + m.toString());
 
         firestoreDB.collection(GROUPS)
                 .document(newGroup.getGroupID())
                 .set(new GroupDAO(newGroup))
                 .addOnSuccessListener(unused1 -> {
+
+                    // Add ourselves to the group
                     firestoreDB.collection(USERS)
                             .document(userID)
                             .update(JOINED_GROUPS, FieldValue.arrayUnion(newGroup.getGroupID()))
@@ -75,6 +84,14 @@ public class FirestoreService implements IFirestoreService {
                                 logFailure("tryCreateGroup", e.getMessage());
                             });
 
+                    // Create an associated chat group, with us in it
+                    firestoreDB.collection(MESSAGES)
+                            .document(m.getChatId())
+                            .set(new ChatDAO(m))
+                            .addOnFailureListener(e -> {
+                                success.set(false);
+                                logFailure("tryCreateGroup", e.getMessage());
+                            });
                 })
                 .addOnFailureListener(e -> {
                     success.set(false);
@@ -291,6 +308,24 @@ public class FirestoreService implements IFirestoreService {
                                                 success.set(false);
                                                 logFailure("tryJoinGroup", e.getMessage());
                                             });
+
+                                    // Add group to to the user's list of chats
+                                    firestoreDB.collection(USERS)
+                                            .document(userID)
+                                            .update("chats", FieldValue.arrayUnion(groupDAO.groupChatId))
+                                            .addOnFailureListener(e -> {
+                                                success.set(false);
+                                                logFailure("tryJoinGroup", e.getMessage());
+                                            });
+
+                                    // Add user to the list of chatters
+                                    firestoreDB.collection(GROUPS)
+                                            .document(groupDAO.groupChatId)
+                                            .update("members", FieldValue.arrayUnion(userID))
+                                            .addOnFailureListener(e -> {
+                                                success.set(false);
+                                                logFailure("tryJoinGroup", e.getMessage());
+                                            });
                                 });
                     }
                 });
@@ -323,6 +358,12 @@ public class FirestoreService implements IFirestoreService {
                         firestoreDB.collection(USERS)
                                 .document(userID)
                                 .update(JOINED_GROUPS, FieldValue.arrayRemove(groupID))
+                                .addOnFailureListener(e -> logFailure("leaveGroup", e.getMessage()));
+
+                        // remove group chat from the user's list of chats
+                        firestoreDB.collection(USERS)
+                                .document(userID)
+                                .update("chats", FieldValue.arrayRemove(groupDAO.groupChatId))
                                 .addOnFailureListener(e -> logFailure("leaveGroup", e.getMessage()));
                     }
                 })

@@ -30,6 +30,7 @@ public class UserUtil {
         db = FirebaseFirestore.getInstance();
         user_auth = FirebaseAuth.getInstance();
         currUserData = new User();
+        getUserFromDB();
     }
 
     public static UserUtil getInstance() {
@@ -56,6 +57,17 @@ public class UserUtil {
                         }
                     } else {
                         Log.d(TAG, "Current data: null");
+                    }
+                });
+    }
+
+    public void getUserFromDB() {
+        db.collection(Constants.USERS)
+                .document(user_auth.getUid())
+                .get()
+                .addOnSuccessListener(ds -> {
+                    synchronized(currUserData) {
+                        currUserData = new User(ds.toObject(UserDAO.class), user_auth.getUid());
                     }
                 });
     }

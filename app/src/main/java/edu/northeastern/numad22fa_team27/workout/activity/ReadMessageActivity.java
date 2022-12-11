@@ -55,7 +55,7 @@ public class ReadMessageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_read_meassage);
         firestore = FirebaseFirestore.getInstance();
-        AtomicReference<Message> currMessages = new AtomicReference(new Message());
+        AtomicReference<Message> currMessages = new AtomicReference(new Message(""));
         idToUsernameMap = new HashMap<>();
 
         progressBar = findViewById(R.id.pb_loading);
@@ -63,11 +63,7 @@ public class ReadMessageActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
-
-        if(extras != null) {
-            chatId = extras.getString("chatId");
-        }
-        //chat id
+        chatId = extras.getString("chatId");
 
         //initialize recycler
         RecyclerView.LayoutManager manager = new StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.VERTICAL);
@@ -95,6 +91,7 @@ public class ReadMessageActivity extends AppCompatActivity {
 
             // If we add the update to the message object directly, or differential callback won't think there has been a change.
             ChatDAO cd = new ChatDAO(currMessages.get());
+            Log.v("XYZ", cd.toString());
             cd.messages = new ArrayList<>();
             cd.messages.addAll(currMessages.get().getChatHistory());
             cd.messages.add(new HashMap<>() {{ put("userId", currentID); put("message", newMessage); }});
@@ -114,12 +111,12 @@ public class ReadMessageActivity extends AppCompatActivity {
 
         // Initial retrieval of data
         firestore.collection(Constants.MESSAGES)
-                .document(chatId)
+                .document(chatId.trim())
                 .get()
                 .addOnSuccessListener(ds -> {
                     ChatDAO cd = ds.toObject(ChatDAO.class);
+
                     currMessages.set(new Message(chatId, cd.title, cd.members, cd.messages));
-                    Log.v("XYZ", currMessages.toString());
 
                     // Update the RecyclerView
                     for (int i = 0; i < currMessages.get().getChatHistory().size(); i++) {

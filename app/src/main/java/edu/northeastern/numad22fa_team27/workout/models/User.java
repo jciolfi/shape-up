@@ -47,7 +47,9 @@ public class User implements Summarizeable {
     // List of chat IDs that the user is a part of
     private List<String> chats;
 
-    public User() { }
+    public User() {
+        this("", "");
+    }
 
     /**
      * New user constructor

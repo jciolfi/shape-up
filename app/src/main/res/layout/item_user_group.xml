@@ -6,77 +6,67 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="2dp"
     android:background="@color/md_theme_light_primaryContainer"
-    android:backgroundTint="@color/md_theme_light_primaryContainer">
+    android:backgroundTint="@color/md_theme_light_primaryContainer"
+    android:foregroundTint="@color/md_theme_light_tertiary"
+    android:paddingHorizontal="8dp"
+    android:paddingVertical="8dp">
 
     <TextView
         android:id="@+id/user_group_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:text="@string/placeholder_groupname"
-        android:textColor="@color/md_theme_light_onBackground"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
+        android:elevation="20dp"
+        android:fontFamily="@font/poppins_regular"
+        android:text="@string/test"
+        android:textColor="@color/md_theme_light_onPrimaryContainer"
         android:textSize="20sp"
-        android:textStyle="bold|italic"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/user_group_member_count"
+        app:layout_constraintEnd_toStartOf="@+id/btn_leave_group"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <View
-        android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
-        android:background="@color/md_theme_light_onBackground"
-        app:layout_constraintBottom_toTopOf="@+id/user_group_member_count"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/user_group_name" />
-
-    <TextView
+        <TextView
         android:id="@+id/user_group_member_count"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/members"
-        android:textColor="@color/md_theme_light_onBackground"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
+        android:fontFamily="@font/poppins_light"
+        android:text="@string/test"
+        android:textColor="@color/md_theme_light_onPrimaryContainer"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/user_group_public"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider" />
+        app:layout_constraintTop_toBottomOf="@+id/user_group_name" />
+
 
     <Switch
         android:id="@+id/user_group_public"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/group_public"
-        android:textColor="@color/md_theme_light_onBackground"
+        android:buttonTint="@color/md_theme_light_tertiary"
+        android:checked="true"
+        android:minWidth="88dp"
+        android:minHeight="48dp"
+        android:text="Public"
+        android:textColor="@color/md_theme_light_onPrimaryContainer"
+        android:textColorHighlight="@color/md_theme_light_tertiary"
+        android:textColorLink="@color/md_theme_light_tertiary"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_group_member_count"
-        android:theme="@style/SwitchOnLightBackground" />
+        app:layout_constraintStart_toEndOf="@+id/user_group_member_count"
+        app:layout_constraintTop_toBottomOf="@+id/btn_leave_group" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_leave_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
-        android:text="@string/leave"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="Leave"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_group_public" />
+        app:layout_constraintStart_toEndOf="@+id/user_group_name"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -34,7 +34,6 @@ import edu.northeastern.numad22fa_team27.workout.models.Message;
 
 public class NewGroupChatFragment extends Fragment {
     private Map<String, String> idToNameMap; // this is the current list of friends of the userid
-    private String[] addedArray; // this will go with the text view
     private ChatItemViewModel viewModel;
     private String userId;
 
@@ -58,9 +57,6 @@ public class NewGroupChatFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View newGroupChatView = inflater.inflate(R.layout.fragment_add_chat, container, false);
-
-        addedArray = new String[0];
-
         viewModel = new ViewModelProvider(requireActivity()).get(ChatItemViewModel.class);
 
         //Name of chat
@@ -102,23 +98,21 @@ public class NewGroupChatFragment extends Fragment {
         TextView addedFriends = newGroupChatView.findViewById(R.id.txt_added_friends);
 
         //Add button
+        List<String> friendsAlreadyAdded = new ArrayList<>();
         Button addFriend = newGroupChatView.findViewById(R.id.btn_add_friend);
         addFriend.setOnClickListener(c -> {
-            String[] newAdded = new String[addedArray.length + 1];
-            for (int i = 0; i < addedArray.length; i++) {
-                if (addedArray[i].equals(friends.getSelectedItem().toString())) {
-                    addFriend.setError("friend already in list");
-                    return;//check if the user is already added and exit out of set on clicker
-                }
-                newAdded[i] = addedArray[i];
+            if (friends.getSelectedItem() == null) {
+                addFriend.setError("Please add a friend so you can invite them to chat!");
+                return;
             }
-            newAdded[addedArray.length] = friends.getSelectedItem().toString();
-            addedArray = newAdded;
-            String resultText = "";
-            for (String s : addedArray) {
-                resultText += s + ", ";
+            String selectedFriend = friends.getSelectedItem().toString();
+
+            if (friendsAlreadyAdded.contains(selectedFriend)) {
+                addFriend.setError("friend already in list");
+                return;
             }
-            addedFriends.setText(resultText);
+
+            addedFriends.setText(String.join(", ", friendsAlreadyAdded));
 
         });
         final Button cancelButton = newGroupChatView.findViewById(R.id.btn_esc_chat);
@@ -130,7 +124,7 @@ public class NewGroupChatFragment extends Fragment {
         // Create Chat button
         final Button createChatButton = newGroupChatView.findViewById(R.id.btn_add_chat);
         createChatButton.setOnClickListener(c -> {
-            if (addedArray.length == 0) {
+            if (friendsAlreadyAdded.isEmpty()) {
                 addedFriends.setError("Please add one more friend");
                 return;
             }

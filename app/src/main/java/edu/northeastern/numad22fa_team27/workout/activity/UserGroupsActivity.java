@@ -53,8 +53,6 @@ public class UserGroupsActivity extends AppCompatActivity {
         // set up recycler view
         userGroupsRV = findViewById(R.id.rv_user_groups);
         userGroupsRV.setLayoutManager(new LinearLayoutManager(this));
-
-        // this will set adapter.
         firestoreService.findUserGroups(new FindUserGroupsCallback(userGroups, userGroupsRV));
     }
 
@@ -63,7 +61,7 @@ public class UserGroupsActivity extends AppCompatActivity {
 
         AlertDialog createGroupDialog = new AlertDialog.Builder(this)
                 .setTitle("Create Group")
-                .setMessage("Enter a name for you group")
+                .setMessage("Enter a name for your group")
                 .setView(groupNameText)
                 .setPositiveButton("Create", (dialogInterface, i) -> {
                     if (!Util.stringIsNullOrEmpty(groupNameText.getText().toString())) {

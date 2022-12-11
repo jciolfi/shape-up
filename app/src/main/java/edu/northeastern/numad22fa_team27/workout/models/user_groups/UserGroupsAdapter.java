@@ -1,5 +1,6 @@
 package edu.northeastern.numad22fa_team27.workout.models.user_groups;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Objects;
 
 import edu.northeastern.numad22fa_team27.R;
+import edu.northeastern.numad22fa_team27.workout.activity.ReadMessageActivity;
 import edu.northeastern.numad22fa_team27.workout.models.Group;
 import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 
@@ -40,6 +42,14 @@ public class UserGroupsAdapter extends RecyclerView.Adapter<UserGroupsViewHolder
         holder.numMembers.setText(String.format("Members: %s", group.getMembers().size()));
 
         holder.publicSwitch.setChecked(group.getAcceptingMembers());
+
+        holder.cardBase.setOnClickListener(
+                v -> {
+                    Intent newIntent = new Intent(v.getContext(), ReadMessageActivity.class);
+                    newIntent.putExtra("chatId", group.getGroupChatId());
+                    v.getContext().startActivity(newIntent);
+                }
+        );
 
         // set public/private switch if admin
         if (group.getAdminID().equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())) {

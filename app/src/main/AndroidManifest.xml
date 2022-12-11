@@ -48,13 +48,6 @@
             </intent-filter>
         </service>
         <activity
-            android:name=".workout.activity.FriendProfileActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
             android:name=".workout.activity.GroupDisplay"
             android:exported="false">
             <meta-data
@@ -62,7 +55,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".workout.activity.UserFriends"
+            android:name=".workout.activity.FriendProfileActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
