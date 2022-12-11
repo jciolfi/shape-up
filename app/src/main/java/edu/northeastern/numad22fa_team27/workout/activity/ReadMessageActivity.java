@@ -108,7 +108,6 @@ public class ReadMessageActivity extends AppCompatActivity {
                         return;
                     });
         });
-        Log.v("XYZ", chatId);
 
         // Initial retrieval of data
         firestore.collection(Constants.MESSAGES)

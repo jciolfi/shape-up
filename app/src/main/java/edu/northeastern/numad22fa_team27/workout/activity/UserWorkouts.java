@@ -15,6 +15,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -36,24 +38,29 @@ import edu.northeastern.numad22fa_team27.workout.utilities.UserUtil;
 public class UserWorkouts extends AppCompatActivity {
     private final static String TAG = "UserWorkouts";
     private RecyclerView workouts;
+
     private final List<WorkoutProgress> originalWorkoutData = new ArrayList<>();
     private final List<WorkoutProgress> displayedWorkoutData = new ArrayList<>();
 
-    private void genFakeWorkoutCards() throws IOException, InterruptedException {
+    private void getWorkoutData() {
         Map<String, Integer> completedWorkouts = UserUtil.getInstance().getUser().getWorkoutCompletions();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         for (Map.Entry<String, Integer> kv : completedWorkouts.entrySet()) {
+            Log.v("XYZ", kv.toString());
             db.collection(Constants.WORKOUTS)
                     .document(kv.getKey())
                     .get().addOnSuccessListener(ds -> {
                         Workout w = new Workout(ds.toObject(WorkoutDAO.class));
-                        synchronized (originalWorkoutData) {
-                            WorkoutProgress newWorkout = (new WorkoutProgress(w, completedWorkouts.get(w.getWorkoutID())));
-                            originalWorkoutData.add(newWorkout);
-                            displayedWorkoutData.add(newWorkout);
-                            Objects.requireNonNull(workouts.getAdapter()).notifyItemInserted(displayedWorkoutData.size() - 1);
-                        }
+                        WorkoutProgress newWorkout = (new WorkoutProgress(w, completedWorkouts.get(w.getWorkoutID())));
+                        originalWorkoutData.add(newWorkout);
+                        displayedWorkoutData.add(newWorkout);
+
+                        Collections.sort(displayedWorkoutData, Comparator.comparingInt(WorkoutProgress::getTimesCompleted));
+                        Collections.reverse(displayedWorkoutData);
+                        Objects.requireNonNull(workouts.getAdapter()).notifyItemInserted(displayedWorkoutData.size() - 1);
+                    }).addOnFailureListener(e -> {
+                        Log.e("XYZ", "Could not get item! " + e);
                     });
         }
     }
@@ -75,13 +82,7 @@ public class UserWorkouts extends AppCompatActivity {
         workouts.setLayoutManager(manager);
         workouts.addItemDecoration(new InterItemSpacer(12));
 
-        // Create dummy data
-        try {
-            genFakeWorkoutCards();
-        } catch (IOException | InterruptedException e) {
-            Log.e(TAG, "Could not load data!");
-            return;
-        }
+        getWorkoutData();
 
         EditText userWorkoutSearch = findViewById(R.id.userWorkoutSearch);
         userWorkoutSearch.addTextChangedListener(new TextWatcher() {
