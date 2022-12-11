@@ -39,12 +39,12 @@ public class RecommendationService {
      * @return List of workouts to try
      */
     public void RecommendWorkouts(RecyclerView rv, List<Workout> target) {
-        // TODO: Algorithm that takes into account past workouts, and completed workout difficulty
+        // TODO: Algorithm that takes into account past workouts
 
         // Pretend we found the average
-        Double userAvgDifficulty = 3.0;
-        Double userMaxDifficulty = Math.max(userAvgDifficulty + 1, 5);
-        Double userMinDifficulty = Math.max(userAvgDifficulty - 1, 0);
+        Double userAvgDifficulty = (Math.random() * 5);
+        Double userMaxDifficulty = Math.max(userAvgDifficulty + 0.5, 5);
+        Double userMinDifficulty = Math.max(userAvgDifficulty - 0.5, 0);
         firestoreDB.collection("workouts")
                 .whereGreaterThanOrEqualTo("difficulty", userMinDifficulty)
                 .whereLessThan("difficulty", userMaxDifficulty)
@@ -70,7 +70,7 @@ public class RecommendationService {
         // TODO: Algorithm that reports workouts many friends have done that we haven't.
 
         // Pretend we found the average
-        Double friendAvgDifficulty = 4.0;
+        Double friendAvgDifficulty = (Math.random() * 5);
         Double friendMaxDifficulty = Math.max(friendAvgDifficulty + 1, 5);
         Double friendMinDifficulty = Math.max(friendAvgDifficulty - 1, 0);
         firestoreDB.collection("workouts")

@@ -155,7 +155,7 @@ public class UniversalSearchFragment extends DialogFragment {
                 // Trigger a search based on the category we selected.
                 if (includeWorkouts.get()) {
                     firestoreService.findWorkoutsByCriteria(s.toString(), null, -1, -1,
-                            new FindWorkoutsCallback(displayedResults, searchRV), 10, reverseSort.get());
+                            new FindWorkoutsCallback(displayedResults, searchRV), 100, reverseSort.get());
                 } else if (includeGroups.get()) {
                     firestoreService.findGroupsByName(s.toString(), new FindGroupsCallback(displayedResults, searchRV), reverseSort.get());
                 } else if (includeUsers.get()) {

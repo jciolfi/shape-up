@@ -58,6 +58,7 @@
             android:backgroundTint="@color/md_theme_light_primary"
             android:text="@string/friend_workouts"
             android:textColor="@color/md_theme_light_onPrimary"
+            android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@+id/friendActionBtn"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -1,7 +1,10 @@
 package edu.northeastern.numad22fa_team27.workout.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -38,6 +41,7 @@ public class LeaderboardActivity extends AppCompatActivity {
     private RecyclerView leaderboardRV;
     private final List<UserDAO> users = new ArrayList<>();
 
+    @SuppressLint("ResourceAsColor")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,8 +80,16 @@ public class LeaderboardActivity extends AppCompatActivity {
         // set up categories dropdown
         Spinner categoryDropdown = findViewById(R.id.dropdown_leaderboard_category);
         categories = WorkoutCategory.listCategories(true, true);
-        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, categories);
+
+        List<SpannableString> categoriesWithColor = new ArrayList<>();
+        for (String cat : categories) {
+            SpannableString coloredTitle = new SpannableString(cat);
+            coloredTitle.setSpan(new ForegroundColorSpan(R.color.md_theme_light_onBackground), 0, coloredTitle.length(), 0);
+            categoriesWithColor.add(coloredTitle);
+        }
+
+        ArrayAdapter<SpannableString> categoryAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, categoriesWithColor);
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         categoryDropdown.setAdapter(categoryAdapter);
         categoryDropdown.setSelection(0);
