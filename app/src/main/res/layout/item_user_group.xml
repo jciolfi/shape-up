@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/group_card_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -13,49 +12,71 @@
         android:id="@+id/user_group_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:background="@drawable/border"
-        android:elevation="20dp"
-        android:text="@string/test"
-        android:textColor="@color/md_theme_dark_onBackground"
-        android:textSize="16sp"
+        android:layout_marginTop="15dp"
+        android:text="@string/placeholder_groupname"
+        android:textColor="@color/md_theme_light_onBackground"
+        android:textSize="20sp"
+        android:textStyle="bold|italic"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/md_theme_light_onBackground"
+        app:layout_constraintBottom_toTopOf="@+id/user_group_member_count"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/user_group_name" />
 
     <TextView
         android:id="@+id/user_group_member_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="24dp"
-        android:text="@string/test"
-        android:textColor="@color/md_theme_light_onPrimaryContainer"
-        android:textSize="16sp"
-        app:layout_constraintStart_toEndOf="@+id/user_group_name"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/members"
+        android:textColor="@color/md_theme_light_onBackground"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider" />
 
     <Switch
         android:id="@+id/user_group_public"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="24dp"
-        android:checked="true"
-        android:text="Public"
-        android:textColor="@color/md_theme_light_onPrimaryContainer"
-        android:visibility="invisible"
-        app:layout_constraintStart_toEndOf="@+id/user_group_member_count"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/group_public"
+        android:textColor="@color/md_theme_light_onBackground"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/user_group_member_count"
+        android:theme="@style/SwitchOnLightBackground" />
 
     <Button
         android:id="@+id/btn_leave_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="Leave"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/leave"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_group_name" />
+        app:layout_constraintTop_toBottomOf="@+id/user_group_public" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

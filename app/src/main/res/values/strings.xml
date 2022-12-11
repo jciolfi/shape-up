@@ -123,4 +123,5 @@
     <string name="group_public">ACCEPTING MEMBERS: </string>
     <string name="placeholder_groupname">PLACEHOLDER GROUPNAME</string>
     <string name="admin_for_group">YOU ARE AN ADMIN FOR THIS GROUP!</string>
+    <string name="leave">Leave</string>
 </resources>
