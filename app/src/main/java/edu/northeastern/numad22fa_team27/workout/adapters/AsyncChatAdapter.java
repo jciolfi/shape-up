@@ -18,12 +18,10 @@ import edu.northeastern.numad22fa_team27.R;
  * control the components in a recycler.
  */
 public class AsyncChatAdapter extends RecyclerView.Adapter<ChatHolder> {
-    private final Map<Integer, ChatCard> list;
     private final List<ChatCard> finalizedListData;
 
-    public AsyncChatAdapter() {
-        this.finalizedListData = new ArrayList<>();
-        this.list = new TreeMap<>();
+    public AsyncChatAdapter(List<ChatCard> data) {
+        this.finalizedListData = data;
     }
 
     @NonNull
@@ -34,34 +32,13 @@ public class AsyncChatAdapter extends RecyclerView.Adapter<ChatHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ChatHolder holder, int position) {
-        ChatCard card = list.get(position);
+        ChatCard card = finalizedListData.get(position);
         holder.title.setText(card.getUserName());
         holder.body.setText(card.getBody());
     }
 
-    public ChatCard getCardAtPositionOrDefault(Integer position) {
-        return list.getOrDefault(position, new ChatCard("", ""));
-    }
-
-    public void setCardAtPosition(Integer position, ChatCard card) {
-        list.put(position, card);
-
-        // Recompile list of data
-        this.finalizedListData.clear();
-
-        // TreeMap is always ordered
-        for (ChatCard c : list.values()) {
-            this.finalizedListData.add(c);
-        }
-    }
-
-    public List<ChatCard> getCards() {
-        return this.finalizedListData;
-    }
-
-
     @Override
     public int getItemCount() {
-        return list.size();
+        return finalizedListData.size();
     }
 }

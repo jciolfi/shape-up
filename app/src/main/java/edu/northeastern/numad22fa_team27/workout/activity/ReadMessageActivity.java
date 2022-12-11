@@ -15,12 +15,16 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -32,6 +36,7 @@ import edu.northeastern.numad22fa_team27.workout.adapters.ChatCard;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.ChatDAO;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
 import edu.northeastern.numad22fa_team27.workout.models.Message;
+import edu.northeastern.numad22fa_team27.workout.models.User;
 import edu.northeastern.numad22fa_team27.workout.utilities.ChatUtil;
 
 /**
@@ -67,8 +72,9 @@ public class ReadMessageActivity extends AppCompatActivity {
         chatId = extras.getString("chatId");
 
         //initialize recycler
-        RecyclerView.LayoutManager manager = new StaggeredGridLayoutManager(1,StaggeredGridLayoutManager.VERTICAL);
-        adapter = new AsyncChatAdapter();
+        List<ChatCard> cards = new ArrayList<>();
+        RecyclerView.LayoutManager manager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
+        adapter = new AsyncChatAdapter(cards);
         recMessages = findViewById(R.id.rcv_message_view);
         recMessages.setHasFixedSize(false);
         recMessages.setAdapter(adapter);
@@ -91,14 +97,10 @@ public class ReadMessageActivity extends AppCompatActivity {
             }
 
             // If we add the update to the message object directly, or differential callback won't think there has been a change.
-            ChatDAO cd = new ChatDAO(currMessages.get());
-            Log.v("XYZ", cd.toString());
-            cd.messages = new ArrayList<>();
-            cd.messages.addAll(currMessages.get().getChatHistory());
-            cd.messages.add(new HashMap<>() {{ put("userId", currentID); put("message", newMessage); }});
+            currMessages.get().addChatHistory(currentID, newMessage);
             firestore.collection(Constants.MESSAGES)
                     .document(chatId)
-                    .set(cd)
+                    .set(new ChatDAO(currMessages.get()))
                     .addOnSuccessListener(unused -> {
                         editText.setText("");
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -119,23 +121,10 @@ public class ReadMessageActivity extends AppCompatActivity {
 
                     currMessages.set(new Message(chatId, cd.title, cd.members, cd.messages));
 
-                    // Update the RecyclerView
-                    for (int i = 0; i < currMessages.get().getChatHistory().size(); i++) {
-                        Map<String, String> map = currMessages.get().getChatHistory().get(i);
-                        ((AsyncChatAdapter) recMessages.getAdapter()).setCardAtPosition(i, new ChatCard(map.get("userId"), map.get("message")));
-                    }
-                    recMessages.getAdapter().notifyDataSetChanged();
-                    recMessages.scrollToPosition(adapter.getItemCount() - 1);
-                    progressBar.setVisibility(View.INVISIBLE);
-
-                    // Watch for changes in the future
-                    watcher = new ChatUtil(currMessages.get(), adapter, recMessages);
+                    // Update the RecyclerView and watch for changes in the future
+                    watcher = new ChatUtil(currMessages, cards, recMessages);
                     watcher.watchConversationChanges(idToUsernameMap);
-
-                    // Now, find out who these users are
-                    for (String m : currMessages.get().getChatMembers()) {
-                        watcher.ayncFindUsernameFromId(idToUsernameMap, m);
-                    }
+                    progressBar.setVisibility(View.INVISIBLE);
                 });
     }
 
