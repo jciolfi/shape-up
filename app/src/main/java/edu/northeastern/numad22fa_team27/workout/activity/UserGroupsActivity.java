@@ -27,6 +27,7 @@ import edu.northeastern.numad22fa_team27.workout.callbacks.FindUserGroupsCallbac
 import edu.northeastern.numad22fa_team27.workout.fragments.UniversalSearchFragment;
 import edu.northeastern.numad22fa_team27.workout.models.Group;
 import edu.northeastern.numad22fa_team27.workout.models.universal_search.NavigationBar;
+import edu.northeastern.numad22fa_team27.workout.models.user_groups.UserGroupsAdapter;
 import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 
 public class UserGroupsActivity extends AppCompatActivity {
@@ -53,6 +54,7 @@ public class UserGroupsActivity extends AppCompatActivity {
         // set up recycler view
         userGroupsRV = findViewById(R.id.rv_user_groups);
         userGroupsRV.setLayoutManager(new LinearLayoutManager(this));
+        userGroupsRV.setAdapter(new UserGroupsAdapter(userGroups));
         firestoreService.findUserGroups(new FindUserGroupsCallback(userGroups, userGroupsRV));
     }
 
