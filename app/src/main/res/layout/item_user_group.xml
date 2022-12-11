@@ -55,6 +55,7 @@
         android:textColorHighlight="@color/md_theme_light_tertiary"
         android:textColorLink="@color/md_theme_light_tertiary"
         android:visibility="invisible"
+        android:theme="@style/SwitchOnLightBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/user_group_member_count"
