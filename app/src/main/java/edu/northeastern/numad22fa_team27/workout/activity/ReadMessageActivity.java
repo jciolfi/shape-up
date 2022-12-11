@@ -49,6 +49,7 @@ public class ReadMessageActivity extends AppCompatActivity {
     FirebaseFirestore firestore;
     private AsyncChatAdapter adapter;
     private Map<String, String> idToUsernameMap;
+    private ChatUtil watcher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,7 +129,7 @@ public class ReadMessageActivity extends AppCompatActivity {
                     progressBar.setVisibility(View.INVISIBLE);
 
                     // Watch for changes in the future
-                    ChatUtil watcher = new ChatUtil(currMessages.get(), adapter, recMessages);
+                    watcher = new ChatUtil(currMessages.get(), adapter, recMessages);
                     watcher.watchConversationChanges(idToUsernameMap);
 
                     // Now, find out who these users are
@@ -138,4 +139,13 @@ public class ReadMessageActivity extends AppCompatActivity {
                 });
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        // Remove our change watcher
+        if (watcher != null) {
+            watcher.shutdown();
+        }
+    }
 }

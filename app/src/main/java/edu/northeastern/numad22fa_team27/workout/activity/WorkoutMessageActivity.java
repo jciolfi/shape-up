@@ -2,47 +2,31 @@ package edu.northeastern.numad22fa_team27.workout.activity;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,28 +36,23 @@ import java.util.stream.Collectors;
 import edu.northeastern.numad22fa_team27.Constants;
 import edu.northeastern.numad22fa_team27.R;
 import edu.northeastern.numad22fa_team27.workout.adapters.MessageAdapter;
-import edu.northeastern.numad22fa_team27.workout.adapters.MessageCard;
 import edu.northeastern.numad22fa_team27.workout.adapters.MessageClickListener;
 import edu.northeastern.numad22fa_team27.workout.fragments.NewGroupChatFragment;
-import edu.northeastern.numad22fa_team27.workout.models.ChatItem;
 import edu.northeastern.numad22fa_team27.workout.models.ChatItemViewModel;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.ChatDAO;
 import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
-import edu.northeastern.numad22fa_team27.workout.models.DAO.WorkoutDAO;
 import edu.northeastern.numad22fa_team27.workout.models.Message;
 import edu.northeastern.numad22fa_team27.workout.models.User;
 import edu.northeastern.numad22fa_team27.workout.models.universal_search.NavigationBar;
-import edu.northeastern.numad22fa_team27.workout.utilities.ChatUtil;
 import edu.northeastern.numad22fa_team27.workout.utilities.UserUtil;
 
 public class WorkoutMessageActivity extends AppCompatActivity {
 
     //stored data variables
-    private String[][] friends;
     private List<String> usernames = new ArrayList<>();
     private List<String> chats = new ArrayList<>();
     private List<Message> cards;
-    private List<ChatUtil> messagelisteners;
+    private List<ListenerRegistration> messagelisteners;
     private boolean showingSearch = false;
 
     private Message chatUpdate;
@@ -134,6 +113,16 @@ public class WorkoutMessageActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
 
+        if (messagelisteners == null) {
+            return;
+        }
+        for (ListenerRegistration listener : messagelisteners) {
+            try {
+                listener.remove();
+            } catch (Exception e) {
+                Log.e(TAG, "Could not close listener");
+            }
+        }
     }
 
     private ListenerRegistration createChatListener(String chatId, RecyclerView rvToUpdate) {
@@ -245,7 +234,7 @@ public class WorkoutMessageActivity extends AppCompatActivity {
                     if (chat.messages != null && chat.members != null && chat.title != null) {
                         cards.add(new Message(messageKey, chat.title, chat.members, chat.messages));
                         chatsRecycler.getAdapter().notifyDataSetChanged();
-                        createChatListener(messageKey.trim(), chatsRecycler);
+                        messagelisteners.add(createChatListener(messageKey.trim(), chatsRecycler));
                     }
                 });
     }
@@ -293,22 +282,6 @@ public class WorkoutMessageActivity extends AppCompatActivity {
                     });
                 });
     }
-
-    private void findUserName(int index) {
-        FirebaseFirestore.getInstance()
-                .collection(Constants.USERS)
-                .document(friends[0][index])
-                .get()
-                .addOnSuccessListener(ds-> {
-                    UserDAO ud = ds.toObject(UserDAO.class);
-                    usernames.add(ud.username);
-                    friends[1][usernames.size() - 1] = usernames.get(usernames.size() - 1);
-                }).addOnFailureListener(ds -> {
-                    usernames.add("User Not Found");
-                    friends[1][usernames.size() - 1] = usernames.get(usernames.size() - 1);
-                });
-    }
-
 
     private void setupRecView(RecyclerView rv, List<Message> dataset) {
         RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
