@@ -53,28 +53,21 @@ public class MyFriendsActivity extends AppCompatActivity implements IRecyclerVie
     private void initData() {
         list = new ArrayList<>();
         db.collection("users")
-                .document(user.getUid())
-                        .get()
-                                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        List<String> friendsUIDList = (List<String>) documentSnapshot.getData().get("friends");
-                                        for (String id : friendsUIDList) {
-                                            db.collection("users")
-                                                    .document(id)
-                                                    .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                                        @Override
-                                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                            String username = documentSnapshot.getString("username");
-                                                            String url = documentSnapshot.getString("profilePic");
-                                                            Log.d("ReadingFS", "onSuccess: " + documentSnapshot.getString("username"));
-                                                            list.add(new FriendsCard(url, username));
-                                                            adapter.notifyDataSetChanged();
-                                                        }
-                                                    });
-                                        }
-                                    }
-                                });
+            .document(user.getUid())
+            .get()
+            .addOnSuccessListener(documentSnapshot -> {
+                List<String> friendsUIDList = (List<String>) documentSnapshot.getData().get("friends");
+                for (String id : friendsUIDList) {
+                    db.collection("users")
+                        .document(id)
+                        .get().addOnSuccessListener(documentSnapshot1 -> {
+                            String username = documentSnapshot1.getString("username");
+                            String url = documentSnapshot1.getString("profilePic");
+                            list.add(new FriendsCard(url, id, username));
+                            adapter.notifyDataSetChanged();
+                        });
+                }
+            });
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -91,9 +84,11 @@ public class MyFriendsActivity extends AppCompatActivity implements IRecyclerVie
 
     @Override
     public void onItemClick(int position) {
+        FriendsCard friend = list.get(position);
         Intent intent = new Intent(MyFriendsActivity.this, FriendProfileActivity.class);
-        intent.putExtra("USERNAME", list.get(position).getUsername());
-        intent.putExtra("PROFILEPIC", list.get(position).getImageView());
+        intent.putExtra("USERNAME", friend.getUsername());
+        intent.putExtra("PROFILEPIC", friend.getImageView());
+        intent.putExtra("USERID", friend.getUserId());
         startActivity(intent);
     }
 }

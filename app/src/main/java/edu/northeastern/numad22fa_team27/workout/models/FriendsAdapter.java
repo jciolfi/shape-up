@@ -44,10 +44,11 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsHolder> {
         String url = list.get(position).getImageView();
 
         holder.username.setText(email);
-        Picasso.get()
-                .load(url)
-                .into(holder.friendProfilePic);
-
+        if (url != null && !url.isEmpty()) {
+            Picasso.get()
+                    .load(url)
+                    .into(holder.friendProfilePic);
+        }
     }
 
     @Override

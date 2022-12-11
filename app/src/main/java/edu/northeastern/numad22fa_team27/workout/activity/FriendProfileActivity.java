@@ -5,6 +5,7 @@ import static edu.northeastern.numad22fa_team27.Constants.USERS;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -23,7 +24,7 @@ import edu.northeastern.numad22fa_team27.workout.models.DAO.UserDAO;
 import edu.northeastern.numad22fa_team27.workout.services.FirestoreService;
 
 public class FriendProfileActivity extends AppCompatActivity {
-
+    private static final String TAG = "FriendProfileActivity";
     private TextView friend_email;
     private ImageView friend_profilePic;
     private Button actionButton;
@@ -61,6 +62,7 @@ public class FriendProfileActivity extends AppCompatActivity {
     private void setActionButton() {
         FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
         if (fbUser == null) {
+            Log.e(TAG, "Cannot get Firebase auth");
             return;
         }
 
@@ -76,11 +78,11 @@ public class FriendProfileActivity extends AppCompatActivity {
         String currentUserID = fbUser.getUid();
         String selectedUserID = getIntent().getStringExtra("USERID");
 
-
         // hide button for now so user doesn't see changing button state
         actionButton.setVisibility(View.INVISIBLE);
         actionButton.setEnabled(false);
         if (currentUserID.equals(selectedUserID)) {
+            Log.e(TAG, "Our ID is the same as the selected ID");
             return;
         }
 
@@ -89,9 +91,6 @@ public class FriendProfileActivity extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(currUserSnapshot -> {
                     UserDAO currentUser = currUserSnapshot.toObject(UserDAO.class);
-                    if (currentUser == null) {
-                        return;
-                    }
 
                     if (currentUser.friends.contains(selectedUserID)) {
                         actionButton.setText("Remove");
@@ -132,8 +131,12 @@ public class FriendProfileActivity extends AppCompatActivity {
                                             onBackPressed();
                                         });
                                     }
+                                }).addOnFailureListener(e -> {
+                                    Log.e(TAG, "Could not load peer");
                                 });
                     }
+                }).addOnFailureListener(e -> {
+                    Log.e(TAG, "Could not load user");
                 });
     }
 }
