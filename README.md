@@ -10,21 +10,24 @@
 # Number of commits per user
 Ben_M@DESKTOP-GHIMRMC MINGW64 ~/AndroidStudioProjects/NUMAD22Fa_Team27 (master)
 $ git shortlog -sn
-    78  bmontgom
-    68  John Ciolfi
+    89  bmontgom
+    71  John Ciolfi
     50  farzadjahandar
+    36  Ben Montgomery
     35  fabigazi
-    29  Ben Montgomery
      7  fjahandar
      2  Farzad
 
 # Lines of code authored per user
 Ben_M@DESKTOP-GHIMRMC MINGW64 ~/AndroidStudioProjects/NUMAD22Fa_Team27 (master)
 $ git ls-files | while read f; do git blame -w -M -C -C --line-porcelain "$f" | grep -I '^author '; done | sort -f | uniq -ic | sort -n --reverse
-   6240 author bmontgom
-   4257 author John Ciolfi
-   1771 author farzadjahandar
-   1368 author fabigazi
+   6364 author bmontgom
+   4265 author John Ciolfi
+   1759 author farzadjahandar
+   1318 author fabigazi
+    223 author fjahandar
+     51 author Ben Montgomery
+
 
 ```
 
